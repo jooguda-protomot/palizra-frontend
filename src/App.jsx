@@ -354,8 +354,14 @@ export default function ClaimVerifierDemo() {
                   {(comparison.consensus_points || []).map((p, i) => (
                     <div key={i} style={{ fontSize: 14, marginBottom: 4 }}>
                       {p.point}
-                      <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 2 }}>
-                        {(p.supporting_sources || []).join(" · ")}
+                      <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 2, display: "flex", flexWrap: "wrap", gap: 8 }}>
+                        {(p.supporting_sources || []).map((s, j) =>
+                          typeof s === "string" ? (
+                            <span key={j}>{s}</span>
+                          ) : (
+                            <SourceLink key={j} source={s.source} url={s.url} color={COLORS.consensus} />
+                          )
+                        )}
                       </div>
                     </div>
                   ))}
@@ -367,7 +373,10 @@ export default function ClaimVerifierDemo() {
                       <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{d.issue}</div>
                       {(d.positions || []).map((pos, j) => (
                         <div key={j} style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 3, paddingLeft: 10, borderLeft: `2px solid ${COLORS.discrepancy}` }}>
-                          <strong style={{ color: COLORS.ink }}>{pos.source}:</strong> {pos.claims}
+                          <strong style={{ color: COLORS.ink }}>
+                            <SourceLink source={pos.source} url={pos.url} color={COLORS.discrepancy} />:
+                          </strong>{" "}
+                          {pos.claims}
                         </div>
                       ))}
                     </div>
@@ -380,7 +389,10 @@ export default function ClaimVerifierDemo() {
                       <div style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 4 }}>{f.point}</div>
                       {(f.examples || []).map((ex, j) => (
                         <div key={j} style={{ fontSize: 13 }}>
-                          <strong>{ex.source}:</strong> {ex.framing}
+                          <strong>
+                            <SourceLink source={ex.source} url={ex.url} color={COLORS.framing} />:
+                          </strong>{" "}
+                          {ex.framing}
                         </div>
                       ))}
                     </div>
@@ -559,6 +571,24 @@ export default function ClaimVerifierDemo() {
         sa volania nepodaria — spusti <code>npm run dev</code> v priečinku server/ a doplň API kľúče do .env.
       </footer>
     </div>
+  );
+}
+
+function SourceLink({ source, url, color }) {
+  if (!url) {
+    // Žiadny URL k dispozícii (model ho nenašiel v dodaných výsledkoch) -
+    // zobrazí sa len meno zdroja, bez linku, aby sme nikdy nevymýšľali URL.
+    return <span title="URL nebol k dispozícii">{source}</span>;
+  }
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color, textDecoration: "underline" }}
+    >
+      {source}
+    </a>
   );
 }
 
