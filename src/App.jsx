@@ -73,6 +73,22 @@ async function extractClaimsViaBackend(text) {
   return data; // { claims: [...] }
 }
 
+async function checkConsistencyViaBackend(claims) {
+  const response = await fetch(`${API_BASE_URL}/api/claims/check-consistency`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ claims }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.error || `Backend vrátil HTTP ${response.status}`);
+  }
+
+  return data; // { issues: [...] }
+}
+
 async function verifyClaimViaBackend(claim) {
   const response = await fetch(`${API_BASE_URL}/api/claims/verify`, {
     method: "POST",
@@ -93,6 +109,8 @@ export default function ClaimVerifierDemo() {
   const [activeTab, setActiveTab] = useState("text"); // "text" | "image"
   const [inputText, setInputText] = useState(SAMPLE_TEXT);
   const [claims, setClaims] = useState(null);
+  const [consistencyIssues, setConsistencyIssues] = useState(null);
+  const [consistencyLoading, setConsistencyLoading] = useState(false);
   const [selectedClaimId, setSelectedClaimId] = useState(null);
   const [comparison, setComparison] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -141,9 +159,21 @@ export default function ClaimVerifierDemo() {
     setClaims(null);
     setComparison(null);
     setSelectedClaimId(null);
+    setConsistencyIssues(null);
+    setConsistencyLoading(false);
     try {
       const result = await extractClaimsViaBackend(inputText);
-      setClaims(result.claims || []);
+      const claimsList = result.claims || [];
+      setClaims(claimsList);
+
+      // Kontrola konzistentnosti beží na pozadí, neblokuje zobrazenie tvrdení
+      if (claimsList.length >= 2) {
+        setConsistencyLoading(true);
+        checkConsistencyViaBackend(claimsList)
+          .then((res) => setConsistencyIssues(res.issues || []))
+          .catch(() => setConsistencyIssues(null))
+          .finally(() => setConsistencyLoading(false));
+      }
     } catch (e) {
       setError(
         e.message?.includes("fetch")
@@ -292,6 +322,38 @@ export default function ClaimVerifierDemo() {
       </div>
 
       {claims && claims.length > 0 && (
+        <>
+        {consistencyLoading && (
+          <div style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 14, fontFamily: "monospace" }}>
+            Kontrolujem vnútornú konzistentnosť tvrdení…
+          </div>
+        )}
+        {!consistencyLoading && consistencyIssues && consistencyIssues.length > 0 && (
+          <div style={{ marginBottom: 14, background: COLORS.discrepancyBg, border: `1px solid ${COLORS.discrepancy}55`, borderRadius: 4, padding: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+              <AlertTriangle size={14} color={COLORS.discrepancy} />
+              <span style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.discrepancy, letterSpacing: "0.04em" }}>
+                NÁJDENÉ VNÚTORNÉ NEZROVNALOSTI ({consistencyIssues.length})
+              </span>
+            </div>
+            {consistencyIssues.map((issue, i) => (
+              <div key={i} style={{ fontSize: 13, marginBottom: 6 }}>
+                <strong style={{ color: COLORS.ink }}>
+                  [{({ casova_os: "Časová os", ciselna_nezrovnalost: "Číselná nezrovnalosť", logicky_rozpor: "Logický rozpor", nekonzistentne_pomenovanie: "Nekonzistentné pomenovanie" })[issue.type] || issue.type}]
+                </strong>{" "}
+                {issue.description}
+                {issue.claim_ids?.length > 0 && (
+                  <span style={{ color: COLORS.inkSoft }}> (tvrdenia č. {issue.claim_ids.join(", ")})</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {!consistencyLoading && consistencyIssues && consistencyIssues.length === 0 && (
+          <div style={{ fontSize: 13, color: COLORS.consensus, marginBottom: 14 }}>
+            ✓ Medzi extrahovanými tvrdeniami nebola nájdená žiadna vnútorná nezrovnalosť.
+          </div>
+        )}
         <div className="cv-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 20 }}>
           {/* Ľavý panel: zoznam tvrdení */}
           <div>
@@ -413,6 +475,7 @@ export default function ClaimVerifierDemo() {
             )}
           </div>
         </div>
+        </>
       )}
       </>
       )}
