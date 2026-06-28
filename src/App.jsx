@@ -534,9 +534,32 @@ export default function ClaimVerifierDemo() {
 
                 <Section title="Reverse image search" color={COLORS.unverified} bg={COLORS.unverifiedBg}>
                   {(imageAnalysis.reverseResults || []).map((r, i) => (
-                    <div key={i} style={{ fontSize: 13, marginBottom: 3 }}>
+                    <div key={i} style={{ fontSize: 13, marginBottom: 8 }}>
                       <strong>{r.engine}:</strong>{" "}
-                      {r.error ? r.error : `${r.matches?.length || 0} výsledkov`}
+                      {r.error ? (
+                        <span style={{ color: COLORS.inkSoft }}>{r.error}</span>
+                      ) : (
+                        <span>{r.matches?.length || 0} výsledkov</span>
+                      )}
+                      {!r.error && (r.matches || []).length > 0 && (
+                        <div style={{ marginTop: 4, paddingLeft: 10, borderLeft: `2px solid ${COLORS.unverified}` }}>
+                          {r.matches.slice(0, 5).map((m, j) => (
+                            <div key={j} style={{ marginBottom: 3 }}>
+                              <a
+                                href={m.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: COLORS.unverified, textDecoration: "underline", fontSize: 12 }}
+                              >
+                                {m.title || m.url}
+                              </a>
+                              {m.firstSeenDate && (
+                                <span style={{ color: COLORS.inkSoft, fontSize: 11 }}> · {m.firstSeenDate}</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </Section>
