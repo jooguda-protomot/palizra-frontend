@@ -587,6 +587,42 @@ export default function ClaimVerifierDemo() {
                   ))}
                 </Section>
 
+                {imageAnalysis.llmAnalysis?.geolocation_assessment && (
+                  <Section
+                    title="Geolokalizácia"
+                    color={
+                      imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location === "nekonzistentné"
+                        ? COLORS.discrepancy
+                        : COLORS.framing
+                    }
+                    bg={
+                      imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location === "nekonzistentné"
+                        ? COLORS.discrepancyBg
+                        : COLORS.framingBg
+                    }
+                    icon={
+                      imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location === "nekonzistentné"
+                        ? AlertTriangle
+                        : undefined
+                    }
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+                      Súlad s tvrdeným miestom:{" "}
+                      {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location}
+                    </div>
+                    {(imageAnalysis.llmAnalysis.geolocation_assessment.visual_clues || []).length > 0 && (
+                      <ul style={{ fontSize: 13, margin: "4px 0", paddingLeft: 18 }}>
+                        {imageAnalysis.llmAnalysis.geolocation_assessment.visual_clues.map((clue, i) => (
+                          <li key={i}>{clue}</li>
+                        ))}
+                      </ul>
+                    )}
+                    <div style={{ fontSize: 13, color: COLORS.inkSoft }}>
+                      {imageAnalysis.llmAnalysis.geolocation_assessment.explanation}
+                    </div>
+                  </Section>
+                )}
+
                 <Section title="Metadáta (EXIF)" color={COLORS.framing} bg={COLORS.framingBg} icon={Clock}>
                   <div style={{ fontSize: 13 }}>
                     {imageAnalysis.metadata?.present
@@ -627,12 +663,22 @@ export default function ClaimVerifierDemo() {
                   ))}
                 </Section>
 
-                <Section title="Archívna kontrola" color={COLORS.unverified} bg={COLORS.unverifiedBg}>
-                  <div style={{ fontSize: 13 }}>
+                <Section
+                  title="Archívna kontrola"
+                  color={imageAnalysis.archiveCheck?.matched_in_archive ? COLORS.discrepancy : COLORS.unverified}
+                  bg={imageAnalysis.archiveCheck?.matched_in_archive ? COLORS.discrepancyBg : COLORS.unverifiedBg}
+                  icon={imageAnalysis.archiveCheck?.matched_in_archive ? AlertTriangle : undefined}
+                >
+                  <div style={{ fontSize: 13, fontWeight: imageAnalysis.archiveCheck?.matched_in_archive ? 600 : 400 }}>
                     {imageAnalysis.archiveCheck?.matched_in_archive
-                      ? `Shoda nájdená: ${imageAnalysis.archiveCheck.archive_source}`
+                      ? `Zhoda s už overeným obrázkom (zo dňa ${imageAnalysis.archiveCheck.known_date}). Pôvodný kontext: "${imageAnalysis.archiveCheck.known_context}"`
                       : imageAnalysis.archiveCheck?.note || "Žiadna shoda."}
                   </div>
+                  {imageAnalysis.archiveCheck?.note && imageAnalysis.archiveCheck?.matched_in_archive && (
+                    <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
+                      {imageAnalysis.archiveCheck.note}
+                    </div>
+                  )}
                 </Section>
 
                 <Section title="AI-detekcia" color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
