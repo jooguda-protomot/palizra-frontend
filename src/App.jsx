@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, FileText, AlertTriangle, CheckCircle2, HelpCircle, Quote, Scale, Image as ImageIcon, Upload, Clock } from "lucide-react";
+import { Search, FileText, AlertTriangle, CheckCircle2, HelpCircle, Quote, Scale, Image as ImageIcon, Upload, Clock, Flag, X } from "lucide-react";
 
 // ---------- Konfigurácia backendu ----------
 // Produkčný backend nasadený na Railway.
@@ -472,6 +472,12 @@ export default function ClaimVerifierDemo() {
                   <strong style={{ color: COLORS.ink }}>Miera istoty: {comparison.confidence_level}.</strong>{" "}
                   {comparison.summary_note}
                 </div>
+
+                <FeedbackButton
+                  context="text_comparison"
+                  subject={claims.find((c) => c.id === selectedClaimId)?.original_text || null}
+                  relatedData={comparison}
+                />
               </div>
             )}
           </div>
@@ -693,6 +699,12 @@ export default function ClaimVerifierDemo() {
                     Nahraté na: {imageAnalysis.imageUrl}
                   </div>
                 )}
+
+                <FeedbackButton
+                  context="image_verification"
+                  subject={claimedContext || imageAnalysis.imageUrl || null}
+                  relatedData={imageAnalysis}
+                />
               </div>
             )}
           </div>
@@ -774,6 +786,120 @@ export default function ClaimVerifierDemo() {
         Tento UI volá backend na {API_BASE_URL} (pozri priečinok server/). Bez bežiaceho backendu
         sa volania nepodaria — spusti <code>npm run dev</code> v priečinku server/ a doplň API kľúče do .env.
       </footer>
+    </div>
+  );
+}
+
+async function submitFeedbackViaBackend({ context, subject, description, relatedData }) {
+  const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ context, subject, description, relatedData }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.error || `Backend vrátil HTTP ${response.status}`);
+  }
+  return data;
+}
+
+/**
+ * Malé tlačidlo "Nahlásiť problém" - po kliknutí otvorí inline formulár
+ * (nie modal, aby sa to dalo jednoducho vložiť kdekoľvek do layoutu).
+ */
+function FeedbackButton({ context, subject, relatedData }) {
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+
+  async function handleSubmit() {
+    if (!description.trim()) return;
+    setStatus("sending");
+    try {
+      await submitFeedbackViaBackend({ context, subject, description, relatedData });
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div style={{ fontSize: 12, color: COLORS.consensus, marginTop: 6 }}>
+        ✓ Ďakujeme, problém bol nahlásený.
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            background: "none",
+            border: "none",
+            color: COLORS.inkSoft,
+            fontSize: 11,
+            fontFamily: "monospace",
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: 0,
+          }}
+        >
+          <Flag size={11} /> NAHLÁSIŤ PROBLÉM
+        </button>
+      ) : (
+        <div style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, maxWidth: 360 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft }}>POPÍŠ PROBLÉM</span>
+            <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <X size={13} color={COLORS.inkSoft} />
+            </button>
+          </div>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Napr. nesprávne zaradený zdroj, chýbajúci kontext, nesprávna kategorizácia..."
+            style={{
+              width: "100%",
+              fontSize: 13,
+              fontFamily: "inherit",
+              border: `1px solid ${COLORS.line}`,
+              borderRadius: 4,
+              padding: 8,
+              resize: "vertical",
+              boxSizing: "border-box",
+            }}
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={status === "sending" || !description.trim()}
+            style={{
+              marginTop: 6,
+              background: COLORS.ink,
+              color: COLORS.paper,
+              border: "none",
+              borderRadius: 4,
+              padding: "6px 12px",
+              fontSize: 12,
+              fontFamily: "monospace",
+              cursor: "pointer",
+              opacity: status === "sending" || !description.trim() ? 0.6 : 1,
+            }}
+          >
+            {status === "sending" ? "ODOSIELAM…" : "ODOSLAŤ"}
+          </button>
+          {status === "error" && (
+            <div style={{ fontSize: 12, color: COLORS.discrepancy, marginTop: 4 }}>
+              Odoslanie zlyhalo, skús to znova.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
