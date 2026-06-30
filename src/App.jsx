@@ -800,8 +800,7 @@ export default function ClaimVerifierDemo() {
       )}
 
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft }}>
-        Tento UI volá backend na {API_BASE_URL} (pozri priečinok server/). Bez bežiaceho backendu
-        sa volania nepodaria — spusti <code>npm run dev</code> v priečinku server/ a doplň API kľúče do .env.
+        © {new Date().getFullYear()} Palizra Analyzator
       </footer>
     </div>
   );
