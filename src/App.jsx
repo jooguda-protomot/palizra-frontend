@@ -775,9 +775,10 @@ export default function ClaimVerifierDemo() {
 
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nezávislosť a financovanie</h3>
           <p style={{ marginBottom: 16 }}>
-            <em>Tento nástroj je nezávislý osobný projekt bez inštitucionálneho
-financovania alebo väzieb na politické či mediálne organizácie. Vyvíja a
-prevádzkuje ho ľudsko-právny a investigatívny aktivista Peter Šrámka.</em>
+            <em>Tento nástroj je nezávislý osobný projekt Petra Šrámku, vyvíjaný a prevádzkovaný
+  bez akéhokoľvek externého financovania, grantov, sponzorstva alebo
+  inštitucionálnych väzieb na politické, mediálne či iné organizácie. Náklady na
+  prevádzku (API, hosting) hradí autor z vlastných prostriedkov.</em>
           </p>
         </div>
       )}
