@@ -422,7 +422,7 @@ export default function ClaimVerifierDemo() {
                           typeof s === "string" ? (
                             <span key={j}>{s}</span>
                           ) : (
-                            <SourceLink key={j} source={s.source} url={s.url} color={COLORS.consensus} />
+                            <SourceLink key={j} source={s.source} url={s.url} archivedUrl={s.archived_url} color={COLORS.consensus} />
                           )
                         )}
                       </div>
@@ -437,7 +437,7 @@ export default function ClaimVerifierDemo() {
                       {(d.positions || []).map((pos, j) => (
                         <div key={j} style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 3, paddingLeft: 10, borderLeft: `2px solid ${COLORS.discrepancy}` }}>
                           <strong style={{ color: COLORS.ink }}>
-                            <SourceLink source={pos.source} url={pos.url} color={COLORS.discrepancy} />:
+                            <SourceLink source={pos.source} url={pos.url} archivedUrl={pos.archived_url} color={COLORS.discrepancy} />:
                           </strong>{" "}
                           {pos.claims}
                         </div>
@@ -453,7 +453,7 @@ export default function ClaimVerifierDemo() {
                       {(f.examples || []).map((ex, j) => (
                         <div key={j} style={{ fontSize: 13 }}>
                           <strong>
-                            <SourceLink source={ex.source} url={ex.url} color={COLORS.framing} />:
+                            <SourceLink source={ex.source} url={ex.url} archivedUrl={ex.archived_url} color={COLORS.framing} />:
                           </strong>{" "}
                           {ex.framing}
                         </div>
@@ -758,20 +758,15 @@ export default function ClaimVerifierDemo() {
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nahlásenie chyby</h3>
           <p style={{ marginBottom: 16 }}>
             Ak si všimneš nesprávnu analýzu, chybnú kategorizáciu zdroja, alebo iný problém,
-            napíš na: <em>palizra@proton.me</em>.
+            napíš na: <em>[doplň svoj kontaktný e-mail]</em>.
           </p>
 
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nezávislosť a financovanie</h3>
           <p style={{ marginBottom: 16 }}>
-            <em>Transparentnosť v tejto oblasti je kritická pre zamedzenie podozrení zo skrytého biasu (strannosti):</em>
+            <em>[Doplň informáciu o tom, kto nástroj vyvíja a prevádzkuje, či má nejaké
+            financovanie alebo inštitucionálne väzby. Transparentnosť v tejto časti je dôležitá
+            pre dôveryhodnosť nástroja pri tejto téme.]</em>
           </p>
-          <p style={{ marginBottom: 16 }}>
-            <em><strong>Nástroj Palizra Analyzator vyvíja a prevádzkuje pomocou pokročilej umelej inteligencie investigatívny aktivista Peter Šrámka</strong></em>
-          </p>
-          <ul style={{ marginBottom: 16 }}>
-            <li><strong>Financovanie:</strong>Projekt je momentálne kompletne samofinancovaný z vlastných zdrojov.</li>
-            <li><strong>Väzby na organizácie:</strong>Nástroj nie je prepojený so žiadnou politickou, štátnou ani náboženskou organizáciou a funguje plne autonómne.</li>
-          </ul>
         </div>
       )}
 
@@ -783,21 +778,34 @@ export default function ClaimVerifierDemo() {
   );
 }
 
-function SourceLink({ source, url, color }) {
+function SourceLink({ source, url, archivedUrl, color }) {
   if (!url) {
     // Žiadny URL k dispozícii (model ho nenašiel v dodaných výsledkoch) -
     // zobrazí sa len meno zdroja, bez linku, aby sme nikdy nevymýšľali URL.
     return <span title="URL nebol k dispozícii">{source}</span>;
   }
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color, textDecoration: "underline" }}
-    >
-      {source}
-    </a>
+    <span>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color, textDecoration: "underline" }}
+      >
+        {source}
+      </a>
+      {archivedUrl && (
+        <a
+          href={archivedUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Archivovaná kópia (Wayback Machine) - dôkaz, čo zdroj hovoril v čase overenia"
+          style={{ color: color, opacity: 0.6, fontSize: 11, marginLeft: 4, textDecoration: "none" }}
+        >
+          [archív]
+        </a>
+      )}
+    </span>
   );
 }
 
