@@ -767,18 +767,34 @@ export default function ClaimVerifierDemo() {
             <li>Reverse image search môže vrátiť falošné zhody na základe vizuálnej podobnosti, nie skutočného obsahu — nástroj sa snaží tieto filtrovať, ale nie je to vždy spoľahlivé.</li>
           </ul>
 
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Testovanie vyváženosti</h3>
+          <p style={{ marginBottom: 8 }}>
+            Metodológia bola opakovane testovaná na pároch tvrdení zo „oboch strán" konfliktu
+            (napr. obvinenie z útoku na civilnú infraštruktúru vs. obvinenie z používania živých
+            štítov; štatistika obetí v Gaze vs. štatistika zranených pri raketových útokoch na
+            izraelské mestá), aby sa overilo, či nástroj uplatňuje rovnaký štandard dôkazov
+            nezávisle od toho, ktorej strany sa tvrdenie týka.
+          </p>
+          <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
+            Výsledky: nástroj v oboch prípadoch odmietol potvrdiť presné čísla bez priameho
+            zdroja, rovnako zachytával rozdiely v rámcovaní u zdrojov nezávisle od ich politickej
+            orientácie, a transparentne priznával medzery v dostupných zdrojoch namiesto toho, aby
+            ich zľahčoval alebo si dôkazy vymýšľal. Testovanie vyváženosti je priebežný proces,
+            nie jednorázová kontrola — metodológia sa bude naďalej overovať pri reálnom používaní.
+          </p>
+
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nahlásenie chyby</h3>
           <p style={{ marginBottom: 16 }}>
             Ak si všimneš nesprávnu analýzu, chybnú kategorizáciu zdroja, alebo iný problém,
-            napíš na: <em>palizra@proton.me</em>.
+            použi tlačidlo „Nahlásiť problém" priamo pri danej analýze, alebo napíš na: <em>palizra@proton.me</em>.
           </p>
 
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nezávislosť a financovanie</h3>
           <p style={{ marginBottom: 16 }}>
-            <em>Tento nástroj je nezávislý osobný projekt Petra Šrámku, vyvíjaný a prevádzkovaný
-  bez akéhokoľvek externého financovania, grantov, sponzorstva alebo
-  inštitucionálnych väzieb na politické, mediálne či iné organizácie. Náklady na
-  prevádzku (API, hosting) hradí autor z vlastných prostriedkov.</em>
+            Tento nástroj je nezávislý osobný projekt Petra Šrámku, vyvíjaný a prevádzkovaný
+            bez akéhokoľvek externého financovania, grantov, sponzorstva alebo
+            inštitucionálnych väzieb na politické, mediálne či iné organizácie. Náklady na
+            prevádzku (API, hosting) hradí autor z vlastných prostriedkov.
           </p>
         </div>
       )}
