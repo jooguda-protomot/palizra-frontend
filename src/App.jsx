@@ -241,6 +241,7 @@ export default function ClaimVerifierDemo() {
         {[
           { id: "text", label: "Text / tvrdenie", icon: FileText },
           { id: "image", label: "Obrázok", icon: ImageIcon },
+          { id: "about", label: "O nástroji", icon: HelpCircle },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -695,6 +696,82 @@ export default function ClaimVerifierDemo() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {activeTab === "about" && (
+        <div style={{ maxWidth: 720, fontSize: 14, lineHeight: 1.6 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>O nástroji</h2>
+          <p style={{ color: COLORS.inkSoft, marginBottom: 20 }}>
+            Posledná aktualizácia tejto stránky: 29. jún 2026.
+          </p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Čo tento nástroj robí</h3>
+          <p style={{ marginBottom: 16 }}>
+            Nástroj rozkladá text alebo obrázky súvisiace s izraelsko-palestínskym konfliktom
+            na overiteľné jednotky a porovnáva ich s nezávislými zdrojmi. <strong>Nevydáva
+            jednoduché verdikty „pravda/nepravda/propaganda".</strong> Namiesto toho ukazuje, kde sa
+            zdroje zhodujú, kde si odporujú, a kde sa fakty zhodujú, ale rámcovanie sa líši.
+            Toto je zámerné rozhodnutie — pri tomto konflikte je binárny verdikt často
+            zavádzajúci, pretože väčšina sporov nie je o samotných faktoch, ale o tom, ktoré
+            fakty sa vyberú a ako sa rámcujú.
+          </p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Ako to funguje</h3>
+          <ol style={{ marginBottom: 16, paddingLeft: 20 }}>
+            <li>Text sa rozloží na jednotky typu: overiteľný fakt, citácia/výrok, interpretácia, neoveriteľné.</li>
+            <li>Pre overiteľné fakty sa spustí vyhľadávanie v kurátorovanom zozname zdrojov (pozri nižšie).</li>
+            <li>Výsledky sa rozdelia podľa kategórie zdroja a porovnajú na zhodu/nezhodu/rámcovanie.</li>
+            <li>Pri obrázkoch sa robí reverse image search, vizuálna analýza a porovnanie proti archívu už overených obrázkov.</li>
+          </ol>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Kurátorovaný zoznam zdrojov</h3>
+          <p style={{ marginBottom: 8 }}>Nástroj vyhľadáva primárne v týchto kategóriách:</p>
+          <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
+            <li><strong>Medzinárodné agentúry:</strong> Reuters, Associated Press, AFP</li>
+            <li><strong>Izraelské médiá:</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet</li>
+            <li><strong>Palestínske/arabské médiá:</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye</li>
+            <li><strong>Fact-checking organizácie:</strong> AFP Fact Check, Reuters Fact Check, Bellingcat</li>
+            <li><strong>Ľudskoprávne organizácie:</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International</li>
+            <li><strong>Konfliktné databázy:</strong> ACLED, Institute for the Study of War</li>
+          </ul>
+          <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
+            Výsledky mimo tohto zoznamu sa nezahadzujú — zobrazujú sa v kategórii „Iné zdroje",
+            jasne oznámkované ako zdroje, ktorých dôveryhodnosť nástroj neoveroval.
+          </p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Použité technológie</h3>
+          <p style={{ marginBottom: 16 }}>
+            Extrakcia textu, porovnanie a vizuálna analýza obrázkov používajú jazykový model
+            Claude (Anthropic). Vyhľadávanie zdrojov používa SerpAPI (Google Search, Google Lens,
+            Yandex Images). Fact-check agregácia používa Google Fact Check Tools API.
+          </p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Obmedzenia</h3>
+          <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
+            <li>Nástroj je AI-asistovaný, nie nahradenie profesionálnych fact-checkerov.</li>
+            <li>Kurátorovaný zoznam zdrojov je nevyhnutne čiastočný — žiadny zoznam nemôže byť úplný.</li>
+            <li>Vyhľadávanie závisí od toho, čo je verejne indexované; nedávne alebo lokálne udalosti môžu mať slabšie pokrytie.</li>
+            <li>Reverse image search môže vrátiť falošné zhody na základe vizuálnej podobnosti, nie skutočného obsahu — nástroj sa snaží tieto filtrovať, ale nie je to vždy spoľahlivé.</li>
+          </ul>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nahlásenie chyby</h3>
+          <p style={{ marginBottom: 16 }}>
+            Ak si všimneš nesprávnu analýzu, chybnú kategorizáciu zdroja, alebo iný problém,
+            napíš na: <em>palizra@proton.me</em>.
+          </p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nezávislosť a financovanie</h3>
+          <p style={{ marginBottom: 16 }}>
+            <em>Transparentnosť v tejto oblasti je kritická pre zamedzenie podozrení zo skrytého biasu (strannosti):</em>
+          </p>
+          <p style={{ marginBottom: 16 }}>
+            <em><strong>Nástroj Palizra Analyzator vyvíja a prevádzkuje pomocou pokročilej umelej inteligencie investigatívny aktivista Peter Šrámka</strong></em>
+          </p>
+          <ul style={{ marginBottom: 16 }}>
+            <li><strong>Financovanie:</strong>Projekt je momentálne kompletne samofinancovaný z vlastných zdrojov.</li>
+            <li><strong>Väzby na organizácie:</strong>Nástroj nie je prepojený so žiadnou politickou, štátnou ani náboženskou organizáciou a funguje plne autonómne.</li>
+          </ul>
         </div>
       )}
 
