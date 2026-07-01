@@ -33,11 +33,6 @@ const TYPE_META = {
   unverifiable: { icon: HelpCircle, color: COLORS.unverified, bg: COLORS.unverifiedBg },
 };
 
-const SAMPLE_TEXT =
-  "Izraelská armáda uviedla, že v noci zasiahla teroristickú infrastruktúru v Gaze. " +
-  "Podľa miestnych zdravotníckych úradov zomrelo pri útoku 15 ľudí, vrátane 6 detí. " +
-  "Útok bol brutálny a neopodstatnený.";
-
 async function describeImageViaBackend(file, claimedContext) {
   const formData = new FormData();
   formData.append("image", file);
@@ -114,7 +109,7 @@ export default function ClaimVerifierDemo() {
   };
 
   const [activeTab, setActiveTab] = useState("text"); // "text" | "image"
-  const [inputText, setInputText] = useState(SAMPLE_TEXT);
+  const [inputText, setInputText] = useState("");
   const [claims, setClaims] = useState(null);
   const [consistencyIssues, setConsistencyIssues] = useState(null);
   const [consistencyLoading, setConsistencyLoading] = useState(false);
