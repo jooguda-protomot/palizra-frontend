@@ -101,7 +101,7 @@ export const translations = {
     tab_text: "Text / Claim",
     tab_image: "Image",
     tab_about: "About",
-    text_placeholder: "Enter a claim, article quote, or comment...",
+    text_placeholder: "Paste a claim, quote from an article, or full paragraph. The tool will break it down into verifiable parts.",
     btn_analyze: "BREAK DOWN CLAIMS",
     btn_analyzing: "ANALYZING\u2026",
     breakdown_label: "Breakdown",
