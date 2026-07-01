@@ -107,6 +107,7 @@ export default function ClaimVerifierDemo() {
     const val = translations[lang]?.[key] ?? translations["sk"]?.[key] ?? key;
     return typeof val === "string" ? val.replace("{year}", new Date().getFullYear()) : val;
   };
+  const isRTL = lang === "ar" || lang === "he";
 
   const [activeTab, setActiveTab] = useState("text"); // "text" | "image"
   const [inputText, setInputText] = useState("");
@@ -208,6 +209,8 @@ export default function ClaimVerifierDemo() {
 
   return (
     <div
+      dir={isRTL ? "rtl" : "ltr"}
+      lang={lang}
       style={{
         fontFamily: "'Iowan Old Style', 'Georgia', serif",
         background: COLORS.paper,
@@ -240,7 +243,7 @@ export default function ClaimVerifierDemo() {
             </p>
           </div>
           <div style={{ display: "flex", gap: 4, flexShrink: 0, marginTop: 4 }}>
-            {["sk", "en"].map((l) => (
+            {["sk", "en", "ar", "he"].map((l) => (
               <button
                 key={l}
                 onClick={() => setLang(l)}
