@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, FileText, AlertTriangle, CheckCircle2, HelpCircle, Quote, Scale, Image as ImageIcon, Upload, Clock, Flag, X } from "lucide-react";
+import { translations } from "./translations.js";
 
 // ---------- Konfigurácia backendu ----------
 // Produkčný backend nasadený na Railway.
@@ -26,10 +27,10 @@ const COLORS = {
 };
 
 const TYPE_META = {
-  factual_claim: { label: "Overiteľný fakt", icon: CheckCircle2, color: COLORS.consensus, bg: COLORS.consensusBg },
-  quoted_statement: { label: "Citácia / výrok", icon: Quote, color: COLORS.framing, bg: COLORS.framingBg },
-  interpretation: { label: "Interpretácia / rámcovanie", icon: Scale, color: COLORS.discrepancy, bg: COLORS.discrepancyBg },
-  unverifiable: { label: "Nedá sa nezávisle overiť", icon: HelpCircle, color: COLORS.unverified, bg: COLORS.unverifiedBg },
+  factual_claim: { icon: CheckCircle2, color: COLORS.consensus, bg: COLORS.consensusBg },
+  quoted_statement: { icon: Quote, color: COLORS.framing, bg: COLORS.framingBg },
+  interpretation: { icon: Scale, color: COLORS.discrepancy, bg: COLORS.discrepancyBg },
+  unverifiable: { icon: HelpCircle, color: COLORS.unverified, bg: COLORS.unverifiedBg },
 };
 
 const SAMPLE_TEXT =
@@ -106,6 +107,12 @@ async function verifyClaimViaBackend(claim) {
 }
 
 export default function ClaimVerifierDemo() {
+  const [lang, setLang] = useState("sk");
+  const t = (key) => {
+    const val = translations[lang]?.[key] ?? translations["sk"]?.[key] ?? key;
+    return typeof val === "string" ? val.replace("{year}", new Date().getFullYear()) : val;
+  };
+
   const [activeTab, setActiveTab] = useState("text"); // "text" | "image"
   const [inputText, setInputText] = useState(SAMPLE_TEXT);
   const [claims, setClaims] = useState(null);
@@ -145,7 +152,7 @@ export default function ClaimVerifierDemo() {
     } catch (e) {
       setImageError(
         e.message?.includes("fetch")
-          ? "Nedá sa pripojiť na backend. Beží server na " + API_BASE_URL + " ? (npm run dev v priečinku server/)"
+          ? t("error_connect") + " " + API_BASE_URL
           : e.message || "Analýza obrázka sa nepodarila."
       );
     } finally {
@@ -178,7 +185,7 @@ export default function ClaimVerifierDemo() {
       setError(
         e.message?.includes("fetch")
           ? "Nedá sa pripojiť na backend. Beží server na " + API_BASE_URL + " ? (npm run dev v priečinku server/)"
-          : e.message || "Extrakcia sa nepodarila."
+          : e.message || t("error_extract")
       );
     } finally {
       setLoading(false);
@@ -225,23 +232,47 @@ export default function ClaimVerifierDemo() {
       `}</style>
 
       <header style={{ marginBottom: 28, borderBottom: `1px solid ${COLORS.line}`, paddingBottom: 16 }}>
-        <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace" }}>
-          PROTOTYP · MODUL OVEROVANIA TVRDENÍ
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace" }}>
+              {t("module_label")}
+            </div>
+            <h1 style={{ fontSize: 28, fontWeight: 600, margin: "6px 0 4px", letterSpacing: "-0.01em" }}>
+              {t("app_title")}
+            </h1>
+            <p style={{ fontSize: 14, color: COLORS.inkSoft, margin: 0, maxWidth: 560, lineHeight: 1.5 }}>
+              {t("app_subtitle")}
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 4, flexShrink: 0, marginTop: 4 }}>
+            {["sk", "en"].map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                style={{
+                  background: lang === l ? COLORS.ink : "transparent",
+                  color: lang === l ? COLORS.paper : COLORS.inkSoft,
+                  border: `1px solid ${lang === l ? COLORS.ink : COLORS.line}`,
+                  borderRadius: 4,
+                  padding: "4px 10px",
+                  fontSize: 12,
+                  fontFamily: "monospace",
+                  cursor: "pointer",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 600, margin: "6px 0 4px", letterSpacing: "-0.01em" }}>
-          Zložka dôkazov
-        </h1>
-        <p style={{ fontSize: 14, color: COLORS.inkSoft, margin: 0, maxWidth: 560, lineHeight: 1.5 }}>
-          Vlož text. Nástroj rozdelí tvrdenia na fakty, citácie a interpretácie — a pri faktoch ukáže,
-          kde sa nezávislé zdroje zhodujú a kde nie. Žiadny finálny verdikt, len rozklad.
-        </p>
       </header>
 
       <div style={{ display: "flex", gap: 6, marginBottom: 22 }}>
         {[
-          { id: "text", label: "Text / tvrdenie", icon: FileText },
-          { id: "image", label: "Obrázok", icon: ImageIcon },
-          { id: "about", label: "O nástroji", icon: HelpCircle },
+          { id: "text", label: t("tab_text"), icon: FileText },
+          { id: "image", label: t("tab_image"), icon: ImageIcon },
+          { id: "about", label: t("tab_about"), icon: HelpCircle },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -291,7 +322,7 @@ export default function ClaimVerifierDemo() {
             resize: "vertical",
             boxSizing: "border-box",
           }}
-          placeholder="Vlož tvrdenie, citát z článku alebo komentár..."
+          placeholder={t("text_placeholder")}
         />
         <button
           className="cv-btn"
@@ -315,7 +346,7 @@ export default function ClaimVerifierDemo() {
           }}
         >
           <Search size={14} />
-          {loading ? "ANALYZUJEM…" : "ROZLOŽIŤ TVRDENIA"}
+          {loading ? t("btn_analyzing") : t("btn_analyze")}
         </button>
         {error && (
           <div style={{ marginTop: 10, color: COLORS.discrepancy, fontSize: 13 }}>{error}</div>
@@ -326,7 +357,7 @@ export default function ClaimVerifierDemo() {
         <>
         {consistencyLoading && (
           <div style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 14, fontFamily: "monospace" }}>
-            Kontrolujem vnútornú konzistentnosť tvrdení…
+            {t("consistency_loading")}
           </div>
         )}
         {!consistencyLoading && consistencyIssues && consistencyIssues.length > 0 && (
@@ -334,7 +365,7 @@ export default function ClaimVerifierDemo() {
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
               <AlertTriangle size={14} color={COLORS.discrepancy} />
               <span style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.discrepancy, letterSpacing: "0.04em" }}>
-                NÁJDENÉ VNÚTORNÉ NEZROVNALOSTI ({consistencyIssues.length})
+                {`${t("consistency_found")} (${consistencyIssues.length})`}
               </span>
             </div>
             {consistencyIssues.map((issue, i) => (
@@ -352,14 +383,14 @@ export default function ClaimVerifierDemo() {
         )}
         {!consistencyLoading && consistencyIssues && consistencyIssues.length === 0 && (
           <div style={{ fontSize: 13, color: COLORS.consensus, marginBottom: 14 }}>
-            ✓ Medzi extrahovanými tvrdeniami nebola nájdená žiadna vnútorná nezrovnalosť.
+            {t("consistency_none")}
           </div>
         )}
         <div className="cv-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 20 }}>
           {/* Ľavý panel: zoznam tvrdení */}
           <div>
             <div style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace", marginBottom: 10 }}>
-              Rozklad ({claims.length})
+              {`${t("breakdown_label")} (${claims.length})`}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {claims.map((claim) => {
@@ -384,7 +415,7 @@ export default function ClaimVerifierDemo() {
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
                       <Icon size={14} color={meta.color} />
                       <span style={{ fontSize: 11, fontFamily: "monospace", color: meta.color, letterSpacing: "0.03em" }}>
-                        {meta.label.toUpperCase()}
+                        {t(`type_${claim.type}`).toUpperCase()}
                       </span>
                     </div>
                     <div style={{ fontSize: 14, lineHeight: 1.4, color: COLORS.ink }}>{claim.original_text}</div>
@@ -397,23 +428,22 @@ export default function ClaimVerifierDemo() {
           {/* Pravý panel: porovnanie zdrojov */}
           <div>
             <div style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace", marginBottom: 10 }}>
-              Porovnanie zdrojov
+              {t("sources_label")}
             </div>
             {!comparison && (
               <div style={{ fontSize: 14, color: COLORS.inkSoft, padding: 16, border: `1px dashed ${COLORS.line}`, borderRadius: 4 }}>
-                Vyber vľavo tvrdenie typu „overiteľný fakt" alebo „nedá sa overiť" — pri citáciách
-                a interpretáciách sa zdroje porovnávajú inak (overuje sa, či bol výrok vyslovený, nie či je „pravdivý").
+                {t("sources_select_hint")}
               </div>
             )}
             {comparison?.loading && (
-              <div style={{ fontSize: 14, color: COLORS.inkSoft, padding: 16 }}>Vyhľadávam zdroje…</div>
+              <div style={{ fontSize: 14, color: COLORS.inkSoft, padding: 16 }}>{t("sources_loading")}</div>
             )}
             {comparison?.error && (
               <div style={{ fontSize: 14, color: COLORS.discrepancy, padding: 16 }}>{comparison.error}</div>
             )}
             {comparison && !comparison.loading && !comparison.error && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <Section title="Zhoda medzi zdrojmi" color={COLORS.consensus} bg={COLORS.consensusBg}>
+                <Section title={t("section_consensus")} color={COLORS.consensus} bg={COLORS.consensusBg}>
                   {(comparison.consensus_points || []).map((p, i) => (
                     <div key={i} style={{ fontSize: 14, marginBottom: 4 }}>
                       {p.point}
@@ -430,7 +460,7 @@ export default function ClaimVerifierDemo() {
                   ))}
                 </Section>
 
-                <Section title="Nezhody" color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
+                <Section title={t("section_discrepancy")} color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
                   {(comparison.discrepancies || []).map((d, i) => (
                     <div key={i} style={{ marginBottom: 10 }}>
                       <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{d.issue}</div>
@@ -446,7 +476,7 @@ export default function ClaimVerifierDemo() {
                   ))}
                 </Section>
 
-                <Section title="Rozdiely v rámcovaní" color={COLORS.framing} bg={COLORS.framingBg}>
+                <Section title={t("section_framing")} color={COLORS.framing} bg={COLORS.framingBg}>
                   {(comparison.framing_differences || []).map((f, i) => (
                     <div key={i} style={{ marginBottom: 6 }}>
                       <div style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 4 }}>{f.point}</div>
@@ -462,14 +492,14 @@ export default function ClaimVerifierDemo() {
                   ))}
                 </Section>
 
-                <Section title="Nepotvrdené nezávisle" color={COLORS.unverified} bg={COLORS.unverifiedBg}>
+                <Section title={t("section_unverified")} color={COLORS.unverified} bg={COLORS.unverifiedBg}>
                   {(comparison.unsupported_by_independent_sources || []).map((u, i) => (
                     <div key={i} style={{ fontSize: 13 }}>{u}</div>
                   ))}
                 </Section>
 
                 <div style={{ borderTop: `1px solid ${COLORS.line}`, paddingTop: 10, fontSize: 13, color: COLORS.inkSoft }}>
-                  <strong style={{ color: COLORS.ink }}>Miera istoty: {comparison.confidence_level}.</strong>{" "}
+                  <strong style={{ color: COLORS.ink }}>{t("confidence_label")} {comparison.confidence_level}.</strong>{" "}
                   {comparison.summary_note}
                 </div>
 
@@ -513,7 +543,7 @@ export default function ClaimVerifierDemo() {
                 <>
                   <Upload size={20} color={COLORS.inkSoft} />
                   <span style={{ fontSize: 13, color: COLORS.inkSoft, fontFamily: "monospace" }}>
-                    KLIKNI A VYBER OBRÁZOK
+                    {t("image_click_upload")}
                   </span>
                 </>
               )}
@@ -524,7 +554,7 @@ export default function ClaimVerifierDemo() {
               value={claimedContext}
               onChange={(e) => setClaimedContext(e.target.value)}
               rows={3}
-              placeholder="Tvrdený kontext (napr. 'Tento obrázok zachytáva útok v Gaze, 20.6.2026')..."
+              placeholder={t("image_context_placeholder")}
               style={{
                 width: "100%",
                 marginTop: 12,
@@ -562,7 +592,7 @@ export default function ClaimVerifierDemo() {
               }}
             >
               <Search size={14} />
-              {imageLoading ? "ANALYZUJEM…" : "OVERIŤ OBRÁZOK"}
+              {imageLoading ? t("btn_verifying_image") : t("btn_verify_image")}
             </button>
             {imageError && <div style={{ marginTop: 10, color: COLORS.discrepancy, fontSize: 13 }}>{imageError}</div>}
           </div>
@@ -574,18 +604,18 @@ export default function ClaimVerifierDemo() {
             </div>
             {!imageAnalysis && (
               <div style={{ fontSize: 14, color: COLORS.inkSoft, padding: 16, border: `1px dashed ${COLORS.line}`, borderRadius: 4 }}>
-                Vlož obrázok a tvrdený kontext vľavo, potom klikni „Overiť obrázok".
+                {t("image_select_hint")}
               </div>
             )}
             {imageAnalysis && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <Section title="Vizuálny popis (reálna analýza)" color={COLORS.consensus} bg={COLORS.consensusBg}>
+                <Section title={t("section_visual")} color={COLORS.consensus} bg={COLORS.consensusBg}>
                   <div style={{ fontSize: 14, marginBottom: 6 }}>
                     {imageAnalysis.llmAnalysis?.visual_description || "Popis nedostupný."}
                   </div>
                   {imageAnalysis.llmAnalysis?.earliest_known_appearance && (
                     <div style={{ fontSize: 13, color: COLORS.inkSoft }}>
-                      <strong style={{ color: COLORS.ink }}>Najstarší známy výskyt:</strong>{" "}
+                      <strong style={{ color: COLORS.ink }}>{t("section_earliest")}</strong>{" "}
                       {imageAnalysis.llmAnalysis.earliest_known_appearance}
                     </div>
                   )}
@@ -596,7 +626,7 @@ export default function ClaimVerifierDemo() {
 
                 {imageAnalysis.llmAnalysis?.geolocation_assessment && (
                   <Section
-                    title="Geolokalizácia"
+                    title={t("section_geolocation")}
                     color={
                       imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location === "nekonzistentné"
                         ? COLORS.discrepancy
@@ -614,7 +644,7 @@ export default function ClaimVerifierDemo() {
                     }
                   >
                     <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
-                      Súlad s tvrdeným miestom:{" "}
+                      {t("geo_consistency")}{" "}
                       {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location}
                     </div>
                     {(imageAnalysis.llmAnalysis.geolocation_assessment.visual_clues || []).length > 0 && (
@@ -630,7 +660,7 @@ export default function ClaimVerifierDemo() {
                   </Section>
                 )}
 
-                <Section title="Metadáta (EXIF)" color={COLORS.framing} bg={COLORS.framingBg} icon={Clock}>
+                <Section title={t("section_metadata")} color={COLORS.framing} bg={COLORS.framingBg} icon={Clock}>
                   <div style={{ fontSize: 13 }}>
                     {imageAnalysis.metadata?.present
                       ? `Dátum: ${imageAnalysis.metadata.captureDate || "neznámy"} · Zariadenie: ${imageAnalysis.metadata.cameraModel || "neznáme"}`
@@ -638,14 +668,14 @@ export default function ClaimVerifierDemo() {
                   </div>
                 </Section>
 
-                <Section title="Reverse image search" color={COLORS.unverified} bg={COLORS.unverifiedBg}>
+                <Section title={t("section_reverse")} color={COLORS.unverified} bg={COLORS.unverifiedBg}>
                   {(imageAnalysis.reverseResults || []).map((r, i) => (
                     <div key={i} style={{ fontSize: 13, marginBottom: 8 }}>
                       <strong>{r.engine}:</strong>{" "}
                       {r.error ? (
                         <span style={{ color: COLORS.inkSoft }}>{r.error}</span>
                       ) : (
-                        <span>{r.matches?.length || 0} výsledkov</span>
+                        <span>{r.matches?.length || 0} {t("reverse_results")}</span>
                       )}
                       {!r.error && (r.matches || []).length > 0 && (
                         <div style={{ marginTop: 4, paddingLeft: 10, borderLeft: `2px solid ${COLORS.unverified}` }}>
@@ -671,7 +701,7 @@ export default function ClaimVerifierDemo() {
                 </Section>
 
                 <Section
-                  title="Archívna kontrola"
+                  title={t("section_archive")}
                   color={imageAnalysis.archiveCheck?.matched_in_archive ? COLORS.discrepancy : COLORS.unverified}
                   bg={imageAnalysis.archiveCheck?.matched_in_archive ? COLORS.discrepancyBg : COLORS.unverifiedBg}
                   icon={imageAnalysis.archiveCheck?.matched_in_archive ? AlertTriangle : undefined}
@@ -688,7 +718,7 @@ export default function ClaimVerifierDemo() {
                   )}
                 </Section>
 
-                <Section title="AI-detekcia" color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
+                <Section title={t("section_ai")} color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
                   <div style={{ fontSize: 13 }}>
                     {imageAnalysis.aiDetection?.error || imageAnalysis.aiDetection?.note || "Bez výsledku."}
                   </div>
@@ -713,94 +743,65 @@ export default function ClaimVerifierDemo() {
 
       {activeTab === "about" && (
         <div style={{ maxWidth: 720, fontSize: 14, lineHeight: 1.6 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>O nástroji</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>
+            {lang === "sk" ? "O nástroji" : "About"}
+          </h2>
           <p style={{ color: COLORS.inkSoft, marginBottom: 20 }}>
-            Posledná aktualizácia tejto stránky: 29. jún 2026.
+            {t("about_updated")} {new Date().toLocaleDateString(lang === "sk" ? "sk-SK" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}.
           </p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Čo tento nástroj robí</h3>
-          <p style={{ marginBottom: 16 }}>
-            Nástroj rozkladá text alebo obrázky súvisiace s izraelsko-palestínskym konfliktom
-            na overiteľné jednotky a porovnáva ich s nezávislými zdrojmi. <strong>Nevydáva
-            jednoduché verdikty „pravda/nepravda/propaganda".</strong> Namiesto toho ukazuje, kde sa
-            zdroje zhodujú, kde si odporujú, a kde sa fakty zhodujú, ale rámcovanie sa líši.
-            Toto je zámerné rozhodnutie — pri tomto konflikte je binárny verdikt často
-            zavádzajúci, pretože väčšina sporov nie je o samotných faktoch, ale o tom, ktoré
-            fakty sa vyberú a ako sa rámcujú.
-          </p>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_what")}</h3>
+          <p style={{ marginBottom: 16 }}>{t("about_what")}</p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Ako to funguje</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_how")}</h3>
           <ol style={{ marginBottom: 16, paddingLeft: 20 }}>
-            <li>Text sa rozloží na jednotky typu: overiteľný fakt, citácia/výrok, interpretácia, neoveriteľné.</li>
-            <li>Pre overiteľné fakty sa spustí vyhľadávanie v kurátorovanom zozname zdrojov (pozri nižšie).</li>
-            <li>Výsledky sa rozdelia podľa kategórie zdroja a porovnajú na zhodu/nezhodu/rámcovanie.</li>
-            <li>Pri obrázkoch sa robí reverse image search, vizuálna analýza a porovnanie proti archívu už overených obrázkov.</li>
+            <li>{t("about_how_1")}</li>
+            <li>{t("about_how_2")}</li>
+            <li>{t("about_how_3")}</li>
+            <li>{t("about_how_4")}</li>
           </ol>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Kurátorovaný zoznam zdrojov</h3>
-          <p style={{ marginBottom: 8 }}>Nástroj vyhľadáva primárne v týchto kategóriách:</p>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_sources")}</h3>
+          <p style={{ marginBottom: 8 }}>{t("about_sources_intro")}</p>
           <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
-            <li><strong>Medzinárodné agentúry:</strong> Reuters, Associated Press, AFP</li>
-            <li><strong>Izraelské médiá:</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet</li>
-            <li><strong>Palestínske/arabské médiá:</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye</li>
-            <li><strong>Fact-checking organizácie:</strong> AFP Fact Check, Reuters Fact Check, Bellingcat</li>
-            <li><strong>Ľudskoprávne organizácie:</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International</li>
-            <li><strong>Konfliktné databázy:</strong> ACLED, Institute for the Study of War</li>
+            <li><strong>{t("about_sources_wire")}</strong> Reuters, Associated Press, AFP</li>
+            <li><strong>{t("about_sources_israeli")}</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet</li>
+            <li><strong>{t("about_sources_arabic")}</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye</li>
+            <li><strong>{t("about_sources_factcheck")}</strong> AFP Fact Check, Reuters Fact Check, Bellingcat</li>
+            <li><strong>{t("about_sources_hr")}</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International</li>
+            <li><strong>{t("about_sources_conflict")}</strong> ACLED, Institute for the Study of War</li>
           </ul>
           <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
-            Výsledky mimo tohto zoznamu sa nezahadzujú — zobrazujú sa v kategórii „Iné zdroje",
-            jasne oznámkované ako zdroje, ktorých dôveryhodnosť nástroj neoveroval.
+            {t("about_sources_other")}
           </p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Použité technológie</h3>
-          <p style={{ marginBottom: 16 }}>
-            Extrakcia textu, porovnanie a vizuálna analýza obrázkov používajú jazykový model
-            Claude (Anthropic). Vyhľadávanie zdrojov používa SerpAPI (Google Search, Google Lens,
-            Yandex Images). Fact-check agregácia používa Google Fact Check Tools API.
-          </p>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_tech")}</h3>
+          <p style={{ marginBottom: 16 }}>{t("about_tech")}</p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Obmedzenia</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_limits")}</h3>
           <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
-            <li>Nástroj je AI-asistovaný, nie nahradenie profesionálnych fact-checkerov.</li>
-            <li>Kurátorovaný zoznam zdrojov je nevyhnutne čiastočný — žiadny zoznam nemôže byť úplný.</li>
-            <li>Vyhľadávanie závisí od toho, čo je verejne indexované; nedávne alebo lokálne udalosti môžu mať slabšie pokrytie.</li>
-            <li>Reverse image search môže vrátiť falošné zhody na základe vizuálnej podobnosti, nie skutočného obsahu — nástroj sa snaží tieto filtrovať, ale nie je to vždy spoľahlivé.</li>
+            <li>{t("about_limit_1")}</li>
+            <li>{t("about_limit_2")}</li>
+            <li>{t("about_limit_3")}</li>
+            <li>{t("about_limit_4")}</li>
           </ul>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Testovanie vyváženosti</h3>
-          <p style={{ marginBottom: 8 }}>
-            Metodológia bola opakovane testovaná na pároch tvrdení zo „oboch strán" konfliktu
-            (napr. obvinenie z útoku na civilnú infraštruktúru vs. obvinenie z používania živých
-            štítov; štatistika obetí v Gaze vs. štatistika zranených pri raketových útokoch na
-            izraelské mestá), aby sa overilo, či nástroj uplatňuje rovnaký štandard dôkazov
-            nezávisle od toho, ktorej strany sa tvrdenie týka.
-          </p>
-          <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
-            Výsledky: nástroj v oboch prípadoch odmietol potvrdiť presné čísla bez priameho
-            zdroja, rovnako zachytával rozdiely v rámcovaní u zdrojov nezávisle od ich politickej
-            orientácie, a transparentne priznával medzery v dostupných zdrojoch namiesto toho, aby
-            ich zľahčoval alebo si dôkazy vymýšľal. Testovanie vyváženosti je priebežný proces,
-            nie jednorázová kontrola — metodológia sa bude naďalej overovať pri reálnom používaní.
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_balance")}</h3>
+          <p style={{ marginBottom: 8 }}>{t("about_balance_1")}</p>
+          <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>{t("about_balance_2")}</p>
+
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_contact")}</h3>
+          <p style={{ marginBottom: 16 }}>
+            {t("about_contact")} <em>palizra@proton.me</em>.
           </p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nahlásenie chyby</h3>
-          <p style={{ marginBottom: 16 }}>
-            Ak si všimneš nesprávnu analýzu, chybnú kategorizáciu zdroja, alebo iný problém,
-            použi tlačidlo „Nahlásiť problém" priamo pri danej analýze, alebo napíš na: <em>palizra@proton.me</em>.
-          </p>
-
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nezávislosť a financovanie</h3>
-          <p style={{ marginBottom: 16 }}>
-            Tento nástroj je nezávislý osobný projekt Petra Šrámku, vyvíjaný a prevádzkovaný
-            bez akéhokoľvek externého financovania, grantov, sponzorstva alebo
-            inštitucionálnych väzieb na politické, mediálne či iné organizácie. Náklady na
-            prevádzku (API, hosting) hradí autor z vlastných prostriedkov.
-          </p>
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_independence")}</h3>
+          <p style={{ marginBottom: 16 }}>{t("about_independence")}</p>
         </div>
       )}
 
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft }}>
-        © {new Date().getFullYear()} Palizra Analyzator
+        {t("footer")}
       </footer>
     </div>
   );
@@ -842,7 +843,7 @@ function FeedbackButton({ context, subject, relatedData }) {
   if (status === "sent") {
     return (
       <div style={{ fontSize: 12, color: COLORS.consensus, marginTop: 6 }}>
-        ✓ Ďakujeme, problém bol nahlásený.
+        {t("feedback_sent")}
       </div>
     );
   }
@@ -865,12 +866,12 @@ function FeedbackButton({ context, subject, relatedData }) {
             padding: 0,
           }}
         >
-          <Flag size={11} /> NAHLÁSIŤ PROBLÉM
+          <Flag size={11} /> {t("feedback_btn")}
         </button>
       ) : (
         <div style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, maxWidth: 360 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft }}>POPÍŠ PROBLÉM</span>
+            <span style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft }}>{t("feedback_label")}</span>
             <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
               <X size={13} color={COLORS.inkSoft} />
             </button>
@@ -879,7 +880,7 @@ function FeedbackButton({ context, subject, relatedData }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            placeholder="Napr. nesprávne zaradený zdroj, chýbajúci kontext, nesprávna kategorizácia..."
+            placeholder={t("feedback_placeholder")}
             style={{
               width: "100%",
               fontSize: 13,
@@ -907,11 +908,11 @@ function FeedbackButton({ context, subject, relatedData }) {
               opacity: status === "sending" || !description.trim() ? 0.6 : 1,
             }}
           >
-            {status === "sending" ? "ODOSIELAM…" : "ODOSLAŤ"}
+            {status === "sending" ? t("feedback_sending") : t("feedback_send")}
           </button>
           {status === "error" && (
             <div style={{ fontSize: 12, color: COLORS.discrepancy, marginTop: 4 }}>
-              Odoslanie zlyhalo, skús to znova.
+              {t("feedback_error")}
             </div>
           )}
         </div>
@@ -924,7 +925,7 @@ function SourceLink({ source, url, archivedUrl, color }) {
   if (!url) {
     // Žiadny URL k dispozícii (model ho nenašiel v dodaných výsledkoch) -
     // zobrazí sa len meno zdroja, bez linku, aby sme nikdy nevymýšľali URL.
-    return <span title="URL nebol k dispozícii">{source}</span>;
+    return <span title={t("url_not_available")}>{source}</span>;
   }
   return (
     <span>
@@ -941,10 +942,10 @@ function SourceLink({ source, url, archivedUrl, color }) {
           href={archivedUrl}
           target="_blank"
           rel="noopener noreferrer"
-          title="Archivovaná kópia (Wayback Machine) - dôkaz, čo zdroj hovoril v čase overenia"
+          title={`${t("archive_label")} - Wayback Machine`}
           style={{ color: color, opacity: 0.6, fontSize: 11, marginLeft: 4, textDecoration: "none" }}
         >
-          [archív]
+          {t("archive_label")}
         </a>
       )}
     </span>
