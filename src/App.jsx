@@ -505,6 +505,7 @@ export default function ClaimVerifierDemo() {
                   context="text_comparison"
                   subject={claims.find((c) => c.id === selectedClaimId)?.original_text || null}
                   relatedData={comparison}
+                  t={t}
                 />
               </div>
             )}
@@ -732,6 +733,7 @@ export default function ClaimVerifierDemo() {
                   context="image_verification"
                   subject={claimedContext || imageAnalysis.imageUrl || null}
                   relatedData={imageAnalysis}
+                  t={t}
                 />
               </div>
             )}
@@ -822,7 +824,7 @@ async function submitFeedbackViaBackend({ context, subject, description, related
  * Malé tlačidlo "Nahlásiť problém" - po kliknutí otvorí inline formulár
  * (nie modal, aby sa to dalo jednoducho vložiť kdekoľvek do layoutu).
  */
-function FeedbackButton({ context, subject, relatedData }) {
+function FeedbackButton({ context, subject, relatedData, t }) {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
