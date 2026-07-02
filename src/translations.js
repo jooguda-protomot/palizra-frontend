@@ -38,7 +38,7 @@ export const translations = {
     image_context_placeholder: "Tvrden\u00fd kontext (napr. 'Tento obr\u00e1zok zachyt\u00e1va \u00fatok v Gaze')...",
     btn_verify_image: "OVERI\u0164 OBR\u00c1ZOK",
     btn_verifying_image: "ANALYZUJEM\u2026",
-    image_select_hint: "Vlo\u017e obr\u00e1zok a tvrden\u00fd kontext vla vo, potom klikni na tla\u010didlo.",
+    image_select_hint: "Vlož obrázok a kontext výroku, potom klikni na tlačidlo.",
     section_visual: "Vizu\u00e1lny popis (re\u00e1lna anal\u00fdza)",
     section_earliest: "Najstar\u0161\u00ed zn\u00e1my v\u00fdskyt:",
     section_geolocation: "Geolokaliz\u00e1cia",
