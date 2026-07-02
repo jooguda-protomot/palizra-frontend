@@ -451,7 +451,7 @@ export default function ClaimVerifierDemo() {
                           typeof s === "string" ? (
                             <span key={j}>{s}</span>
                           ) : (
-                            <SourceLink key={j} source={s.source} url={s.url} archivedUrl={s.archived_url} color={COLORS.consensus} />
+                            <SourceLink key={j} source={s.source} url={s.url} archivedUrl={s.archived_url} color={COLORS.consensus} t={t} />
                           )
                         )}
                       </div>
@@ -466,7 +466,7 @@ export default function ClaimVerifierDemo() {
                       {(d.positions || []).map((pos, j) => (
                         <div key={j} style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 3, paddingLeft: 10, borderLeft: `2px solid ${COLORS.discrepancy}` }}>
                           <strong style={{ color: COLORS.ink }}>
-                            <SourceLink source={pos.source} url={pos.url} archivedUrl={pos.archived_url} color={COLORS.discrepancy} />:
+                            <SourceLink source={pos.source} url={pos.url} archivedUrl={pos.archived_url} color={COLORS.discrepancy} t={t} />:
                           </strong>{" "}
                           {pos.claims}
                         </div>
@@ -482,7 +482,7 @@ export default function ClaimVerifierDemo() {
                       {(f.examples || []).map((ex, j) => (
                         <div key={j} style={{ fontSize: 13 }}>
                           <strong>
-                            <SourceLink source={ex.source} url={ex.url} archivedUrl={ex.archived_url} color={COLORS.framing} />:
+                            <SourceLink source={ex.source} url={ex.url} archivedUrl={ex.archived_url} color={COLORS.framing} t={t} />:
                           </strong>{" "}
                           {ex.framing}
                         </div>
@@ -922,11 +922,11 @@ function FeedbackButton({ context, subject, relatedData, t }) {
   );
 }
 
-function SourceLink({ source, url, archivedUrl, color }) {
+function SourceLink({ source, url, archivedUrl, color, t }) {
   if (!url) {
     // Žiadny URL k dispozícii (model ho nenašiel v dodaných výsledkoch) -
     // zobrazí sa len meno zdroja, bez linku, aby sme nikdy nevymýšľali URL.
-    return <span title={t("url_not_available")}>{source}</span>;
+    return <span title={t ? t("url_not_available") : "URL not available"}>{source}</span>;
   }
   return (
     <span>
