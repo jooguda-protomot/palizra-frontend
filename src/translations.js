@@ -25,7 +25,7 @@ export const translations = {
     consistency_type_nekonzistentne_pomenovanie: "Nekonzistentn\u00e9 pomenovanie",
     consistency_claim_ids: "tvrdenia \u010d.",
     sources_label: "Porovnanie zdrojov",
-    sources_select_hint: "Vyber vla vo tvrdenie typu overite\u013en\u00fd fakt alebo ned\u00e1 sa overi\u0165 \u2014 pri cit\u00e1ci\u00e1ch a interpret\u00e1ci\u00e1ch sa zdroje porovn\u00e1vaj\u00fa inak.",
+    sources_select_hint: "Vyber tvrdenie typu „overiteľný fakt“ alebo „nedá sa overiť“ — pri citáciách a interpretáciách sa zdroje porovnávajú inak.",
     sources_loading: "Vyh\u013ead\u00e1vam zdroje\u2026",
     section_consensus: "Zhoda medzi zdrojmi",
     section_discrepancy: "Nezhody",
