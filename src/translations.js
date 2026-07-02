@@ -35,7 +35,7 @@ export const translations = {
     archive_label: "[arch\u00edv]",
     url_not_available: "URL nebol k dispoz\u00edcii",
     image_click_upload: "KLIKNI A VYBER OBR\u00c1ZOK",
-    image_context_placeholder: "Tvrden\u00fd kontext (napr. 'Tento obr\u00e1zok zachyt\u00e1va \u00fatok v Gaze')...",
+    image_context_placeholder: "Kontext výroku (napr. 'Tento obrázok zachytáva útok v Gaze')...",
     btn_verify_image: "OVERI\u0164 OBR\u00c1ZOK",
     btn_verifying_image: "ANALYZUJEM\u2026",
     image_select_hint: "Vlož obrázok a kontext výroku, potom klikni na tlačidlo.",
