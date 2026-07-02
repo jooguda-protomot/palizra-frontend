@@ -33,10 +33,11 @@ const TYPE_META = {
   unverifiable: { icon: HelpCircle, color: COLORS.unverified, bg: COLORS.unverifiedBg },
 };
 
-async function describeImageViaBackend(file, claimedContext) {
+async function describeImageViaBackend(file, claimedContext, lang) {
   const formData = new FormData();
   formData.append("image", file);
   formData.append("claimedContext", claimedContext || "");
+  formData.append("lang", lang || "sk");
 
   const response = await fetch(`${API_BASE_URL}/api/image/verify`, {
     method: "POST",
@@ -53,11 +54,11 @@ async function describeImageViaBackend(file, claimedContext) {
 }
 
 
-async function extractClaimsViaBackend(text) {
+async function extractClaimsViaBackend(text, lang) {
   const response = await fetch(`${API_BASE_URL}/api/claims/extract`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, lang }),
   });
 
   const data = await response.json();
@@ -69,11 +70,11 @@ async function extractClaimsViaBackend(text) {
   return data; // { claims: [...] }
 }
 
-async function checkConsistencyViaBackend(claims) {
+async function checkConsistencyViaBackend(claims, lang) {
   const response = await fetch(`${API_BASE_URL}/api/claims/check-consistency`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ claims }),
+    body: JSON.stringify({ claims, lang }),
   });
 
   const data = await response.json();
@@ -85,11 +86,11 @@ async function checkConsistencyViaBackend(claims) {
   return data; // { issues: [...] }
 }
 
-async function verifyClaimViaBackend(claim) {
+async function verifyClaimViaBackend(claim, lang) {
   const response = await fetch(`${API_BASE_URL}/api/claims/verify`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ claim }),
+    body: JSON.stringify({ claim, lang }),
   });
 
   const data = await response.json();
@@ -143,7 +144,7 @@ export default function ClaimVerifierDemo() {
     setImageLoading(true);
     setImageError(null);
     try {
-      const result = await describeImageViaBackend(imageFile, claimedContext);
+      const result = await describeImageViaBackend(imageFile, claimedContext, lang);
       setImageAnalysis(result);
     } catch (e) {
       setImageError(
@@ -165,14 +166,14 @@ export default function ClaimVerifierDemo() {
     setConsistencyIssues(null);
     setConsistencyLoading(false);
     try {
-      const result = await extractClaimsViaBackend(inputText);
+      const result = await extractClaimsViaBackend(inputText, lang);
       const claimsList = result.claims || [];
       setClaims(claimsList);
 
       // Kontrola konzistentnosti beží na pozadí, neblokuje zobrazenie tvrdení
       if (claimsList.length >= 2) {
         setConsistencyLoading(true);
-        checkConsistencyViaBackend(claimsList)
+        checkConsistencyViaBackend(claimsList, lang)
           .then((res) => setConsistencyIssues(res.issues || []))
           .catch(() => setConsistencyIssues(null))
           .finally(() => setConsistencyLoading(false));
@@ -196,7 +197,7 @@ export default function ClaimVerifierDemo() {
     }
     setComparison({ loading: true });
     try {
-      const result = await verifyClaimViaBackend(claim);
+      const result = await verifyClaimViaBackend(claim, lang);
       if (result.status === "skipped") {
         setComparison(null);
       } else {
