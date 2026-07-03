@@ -600,7 +600,7 @@ export default function ClaimVerifierDemo() {
           {/* Pravý panel: výsledky */}
           <div>
             <div style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace", marginBottom: 10 }}>
-              Výsledok overenia
+              {t("image_result_title")}
             </div>
             {!imageAnalysis && (
               <div style={{ fontSize: 14, color: COLORS.inkSoft, padding: 16, border: `1px dashed ${COLORS.line}`, borderRadius: 4 }}>
