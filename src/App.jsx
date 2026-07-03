@@ -747,7 +747,7 @@ export default function ClaimVerifierDemo() {
       {activeTab === "about" && (
         <div style={{ maxWidth: 720, fontSize: 14, lineHeight: 1.6 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>
-            {lang === "sk" ? "O nástroji" : "About"}
+            {t("tab_about")}
           </h2>
           <p style={{ color: COLORS.inkSoft, marginBottom: 20 }}>
             {t("about_updated")} {new Date().toLocaleDateString(lang === "sk" ? "sk-SK" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}.
