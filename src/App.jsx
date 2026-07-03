@@ -663,8 +663,8 @@ export default function ClaimVerifierDemo() {
                 <Section title={t("section_metadata")} color={COLORS.framing} bg={COLORS.framingBg} icon={Clock}>
                   <div style={{ fontSize: 13 }}>
                     {imageAnalysis.metadata?.present
-                      ? `Dátum: ${imageAnalysis.metadata.captureDate || "neznámy"} · Zariadenie: ${imageAnalysis.metadata.cameraModel || "neznáme"}`
-                      : imageAnalysis.metadata?.note || "Žiadne EXIF dáta."}
+                      ? `${t("metadata_date")} ${imageAnalysis.metadata.captureDate || "?"} · ${t("metadata_device")} ${imageAnalysis.metadata.cameraModel || "?"}`
+                      : imageAnalysis.metadata?.note === "NO_EXIF" ? t("metadata_none") : (imageAnalysis.metadata?.note || t("metadata_none"))}
                   </div>
                 </Section>
 
