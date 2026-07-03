@@ -103,7 +103,7 @@ async function verifyClaimViaBackend(claim, lang) {
 }
 
 export default function ClaimVerifierDemo() {
-  const [lang, setLang] = useState("sk");
+  const [lang, setLang] = useState("en");
   const t = (key) => {
     const val = translations[lang]?.[key] ?? translations["sk"]?.[key] ?? key;
     return typeof val === "string" ? val.replace("{year}", new Date().getFullYear()) : val;
