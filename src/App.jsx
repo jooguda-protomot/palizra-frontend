@@ -708,25 +708,27 @@ export default function ClaimVerifierDemo() {
                 >
                   <div style={{ fontSize: 13, fontWeight: imageAnalysis.archiveCheck?.matched_in_archive ? 600 : 400 }}>
                     {imageAnalysis.archiveCheck?.matched_in_archive
-                      ? `Zhoda s už overeným obrázkom (zo dňa ${imageAnalysis.archiveCheck.known_date}). Pôvodný kontext: "${imageAnalysis.archiveCheck.known_context}"`
-                      : imageAnalysis.archiveCheck?.note || "Žiadna shoda."}
+                      ? `${t("archive_match")} ${imageAnalysis.archiveCheck.known_date}). ${t("archive_context")} "${imageAnalysis.archiveCheck.known_context}"`
+                      : imageAnalysis.archiveCheck?.note || t("archive_none")}
                   </div>
                   {imageAnalysis.archiveCheck?.note && imageAnalysis.archiveCheck?.matched_in_archive && (
                     <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
-                      {imageAnalysis.archiveCheck.note}
+                      {t("archive_warning") || imageAnalysis.archiveCheck.note}
                     </div>
                   )}
                 </Section>
 
                 <Section title={t("section_ai")} color={COLORS.discrepancy} bg={COLORS.discrepancyBg} icon={AlertTriangle}>
                   <div style={{ fontSize: 13 }}>
-                    {imageAnalysis.aiDetection?.error || imageAnalysis.aiDetection?.note || "Bez výsledku."}
+                    {imageAnalysis.aiDetection?.note === "AI_DETECTION_DISCLAIMER"
+                      ? t("ai_disclaimer")
+                      : (imageAnalysis.aiDetection?.error || imageAnalysis.aiDetection?.note || t("ai_no_result"))}
                   </div>
                 </Section>
 
                 {imageAnalysis.imageUrl && (
                   <div style={{ fontSize: 11, color: COLORS.inkSoft, wordBreak: "break-all" }}>
-                    Nahraté na: {imageAnalysis.imageUrl}
+                    {t("image_url_label")} {imageAnalysis.imageUrl}
                   </div>
                 )}
 
