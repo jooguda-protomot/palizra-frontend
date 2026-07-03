@@ -708,7 +708,7 @@ export default function ClaimVerifierDemo() {
                 >
                   <div style={{ fontSize: 13, fontWeight: imageAnalysis.archiveCheck?.matched_in_archive ? 600 : 400 }}>
                     {imageAnalysis.archiveCheck?.matched_in_archive
-                      ? `${t("archive_match")} ${imageAnalysis.archiveCheck.known_date}). ${t("archive_context")} "${imageAnalysis.archiveCheck.known_context}"`
+                      ? <span>{t("archive_match")} {imageAnalysis.archiveCheck.known_date}). {t("archive_context")} "{imageAnalysis.archiveCheck.known_context}" <span style={{fontSize: 11, color: COLORS.inkSoft, fontStyle: "italic"}}>({t("archive_context_lang_note")})</span></span>
                       : imageAnalysis.archiveCheck?.note || t("archive_none")}
                   </div>
                   {imageAnalysis.archiveCheck?.note && imageAnalysis.archiveCheck?.matched_in_archive && (
