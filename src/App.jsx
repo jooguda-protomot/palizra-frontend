@@ -272,6 +272,7 @@ export default function ClaimVerifierDemo() {
           { id: "text", label: t("tab_text"), icon: FileText },
           { id: "image", label: t("tab_image"), icon: ImageIcon },
           { id: "about", label: t("tab_about"), icon: HelpCircle },
+          { id: "changelog", label: t("tab_changelog"), icon: Clock },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -800,6 +801,113 @@ export default function ClaimVerifierDemo() {
 
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_independence")}</h3>
           <p style={{ marginBottom: 16 }}>{t("about_independence")}</p>
+        </div>
+      )}
+
+      {activeTab === "changelog" && (
+        <div style={{ maxWidth: 720, fontSize: 14, lineHeight: 1.6 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Changelog</h2>
+          <p style={{ color: COLORS.inkSoft, marginBottom: 24 }}>
+            {lang === "en"
+              ? "A public record of methodology changes, corrections, and new features. Maintained in accordance with IFCN transparency standards."
+              : lang === "ar"
+              ? "سجل عام لتغييرات المنهجية والتصحيحات والميزات الجديدة."
+              : lang === "he"
+              ? "רשומה ציבורית של שינויי מתודולוגיה, תיקונים ותכונות חדשות."
+              : "Verejný záznam zmien metodológie, opráv a nových funkcií. Vedený v súlade so štandardmi transparentnosti IFCN."}
+          </p>
+
+          {[
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaná podpora jazykov SK/EN/AR/HE vrátane RTL pre arabčinu a hebrejčinu.",
+              en: "Added multilingual support SK/EN/AR/HE including RTL layout for Arabic and Hebrew.",
+              ar: "تمت إضافة دعم متعدد اللغات SK/EN/AR/HE بما في ذلك تخطيط RTL للعربية والعبرية.",
+              he: "נוספה תמיכה רב-לשונית SK/EN/AR/HE כולל פריסת RTL לערבית ועברית.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Implementovaný dvojjazyčný vyhľadávací dotaz – okrem angličtiny aj v arabčine/hebrejčine pre relevantnejšie výsledky.",
+              en: "Implemented bilingual search queries – English plus Arabic/Hebrew for more relevant results from regional sources.",
+              ar: "تم تطبيق استعلامات بحث ثنائية اللغة – الإنجليزية والعربية/العبرية للحصول على نتائج أكثر صلة.",
+              he: "יושמו שאילתות חיפוש דו-לשוניות – אנגלית בתוספת ערבית/עברית לתוצאות רלוונטיות יותר.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaná perzistentná archívna databáza recyklovaných obrázkov (perceptual hash, uložená v Cloudflare R2).",
+              en: "Added persistent archive database of recycled images (perceptual hash, stored in Cloudflare R2).",
+              ar: "تمت إضافة قاعدة بيانات أرشيف دائمة للصور المعاد تدويرها.",
+              he: "נוספה מסד נתונים ארכיוני קבוע של תמונות ממוחזרות.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaná archivácia citovaných zdrojov cez Wayback Machine – zdroje zostávajú overiteľné aj po zmene/zmazaní článku.",
+              en: "Added automatic archiving of cited sources via Wayback Machine – sources remain verifiable even if the original article is changed or deleted.",
+              ar: "تمت إضافة أرشفة تلقائية للمصادر المستشهد بها عبر Wayback Machine.",
+              he: "נוספה ארכוב אוטומטי של מקורות מצוטטים דרך Wayback Machine.",
+            },
+            {
+              date: "Júl 2026",
+              type: "methodology",
+              sk: "Metodológia testovaná na pároch tvrdení z oboch strán konfliktu. Výsledok: symetrické správanie – rovnaký štandard dôkazov pre obe strany.",
+              en: "Methodology tested on pairs of claims from both sides of the conflict. Result: symmetric behavior – same evidentiary standard applied regardless of which side the claim concerns.",
+              ar: "تم اختبار المنهجية على أزواج من الادعاءات من كلا الجانبين. النتيجة: سلوك متماثل.",
+              he: "המתודולוגיה נבדקה על זוגות טענות משני הצדדים. תוצאה: התנהגות סימטרית.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaná geolokalizácia obrázkov – analýza vegetácie, architektúry a nápisov pre posúdenie súladu s tvrdeným miestom.",
+              en: "Added image geolocation – analysis of vegetation, architecture, and signage to assess consistency with the claimed location.",
+              ar: "تمت إضافة تحديد الموقع الجغرافي للصور.",
+              he: "נוספה גיאולוקציה של תמונות.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaná kontrola vnútornej konzistentnosti tvrdení – detekcia časových, číselných a logických rozporov v rámci jedného textu.",
+              en: "Added internal consistency checking – detection of timeline, numerical, and logical contradictions within a single article.",
+              ar: "تمت إضافة فحص الاتساق الداخلي للادعاءات.",
+              he: "נוספה בדיקת עקביות פנימית של טענות.",
+            },
+            {
+              date: "Júl 2026",
+              type: "feature",
+              sk: "Pridaný mechanizmus nahlásenia chyby – používatelia môžu nahlásiť problém priamo pri každej analýze.",
+              en: "Added error reporting mechanism – users can report issues directly within each analysis.",
+              ar: "تمت إضافة آلية الإبلاغ عن الأخطاء.",
+              he: "נוספה מנגנון דיווח על שגיאות.",
+            },
+          ].map((entry, i) => (
+            <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
+              <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{entry.date}</div>
+              <div style={{ flex: 1 }}>
+                <span style={{
+                  fontSize: 10,
+                  fontFamily: "monospace",
+                  letterSpacing: "0.06em",
+                  padding: "2px 7px",
+                  borderRadius: 3,
+                  marginRight: 8,
+                  background: entry.type === "methodology" ? COLORS.framingBg : entry.type === "fix" ? COLORS.discrepancyBg : COLORS.consensusBg,
+                  color: entry.type === "methodology" ? COLORS.framing : entry.type === "fix" ? COLORS.discrepancy : COLORS.consensus,
+                }}>
+                  {entry.type === "methodology"
+                    ? (lang === "en" ? "METHODOLOGY" : lang === "ar" ? "منهجية" : lang === "he" ? "מתודולוגיה" : "METODOLÓGIA")
+                    : entry.type === "fix"
+                    ? (lang === "en" ? "FIX" : lang === "ar" ? "إصلاح" : lang === "he" ? "תיקון" : "OPRAVA")
+                    : (lang === "en" ? "FEATURE" : lang === "ar" ? "ميزة" : lang === "he" ? "תכונה" : "FUNKCIA")}
+                </span>
+                <span style={{ fontSize: 13 }}>
+                  {lang === "en" ? entry.en : lang === "ar" ? entry.ar : lang === "he" ? entry.he : entry.sk}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
