@@ -806,7 +806,7 @@ export default function ClaimVerifierDemo() {
 
       {activeTab === "changelog" && (
         <div style={{ maxWidth: 720, fontSize: 14, lineHeight: 1.6 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Changelog</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>{t("tab_changelog")}</h2>
           <p style={{ color: COLORS.inkSoft, marginBottom: 24 }}>
             {lang === "en"
               ? "A public record of methodology changes, corrections, and new features. Maintained in accordance with IFCN transparency standards."
@@ -819,7 +819,7 @@ export default function ClaimVerifierDemo() {
 
           {[
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaná podpora jazykov SK/EN/AR/HE vrátane RTL pre arabčinu a hebrejčinu.",
               en: "Added multilingual support SK/EN/AR/HE including RTL layout for Arabic and Hebrew.",
@@ -827,7 +827,7 @@ export default function ClaimVerifierDemo() {
               he: "נוספה תמיכה רב-לשונית SK/EN/AR/HE כולל פריסת RTL לערבית ועברית.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Implementovaný dvojjazyčný vyhľadávací dotaz – okrem angličtiny aj v arabčine/hebrejčine pre relevantnejšie výsledky.",
               en: "Implemented bilingual search queries – English plus Arabic/Hebrew for more relevant results from regional sources.",
@@ -835,7 +835,7 @@ export default function ClaimVerifierDemo() {
               he: "יושמו שאילתות חיפוש דו-לשוניות – אנגלית בתוספת ערבית/עברית לתוצאות רלוונטיות יותר.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaná perzistentná archívna databáza recyklovaných obrázkov (perceptual hash, uložená v Cloudflare R2).",
               en: "Added persistent archive database of recycled images (perceptual hash, stored in Cloudflare R2).",
@@ -843,7 +843,7 @@ export default function ClaimVerifierDemo() {
               he: "נוספה מסד נתונים ארכיוני קבוע של תמונות ממוחזרות.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaná archivácia citovaných zdrojov cez Wayback Machine – zdroje zostávajú overiteľné aj po zmene/zmazaní článku.",
               en: "Added automatic archiving of cited sources via Wayback Machine – sources remain verifiable even if the original article is changed or deleted.",
@@ -851,7 +851,7 @@ export default function ClaimVerifierDemo() {
               he: "נוספה ארכוב אוטומטי של מקורות מצוטטים דרך Wayback Machine.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "methodology",
               sk: "Metodológia testovaná na pároch tvrdení z oboch strán konfliktu. Výsledok: symetrické správanie – rovnaký štandard dôkazov pre obe strany.",
               en: "Methodology tested on pairs of claims from both sides of the conflict. Result: symmetric behavior – same evidentiary standard applied regardless of which side the claim concerns.",
@@ -859,7 +859,7 @@ export default function ClaimVerifierDemo() {
               he: "המתודולוגיה נבדקה על זוגות טענות משני הצדדים. תוצאה: התנהגות סימטרית.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaná geolokalizácia obrázkov – analýza vegetácie, architektúry a nápisov pre posúdenie súladu s tvrdeným miestom.",
               en: "Added image geolocation – analysis of vegetation, architecture, and signage to assess consistency with the claimed location.",
@@ -867,7 +867,7 @@ export default function ClaimVerifierDemo() {
               he: "נוספה גיאולוקציה של תמונות.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaná kontrola vnútornej konzistentnosti tvrdení – detekcia časových, číselných a logických rozporov v rámci jedného textu.",
               en: "Added internal consistency checking – detection of timeline, numerical, and logical contradictions within a single article.",
@@ -875,7 +875,7 @@ export default function ClaimVerifierDemo() {
               he: "נוספה בדיקת עקביות פנימית של טענות.",
             },
             {
-              date: "Júl 2026",
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
               sk: "Pridaný mechanizmus nahlásenia chyby – používatelia môžu nahlásiť problém priamo pri každej analýze.",
               en: "Added error reporting mechanism – users can report issues directly within each analysis.",
@@ -884,7 +884,7 @@ export default function ClaimVerifierDemo() {
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
-              <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{entry.date}</div>
+              <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
               <div style={{ flex: 1 }}>
                 <span style={{
                   fontSize: 10,
