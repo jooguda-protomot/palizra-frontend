@@ -23,7 +23,7 @@ function parseCSV(text) {
     let current = "";
     let inQuotes = false;
     for (const ch of line) {
-      if (ch === '"') { inQuotes = !inQuotes; }
+      if (ch === '"' || ch === '„' || ch === '“' || ch === '‘' || ch === '’') { inQuotes = !inQuotes; }
       else if (ch === "," && !inQuotes) { values.push(current.trim()); current = ""; }
       else { current += ch; }
     }
