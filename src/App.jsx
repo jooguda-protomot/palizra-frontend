@@ -765,6 +765,17 @@ export default function ClaimVerifierDemo() {
             <li>{t("about_how_4")}</li>
           </ol>
 
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_source_criteria")}</h3>
+          <p style={{ marginBottom: 8 }}>{t("about_source_criteria_intro")}</p>
+          <ol style={{ marginBottom: 8, paddingLeft: 20 }}>
+            <li>{t("about_source_criteria_1")}</li>
+            <li>{t("about_source_criteria_2")}</li>
+            <li>{t("about_source_criteria_3")}</li>
+            <li>{t("about_source_criteria_4")}</li>
+            <li>{t("about_source_criteria_5")}</li>
+          </ol>
+          <p style={{ marginBottom: 24, color: COLORS.inkSoft, fontSize: 13 }}>{t("about_source_criteria_doc")}</p>
+
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_sources")}</h3>
           <p style={{ marginBottom: 8 }}>{t("about_sources_intro")}</p>
           <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
