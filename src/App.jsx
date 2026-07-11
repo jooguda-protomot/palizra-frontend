@@ -503,12 +503,21 @@ export default function ClaimVerifierDemo() {
                   {comparison.summary_note}
                 </div>
 
-                <FeedbackButton
-                  context="text_comparison"
-                  subject={claims.find((c) => c.id === selectedClaimId)?.original_text || null}
-                  relatedData={comparison}
-                  t={t}
-                />
+                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}>
+                  <FeedbackButton
+                    context="text_comparison"
+                    subject={claims.find((c) => c.id === selectedClaimId)?.original_text || null}
+                    relatedData={comparison}
+                    t={t}
+                  />
+                  <SaveAnalysisButton
+                    claimText={claims.find((c) => c.id === selectedClaimId)?.original_text || ""}
+                    type="text"
+                    lang={lang}
+                    result={{ comparison }}
+                    t={t}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -925,6 +934,71 @@ export default function ClaimVerifierDemo() {
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft }}>
         {t("footer")}
       </footer>
+    </div>
+  );
+}
+
+async function saveAnalysisViaBackend({ claimText, type, location, category, lang, result }) {
+  const response = await fetch(`${API_BASE_URL}/api/analyses/save`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ claim_text: claimText, type, location, category, lang, result }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data?.error || "Uloženie zlyhalo.");
+  return data;
+}
+
+const LOCATION_OPTIONS = ["Gaza", "Libanon", "Sýria", "Izrael", "Západný breh", "Iné"];
+const CATEGORY_OPTIONS = ["obete", "infraštruktúra", "diplomatické", "obrázok", "iné"];
+
+function SaveAnalysisButton({ claimText, type, lang, result, t }) {
+  const [open, setOpen] = useState(false);
+  const [location, setLocation] = useState("Gaza");
+  const [category, setCategory] = useState("obete");
+  const [status, setStatus] = useState("idle");
+
+  async function handleSave() {
+    setStatus("saving");
+    try {
+      await saveAnalysisViaBackend({ claimText, type, location, category, lang, result });
+      setStatus("saved");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "saved") {
+    return <div style={{ fontSize: 12, color: COLORS.consensus }}>✓ Analýza uložená do archívu.</div>;
+  }
+
+  return (
+    <div>
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          style={{ background: "none", border: `1px solid ${COLORS.line}`, color: COLORS.inkSoft, fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: "3px 8px", borderRadius: 3, letterSpacing: "0.04em" }}
+        >
+          ULOŽIŤ DO ARCHÍVU
+        </button>
+      ) : (
+        <div style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <select value={location} onChange={e => setLocation(e.target.value)}
+            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+            {LOCATION_OPTIONS.map(l => <option key={l}>{l}</option>)}
+          </select>
+          <select value={category} onChange={e => setCategory(e.target.value)}
+            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+            {CATEGORY_OPTIONS.map(c => <option key={c}>{c}</option>)}
+          </select>
+          <button onClick={handleSave} disabled={status === "saving"}
+            style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
+            {status === "saving" ? "UKLADÁM…" : "ULOŽIŤ"}
+          </button>
+          {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>Chyba, skús znova.</span>}
+          <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
+        </div>
+      )}
     </div>
   );
 }
