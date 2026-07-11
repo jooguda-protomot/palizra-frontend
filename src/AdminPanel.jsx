@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const API_BASE_URL = "https://palizraanalyzator-production.up.railway.app";
 
@@ -30,6 +30,90 @@ function parseCSV(text) {
     values.push(current.trim());
     return Object.fromEntries(headers.map((h, i) => [h, values[i] || ""]));
   }).filter(r => r.url);
+}
+
+function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
+  const [analyses, setAnalyses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [actionStatus, setActionStatus] = useState({});
+
+  async function loadAnalyses() {
+    if (!adminKey) return;
+    setLoading(true);
+    try {
+      // Admin vidí všetky analýzy – použijeme index endpoint s veľkým limitom
+      const res = await fetch(`${API_BASE_URL}/api/analyses?limit=100&page=1`, {
+        headers: { "x-admin-key": adminKey }
+      });
+      const data = await res.json();
+      // Načítame aj nepublikované – zobrazíme všetky
+      setAnalyses(data.analyses || []);
+    } catch (err) {
+      console.error("Chyba pri načítaní analýz:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function togglePublish(id, currentlyPublished) {
+    setActionStatus(s => ({ ...s, [id]: "loading" }));
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ published: !currentlyPublished }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setAnalyses(prev => prev.map(a => a.id === id ? { ...a, published: !currentlyPublished } : a));
+        setActionStatus(s => ({ ...s, [id]: "done" }));
+      }
+    } catch {
+      setActionStatus(s => ({ ...s, [id]: "error" }));
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 40, borderTop: `2px solid ${COLORS.ink}`, paddingTop: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>Správa analýz</div>
+        <button onClick={loadAnalyses} disabled={!adminKey || loading}
+          style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+          {loading ? "NAČÍTAVAM…" : "NAČÍTAŤ ANALÝZY"}
+        </button>
+      </div>
+
+      {analyses.length === 0 && !loading && (
+        <div style={{ fontSize: 13, color: COLORS.inkSoft }}>
+          {adminKey ? "Klikni na NAČÍTAŤ ANALÝZY." : "Najprv zadaj admin kľúč vyššie."}
+        </div>
+      )}
+
+      {analyses.map(a => (
+        <div key={a.id} style={{ padding: "10px 12px", marginBottom: 8, border: `1px solid ${COLORS.line}`, borderRadius: 4, background: a.published ? "#f0faf3" : "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>
+              {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
+              {a.published && <span style={{ marginLeft: 8, color: "#2A6B3C", fontWeight: 600 }}>✓ ZVEREJNENÉ</span>}
+            </div>
+            <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "…" : ""}
+            </div>
+          </div>
+          <button
+            onClick={() => togglePublish(a.id, a.published)}
+            disabled={actionStatus[a.id] === "loading"}
+            style={{
+              fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", flexShrink: 0,
+              background: a.published ? COLORS.error : COLORS.success,
+              color: "#fff",
+            }}>
+            {actionStatus[a.id] === "loading" ? "…" : a.published ? "STIAHNUŤ" : "ZVEREJNIŤ"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function AdminPanel() {
@@ -174,6 +258,9 @@ export default function AdminPanel() {
         <code>https://example.com/img.jpg,"Popis kontextu",2023-10-07,Bellingcat</code><br/><br/>
         Stĺpce <code>context</code>, <code>date</code> a <code>source</code> sú voliteľné. Povinný je len <code>url</code>.
       </div>
+
+      {/* Správa analýz */}
+      <AnalysesManager adminKey={adminKey} s={s} COLORS={COLORS} API_BASE_URL={API_BASE_URL} />
     </div>
   );
 }
