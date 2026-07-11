@@ -243,7 +243,8 @@ export default function ClaimVerifierDemo() {
               {t("app_subtitle")}
             </p>
           </div>
-          <div style={{ display: "flex", gap: 4, flexShrink: 0, marginTop: 4 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0, marginTop: 4 }}>
+            <div style={{ display: "flex", gap: 4 }}>
             {["sk", "en", "ar", "he"].map((l) => (
               <button
                 key={l}
@@ -263,6 +264,22 @@ export default function ClaimVerifierDemo() {
                 {l.toUpperCase()}
               </button>
             ))}
+            </div>
+            <a
+              href="/analyses"
+              style={{
+                fontSize: 11,
+                fontFamily: "monospace",
+                color: COLORS.inkSoft,
+                textDecoration: "none",
+                letterSpacing: "0.06em",
+                border: `1px solid ${COLORS.line}`,
+                borderRadius: 3,
+                padding: "3px 8px",
+              }}
+            >
+              {lang === "ar" ? "أرشيف التحليلات" : lang === "he" ? "ארכיון ניתוחים" : lang === "en" ? "ANALYSES ARCHIVE" : "ARCHÍV ANALÝZ"} →
+            </a>
           </div>
         </div>
       </header>
