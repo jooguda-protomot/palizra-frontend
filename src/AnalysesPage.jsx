@@ -168,7 +168,7 @@ export default function AnalysesPage() {
         {[
           { label: u.location, key: "location", options: u.locations },
           { label: u.category, key: "category", options: u.categories },
-          { label: u.lang, key: "lang", options: ["All","sk","en","ar","he"] },
+          { label: u.lang, key: "lang", options: [u.all, "sk","en","ar","he"] },
         ].map(({ label, key, options }) => (
           <div key={key}>
             <label style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, letterSpacing: "0.06em", display: "block", marginBottom: 4 }}>{label.toUpperCase()}</label>
