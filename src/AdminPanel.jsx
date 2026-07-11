@@ -42,7 +42,7 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
     setLoading(true);
     try {
       // Admin vidí všetky analýzy – použijeme index endpoint s veľkým limitom
-      const res = await fetch(`${API_BASE_URL}/api/analyses?limit=100&page=1`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses`, {
         headers: { "x-admin-key": adminKey }
       });
       const data = await res.json();
