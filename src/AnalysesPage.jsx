@@ -3,6 +3,39 @@ import { translations } from "./translations.js";
 
 const API_BASE_URL = "https://palizraanalyzator-production.up.railway.app";
 
+// Mapovacie tabuľky - kódy → preklady
+const LOCATION_MAP = {
+  Gaza:        { sk: "Gaza",          en: "Gaza",        ar: "غزة",              he: "עזה" },
+  Libanon:     { sk: "Libanon",       en: "Lebanon",     ar: "لبنان",            he: "לבנון" },
+  Lebanon:     { sk: "Libanon",       en: "Lebanon",     ar: "لبنان",            he: "לבנון" },
+  Sýria:       { sk: "Sýria",         en: "Syria",       ar: "سوريا",            he: "סוריה" },
+  Syria:       { sk: "Sýria",         en: "Syria",       ar: "سوريا",            he: "סוריה" },
+  Izrael:      { sk: "Izrael",        en: "Israel",      ar: "إسرائيل",          he: "ישראל" },
+  Israel:      { sk: "Izrael",        en: "Israel",      ar: "إسرائيل",          he: "ישראל" },
+  "Západný breh": { sk: "Západný breh", en: "West Bank", ar: "الضفة الغربية",  he: "הגדה המערבית" },
+  "West Bank":    { sk: "Západný breh", en: "West Bank", ar: "الضفة الغربية",  he: "הגדה המערבית" },
+  Iné:         { sk: "Iné",           en: "Other",       ar: "أخرى",             he: "אחר" },
+  Other:       { sk: "Iné",           en: "Other",       ar: "أخرى",             he: "אחר" },
+};
+
+const CATEGORY_MAP = {
+  obete:           { sk: "obete",          en: "casualties",    ar: "ضحايا",          he: "נפגעים" },
+  casualties:      { sk: "obete",          en: "casualties",    ar: "ضحايا",          he: "נפגעים" },
+  "infraštruktúra":{ sk: "infraštruktúra", en: "infrastructure",ar: "بنية تحتية",    he: "תשתיות" },
+  infrastructure:  { sk: "infraštruktúra", en: "infrastructure",ar: "بنية تحتية",    he: "תשתיות" },
+  diplomatické:    { sk: "diplomatické",   en: "diplomatic",    ar: "دبلوماسي",       he: "דיפלומטי" },
+  diplomatic:      { sk: "diplomatické",   en: "diplomatic",    ar: "دبلوماسي",       he: "דיפלומטי" },
+  obrázok:         { sk: "obrázok",        en: "image",         ar: "صورة",            he: "תמונה" },
+  image:           { sk: "obrázok",        en: "image",         ar: "صورة",            he: "תמונה" },
+  iné:             { sk: "iné",            en: "other",         ar: "أخرى",            he: "אחר" },
+  other:           { sk: "iné",            en: "other",         ar: "أخرى",            he: "אחר" },
+};
+
+function tLocation(val, lang) { return LOCATION_MAP[val]?.[lang] || val; }
+function tCategory(val, lang) { return CATEGORY_MAP[val]?.[lang] || val; }
+
+
+
 const COLORS = {
   paper: "#EFEAE0",
   ink: "#1F2A24",
@@ -192,7 +225,7 @@ export default function AnalysesPage() {
             <div key={a.id} onClick={() => { setSelected(a.id); fetchDetail(a.id); }}
               style={{ padding: "12px 14px", marginBottom: 8, border: `1px solid ${selected === a.id ? COLORS.ink : COLORS.line}`, borderRadius: 4, cursor: "pointer", background: selected === a.id ? COLORS.ink : "#fff", color: selected === a.id ? COLORS.paper : COLORS.ink }}>
               <div style={{ fontSize: 11, fontFamily: "monospace", color: selected === a.id ? COLORS.line : COLORS.inkSoft, marginBottom: 4 }}>
-                {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
+                {a.date} · {tLocation(a.location, lang)} · {tCategory(a.category, lang)} · {a.lang?.toUpperCase()}
               </div>
               <div style={{ fontSize: 14, lineHeight: 1.4 }}>
                 {a.claim_text?.slice(0, 120)}{a.claim_text?.length > 120 ? "…" : ""}
@@ -222,7 +255,7 @@ export default function AnalysesPage() {
             {detail && (
               <>
                 <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 8 }}>
-                  {detail.date} · {detail.location} · {detail.lang?.toUpperCase()}
+                  {detail.date} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
                 {detail.result?.comparison && (
