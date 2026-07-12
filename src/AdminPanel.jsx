@@ -38,13 +38,14 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
   const [actionStatus, setActionStatus] = useState({});
   const [translateStatus, setTranslateStatus] = useState("idle");
 
-  async function handleTranslateAll() {
+  async function handleTranslateAll(force = false) {
     if (!adminKey) return;
     setTranslateStatus("loading");
     try {
       await fetch(`${API_BASE_URL}/api/admin/analyses/translate-all`, {
         method: "POST",
-        headers: { "x-admin-key": adminKey },
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ force }),
       });
       setTranslateStatus("done");
     } catch {
@@ -93,9 +94,13 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ fontSize: 14, fontWeight: 600 }}>Správa analýz</div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={handleTranslateAll} disabled={!adminKey || translateStatus === "loading"}
+          <button onClick={() => handleTranslateAll(false)} disabled={!adminKey || translateStatus === "loading"}
             style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: "#5A6B60", color: "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
-            {translateStatus === "loading" ? "PREKLADÁM…" : translateStatus === "done" ? "✓ SPUSTENÉ" : "PRELOŽIŤ VŠETKY"}
+            {translateStatus === "loading" ? "PREKLADÁM…" : translateStatus === "done" ? "✓ SPUSTENÉ" : "PRELOŽIŤ NOVÉ"}
+          </button>
+          <button onClick={() => handleTranslateAll(true)} disabled={!adminKey || translateStatus === "loading"}
+            style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: "#8B4513", color: "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+            PRELOŽIŤ ZNOVA (VŠETKY)
           </button>
           <button onClick={loadAnalyses} disabled={!adminKey || loading}
             style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
