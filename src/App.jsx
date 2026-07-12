@@ -966,13 +966,27 @@ async function saveAnalysisViaBackend({ claimText, type, location, category, lan
   return data;
 }
 
-const LOCATION_OPTIONS = ["Gaza", "Libanon", "Sýria", "Izrael", "Západný breh", "Iné"];
-const CATEGORY_OPTIONS = ["obete", "infraštruktúra", "diplomatické", "obrázok", "iné"];
+const LOCATION_OPTIONS = [
+  { value: "Gaza",       label: { sk: "Gaza",          en: "Gaza",        ar: "غزة",              he: "עזה" } },
+  { value: "Lebanon",    label: { sk: "Libanon",       en: "Lebanon",     ar: "لبنان",            he: "לבנון" } },
+  { value: "Syria",      label: { sk: "Sýria",         en: "Syria",       ar: "سوريا",            he: "סוריה" } },
+  { value: "Israel",     label: { sk: "Izrael",        en: "Israel",      ar: "إسرائيل",          he: "ישראל" } },
+  { value: "West Bank",  label: { sk: "Západný breh",  en: "West Bank",   ar: "الضفة الغربية",   he: "הגדה המערבית" } },
+  { value: "Other",      label: { sk: "Iné",           en: "Other",       ar: "أخرى",             he: "אחר" } },
+];
+
+const CATEGORY_OPTIONS = [
+  { value: "casualties",     label: { sk: "obete",          en: "casualties",     ar: "ضحايا",        he: "נפגעים" } },
+  { value: "infrastructure", label: { sk: "infraštruktúra", en: "infrastructure", ar: "بنية تحتية",  he: "תשתיות" } },
+  { value: "diplomatic",     label: { sk: "diplomatické",   en: "diplomatic",     ar: "دبلوماسي",     he: "דיפלומטי" } },
+  { value: "image",          label: { sk: "obrázok",        en: "image",          ar: "صورة",          he: "תמונה" } },
+  { value: "other",          label: { sk: "iné",            en: "other",          ar: "أخرى",          he: "אחר" } },
+];
 
 function SaveAnalysisButton({ claimText, type, lang, result, t }) {
   const [open, setOpen] = useState(false);
   const [location, setLocation] = useState("Gaza");
-  const [category, setCategory] = useState("obete");
+  const [category, setCategory] = useState("casualties");
   const [status, setStatus] = useState("idle");
 
   async function handleSave() {
@@ -1002,11 +1016,11 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
         <div style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <select value={location} onChange={e => setLocation(e.target.value)}
             style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-            {LOCATION_OPTIONS.map(l => <option key={l}>{l}</option>)}
+            {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
           </select>
           <select value={category} onChange={e => setCategory(e.target.value)}
             style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-            {CATEGORY_OPTIONS.map(c => <option key={c}>{c}</option>)}
+            {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
           </select>
           <button onClick={handleSave} disabled={status === "saving"}
             style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
