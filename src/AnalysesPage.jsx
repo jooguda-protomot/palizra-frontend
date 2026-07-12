@@ -258,37 +258,40 @@ export default function AnalysesPage() {
                   {detail.date} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
-                {detail.result?.comparison && (
-                  <>
-                    {detail.result.comparison.consensus_points?.length > 0 && (
+                {(() => {
+                  // Použi preloženú verziu ak existuje, inak pôvodnú
+                  const comparison = detail.translations?.[lang]?.comparison || detail.result?.comparison;
+                  return comparison && (<>
+                    {comparison.consensus_points?.length > 0 && (
                       <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
                         <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, letterSpacing: "0.06em", marginBottom: 6 }}>{u.consensus}</div>
-                        {detail.result.comparison.consensus_points.map((p,i) => (
+                        {comparison.consensus_points.map((p,i) => (
                           <div key={i} style={{ fontSize: 13, marginBottom: 4 }}>{p.point}</div>
                         ))}
                       </div>
                     )}
-                    {detail.result.comparison.discrepancies?.length > 0 && (
+                    {comparison.discrepancies?.length > 0 && (
                       <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.discrepancyBg, borderRadius: 4 }}>
                         <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.discrepancy, letterSpacing: "0.06em", marginBottom: 6 }}>{u.discrepancy}</div>
-                        {detail.result.comparison.discrepancies.map((d,i) => (
+                        {comparison.discrepancies.map((d,i) => (
                           <div key={i} style={{ fontSize: 13, marginBottom: 4 }}>{d.issue}</div>
                         ))}
                       </div>
                     )}
-                    {detail.result.comparison.confidence_level && (
+                    {comparison.confidence_level && (
                       <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.line}`, fontSize: 13 }}>
                         <strong>{u.confidence} </strong>
-                        <span style={{ color: CONFIDENCE_COLORS[detail.result.comparison.confidence_level] || COLORS.ink }}>
-                          {detail.result.comparison.confidence_level}
+                        <span style={{ color: CONFIDENCE_COLORS[comparison.confidence_level] || COLORS.ink }}>
+                          {comparison.confidence_level}
                         </span>
-                        {detail.result.comparison.summary_note && (
-                          <span style={{ color: COLORS.inkSoft }}> – {detail.result.comparison.summary_note}</span>
+                        {comparison.summary_note && (
+                          <span style={{ color: COLORS.inkSoft }}> – {comparison.summary_note}</span>
                         )}
                       </div>
                     )}
                   </>
-                )}
+                  );
+                })()}
               </>
             )}
           </div>
