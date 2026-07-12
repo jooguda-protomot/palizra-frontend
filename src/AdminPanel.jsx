@@ -36,6 +36,21 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
   const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionStatus, setActionStatus] = useState({});
+  const [translateStatus, setTranslateStatus] = useState("idle");
+
+  async function handleTranslateAll() {
+    if (!adminKey) return;
+    setTranslateStatus("loading");
+    try {
+      await fetch(`${API_BASE_URL}/api/admin/analyses/translate-all`, {
+        method: "POST",
+        headers: { "x-admin-key": adminKey },
+      });
+      setTranslateStatus("done");
+    } catch {
+      setTranslateStatus("error");
+    }
+  }
 
   async function loadAnalyses() {
     if (!adminKey) return;
@@ -77,10 +92,16 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
     <div style={{ marginTop: 40, borderTop: `2px solid ${COLORS.ink}`, paddingTop: 24 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ fontSize: 14, fontWeight: 600 }}>Správa analýz</div>
-        <button onClick={loadAnalyses} disabled={!adminKey || loading}
-          style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
-          {loading ? "NAČÍTAVAM…" : "NAČÍTAŤ ANALÝZY"}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={handleTranslateAll} disabled={!adminKey || translateStatus === "loading"}
+            style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: "#5A6B60", color: "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+            {translateStatus === "loading" ? "PREKLADÁM…" : translateStatus === "done" ? "✓ SPUSTENÉ" : "PRELOŽIŤ VŠETKY"}
+          </button>
+          <button onClick={loadAnalyses} disabled={!adminKey || loading}
+            style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+            {loading ? "NAČÍTAVAM…" : "NAČÍTAŤ ANALÝZY"}
+          </button>
+        </div>
       </div>
 
       {analyses.length === 0 && !loading && (
