@@ -225,7 +225,10 @@ export default function AnalysesPage() {
             <div key={a.id} onClick={() => { setSelected(a.id); fetchDetail(a.id); }}
               style={{ padding: "12px 14px", marginBottom: 8, border: `1px solid ${selected === a.id ? COLORS.ink : COLORS.line}`, borderRadius: 4, cursor: "pointer", background: selected === a.id ? COLORS.ink : "#fff", color: selected === a.id ? COLORS.paper : COLORS.ink }}>
               <div style={{ fontSize: 11, fontFamily: "monospace", color: selected === a.id ? COLORS.line : COLORS.inkSoft, marginBottom: 4 }}>
-                {a.date} · {tLocation(a.location, lang)} · {tCategory(a.category, lang)} · {a.lang?.toUpperCase()}
+                {new Date(a.date).toLocaleDateString(
+                  lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
+                  { day: "numeric", month: "long", year: "numeric" }
+                )} · {tLocation(a.location, lang)} · {tCategory(a.category, lang)} · {a.lang?.toUpperCase()}
               </div>
               <div style={{ fontSize: 14, lineHeight: 1.4 }}>
                 {a.claim_text?.slice(0, 120)}{a.claim_text?.length > 120 ? "…" : ""}
@@ -255,7 +258,10 @@ export default function AnalysesPage() {
             {detail && (
               <>
                 <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 8 }}>
-                  {detail.date} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
+                  {new Date(detail.date).toLocaleDateString(
+                    lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
+                    { day: "numeric", month: "long", year: "numeric" }
+                  )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
                 {(() => {
