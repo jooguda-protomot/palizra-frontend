@@ -77,7 +77,7 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/update-notice`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
-        body: JSON.stringify({ notice: form.notice, relatedAnalysisId: form.relatedId || null }),
+        body: JSON.stringify({ notice: form.notice, relatedAnalysisId: form.relatedId || null, lang: form.lang || "sk" }),
       });
       const data = await res.json();
       if (data.status === "ok") {
@@ -202,6 +202,18 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
                 rows={2}
                 style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
               />
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <label style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft }}>Jazyk textu:</label>
+                <select
+                  value={noticeForm[a.id]?.lang || "sk"}
+                  onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], lang: e.target.value } }))}
+                  style={{ fontFamily: "monospace", fontSize: 12, padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+                  <option value="sk">SK</option>
+                  <option value="en">EN</option>
+                  <option value="ar">AR</option>
+                  <option value="he">HE</option>
+                </select>
+              </div>
               <input
                 placeholder="ID suvisiacej analyzy (volitelne)"
                 value={noticeForm[a.id]?.relatedId || ""}
