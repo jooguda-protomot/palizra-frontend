@@ -135,6 +135,7 @@ export default function AnalysesPage() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({ location: "", category: "", lang: "" });
+  const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -205,6 +206,17 @@ export default function AnalysesPage() {
         </div>
       </div>
 
+      {/* Vyhľadávanie */}
+      <div style={{ marginBottom: 16 }}>
+        <input
+          type="text"
+          value={search}
+          onChange={e => { setSearch(e.target.value); setSelected(null); setDetail(null); }}
+          placeholder={lang === "ar" ? "بحث في النصوص…" : lang === "he" ? "חפש בטקסטים…" : lang === "en" ? "Search in texts…" : "Hľadaj v textoch…"}
+          style={{ width: "100%", padding: "8px 12px", fontFamily: "monospace", fontSize: 13, border: `1px solid ${COLORS.line}`, borderRadius: 4, boxSizing: "border-box", background: "#fff" }}
+        />
+      </div>
+
       {/* Filtre */}
       <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
         {[
@@ -230,7 +242,9 @@ export default function AnalysesPage() {
           {loading && <div style={{ color: COLORS.inkSoft, fontFamily: "monospace", fontSize: 13 }}>{u.loading}</div>}
           {error && <div style={{ color: COLORS.discrepancy, fontSize: 13 }}>{error}</div>}
           {!loading && analyses.length === 0 && <div style={{ color: COLORS.inkSoft, fontSize: 14 }}>{u.empty}</div>}
-          {analyses.map(a => (
+          {analyses
+            .filter(a => !search || a.claim_text?.toLowerCase().includes(search.toLowerCase()))
+            .map(a => (
             <div key={a.id} onClick={() => { setSelected(a.id); fetchDetail(a.id); }}
               style={{ padding: "12px 14px", marginBottom: 8, border: `1px solid ${selected === a.id ? COLORS.ink : COLORS.line}`, borderRadius: 4, cursor: "pointer", background: selected === a.id ? COLORS.ink : "#fff", color: selected === a.id ? COLORS.paper : COLORS.ink }}>
               <div style={{ fontSize: 11, fontFamily: "monospace", color: selected === a.id ? COLORS.line : COLORS.inkSoft, marginBottom: 4 }}>
