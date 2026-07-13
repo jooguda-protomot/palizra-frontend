@@ -71,7 +71,26 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
     }
   }
 
-  async function togglePublish(id, currentlyPublished) {
+  async function toggleDelete(id, currentlyDeleted) {
+    setActionStatus(s => ({ ...s, [`del_${id}`]: "loading" }));
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ deleted: !currentlyDeleted }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setAnalyses(prev => prev.map(a => a.id === id
+          ? { ...a, deleted: !currentlyDeleted, published: !currentlyDeleted ? false : a.published }
+          : a
+        ));
+        setActionStatus(s => ({ ...s, [`del_${id}`]: "done" }));
+      }
+    } catch {
+      setActionStatus(s => ({ ...s, [`del_${id}`]: "error" }));
+    }
+  }
     setActionStatus(s => ({ ...s, [id]: "loading" }));
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/publish`, {
@@ -121,21 +140,36 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
             <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>
               {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
               {a.published && <span style={{ marginLeft: 8, color: "#2A6B3C", fontWeight: 600 }}>✓ ZVEREJNENÉ</span>}
+              {a.deleted && <span style={{ marginLeft: 8, color: "#8B0000", fontWeight: 600 }}>✕ ZMAZANÉ</span>}
             </div>
             <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "…" : ""}
             </div>
           </div>
-          <button
-            onClick={() => togglePublish(a.id, a.published)}
-            disabled={actionStatus[a.id] === "loading"}
-            style={{
-              fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", flexShrink: 0,
-              background: a.published ? COLORS.error : COLORS.success,
-              color: "#fff",
-            }}>
-            {actionStatus[a.id] === "loading" ? "…" : a.published ? "STIAHNUŤ" : "ZVEREJNIŤ"}
-          </button>
+          <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+            <button
+              onClick={() => togglePublish(a.id, a.published)}
+              disabled={a.deleted || actionStatus[a.id] === "loading"}
+              style={{
+                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
+                cursor: a.deleted ? "not-allowed" : "pointer",
+                background: a.published ? COLORS.error : COLORS.success,
+                color: "#fff", opacity: a.deleted ? 0.4 : 1,
+              }}>
+              {actionStatus[a.id] === "loading" ? "…" : a.published ? "STIAHNUŤ" : "ZVEREJNIŤ"}
+            </button>
+            <button
+              onClick={() => toggleDelete(a.id, a.deleted)}
+              disabled={actionStatus[`del_${a.id}`] === "loading"}
+              style={{
+                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
+                cursor: "pointer",
+                background: a.deleted ? "#5A6B60" : "#8B0000",
+                color: "#fff",
+              }}>
+              {actionStatus[`del_${a.id}`] === "loading" ? "…" : a.deleted ? "OBNOVIŤ" : "ZMAZAŤ"}
+            </button>
+          </div>
         </div>
       ))}
     </div>
