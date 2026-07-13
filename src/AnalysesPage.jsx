@@ -280,7 +280,9 @@ export default function AnalysesPage() {
                     <div style={{ fontSize: 10, fontFamily: "monospace", color: "#7B5EA7", letterSpacing: "0.06em", marginBottom: 4 }}>
                       ⚠ {lang === "ar" ? "تحديث" : lang === "he" ? "עדכון" : lang === "en" ? "UPDATE" : "AKTUALIZÁCIA"} · {detail.updateNotice.date}
                     </div>
-                    <div style={{ fontSize: 13, color: "#1F2A24" }}>{detail.updateNotice.text}</div>
+                    <div style={{ fontSize: 13, color: "#1F2A24" }}>
+                      {detail.updateNotice.translations?.[lang] || detail.updateNotice.text}
+                    </div>
                     {detail.updateNotice.relatedAnalysisId && (
                       <a href={`/analyses?id=${detail.updateNotice.relatedAnalysisId}`}
                         style={{ fontSize: 12, color: "#7B5EA7", marginTop: 4, display: "block" }}>
