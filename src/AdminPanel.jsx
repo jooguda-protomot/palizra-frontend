@@ -23,7 +23,7 @@ function parseCSV(text) {
     let current = "";
     let inQuotes = false;
     for (const ch of line) {
-      if (ch === '"' || ch === '\u201e' || ch === '\u201c' || ch === '\u2018' || ch === '\u2019') { inQuotes = !inQuotes; }
+      if (ch === '"' || ch === '„' || ch === '“' || ch === '‘' || ch === '’') { inQuotes = !inQuotes; }
       else if (ch === "," && !inQuotes) { values.push(current.trim()); current = ""; }
       else { current += ch; }
     }
@@ -71,7 +71,28 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
     }
   }
 
-  async function toggleDelete(id, currentlyDeleted) {
+  const [noticeForm, setNoticeForm] = useState({});
+
+  async function handleUpdateNotice(id) {
+    const form = noticeForm[id];
+    if (!form?.notice) return;
+    setActionStatus(s => ({ ...s, [`notice_${id}`]: "loading" }));
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/update-notice`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ notice: form.notice, relatedAnalysisId: form.relatedId || null }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setAnalyses(prev => prev.map(a => a.id === id ? { ...a, hasUpdateNotice: true } : a));
+        setActionStatus(s => ({ ...s, [`notice_${id}`]: "done" }));
+        setNoticeForm(f => ({ ...f, [id]: { ...f[id], open: false } }));
+      }
+    } catch {
+      setActionStatus(s => ({ ...s, [`notice_${id}`]: "error" }));
+    }
+  }
     setActionStatus(s => ({ ...s, [`del_${id}`]: "loading" }));
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/delete`, {
@@ -91,7 +112,6 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       setActionStatus(s => ({ ...s, [`del_${id}`]: "error" }));
     }
   }
-  async function togglePublish(id, currentlyPublished) {
     setActionStatus(s => ({ ...s, [id]: "loading" }));
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/publish`, {
@@ -142,6 +162,37 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
               {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
               {a.published && <span style={{ marginLeft: 8, color: "#2A6B3C", fontWeight: 600 }}>✓ ZVEREJNENÉ</span>}
               {a.deleted && <span style={{ marginLeft: 8, color: "#8B0000", fontWeight: 600 }}>✕ ZMAZANÉ</span>}
+              {a.hasUpdateNotice && <span style={{ marginLeft: 8, color: "#7B5EA7", fontWeight: 600 }}>⚠ AKTUALIZOVANÉ</span>}
+            </div>
+            {/* Update notice form */}
+            {noticeForm[a.id]?.open && (
+              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+                <textarea
+                  placeholder="Text upozornenia (napr. 'Aktualizácia 13.7.: BBC uviedla nové čísla...')"
+                  value={noticeForm[a.id]?.notice || ""}
+                  onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], notice: e.target.value } }))}
+                  rows={2}
+                  style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
+                />
+                <input
+                  placeholder="ID súvisiacej analýzy (voliteľné)"
+                  value={noticeForm[a.id]?.relatedId || ""}
+                  onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], relatedId: e.target.value } }))}
+                  style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
+                />
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button onClick={() => handleUpdateNotice(a.id)}
+                    disabled={!noticeForm[a.id]?.notice || actionStatus[`notice_${a.id}`] === "loading"}
+                    style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#7B5EA7", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
+                    {actionStatus[`notice_${a.id}`] === "loading" ? "…" : actionStatus[`notice_${a.id}`] === "done" ? "✓ ULOŽENÉ" : "ULOŽIŤ UPOZORNENIE"}
+                  </button>
+                  <button onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
+                    style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
+                    ZRUŠIŤ
+                  </button>
+                </div>
+              </div>
+            )}
             </div>
             <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "…" : ""}
@@ -158,6 +209,14 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
                 color: "#fff", opacity: a.deleted ? 0.4 : 1,
               }}>
               {actionStatus[a.id] === "loading" ? "…" : a.published ? "STIAHNUŤ" : "ZVEREJNIŤ"}
+            </button>
+            <button
+              onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
+              style={{
+                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
+                cursor: "pointer", background: "#7B5EA7", color: "#fff",
+              }}>
+              ⚠ AKTUALIZOVAŤ
             </button>
             <button
               onClick={() => toggleDelete(a.id, a.deleted)}

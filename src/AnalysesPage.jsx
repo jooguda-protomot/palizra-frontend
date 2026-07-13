@@ -264,6 +264,22 @@ export default function AnalysesPage() {
                   )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
+
+                {/* Update notice */}
+                {detail.updateNotice && (
+                  <div style={{ marginBottom: 16, padding: "10px 14px", background: "#F5F0FC", border: "1px solid #7B5EA7", borderRadius: 4 }}>
+                    <div style={{ fontSize: 10, fontFamily: "monospace", color: "#7B5EA7", letterSpacing: "0.06em", marginBottom: 4 }}>
+                      ⚠ {lang === "ar" ? "تحديث" : lang === "he" ? "עדכון" : lang === "en" ? "UPDATE" : "AKTUALIZÁCIA"} · {detail.updateNotice.date}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#1F2A24" }}>{detail.updateNotice.text}</div>
+                    {detail.updateNotice.relatedAnalysisId && (
+                      <a href={`/analyses?id=${detail.updateNotice.relatedAnalysisId}`}
+                        style={{ fontSize: 12, color: "#7B5EA7", marginTop: 4, display: "block" }}>
+                        {lang === "ar" ? "← عرض التحليل المحدث" : lang === "he" ? "← צפה בניתוח המעודכן" : lang === "en" ? "← View updated analysis" : "← Zobraziť aktualizovanú analýzu"}
+                      </a>
+                    )}
+                  </div>
+                )}
                 {(() => {
                   // Použi preloženú verziu ak existuje, inak pôvodnú
                   const comparison = detail.translations?.[lang]?.comparison || detail.result?.comparison;
