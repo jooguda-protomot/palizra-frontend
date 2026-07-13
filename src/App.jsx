@@ -280,6 +280,21 @@ export default function ClaimVerifierDemo() {
             >
               {lang === "ar" ? "أرشيف التحليلات" : lang === "he" ? "ארכיון ניתוחים" : lang === "en" ? "ANALYSES ARCHIVE" : "ARCHÍV ANALÝZ"} →
             </a>
+            <a
+              href="mailto:palizra@proton.me"
+              style={{
+                fontSize: 11,
+                fontFamily: "monospace",
+                color: COLORS.inkSoft,
+                textDecoration: "none",
+                letterSpacing: "0.06em",
+                border: `1px solid ${COLORS.line}`,
+                borderRadius: 3,
+                padding: "3px 8px",
+              }}
+            >
+              {lang === "ar" ? "اتصل بنا" : lang === "he" ? "צור קשר" : lang === "en" ? "CONTACT" : "KONTAKT"}
+            </a>
           </div>
         </div>
       </header>
@@ -837,7 +852,16 @@ export default function ClaimVerifierDemo() {
           </p>
 
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_independence")}</h3>
-          <p style={{ marginBottom: 16 }}>{t("about_independence")}</p>
+          <p style={{ marginBottom: 8 }}>{t("about_independence")}</p>
+          <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 8 }}>{t("about_imprint")}</p>
+          <p style={{ fontSize: 13, marginBottom: 8 }}>
+            <strong>{t("about_methodology_version")}</strong>
+            {" · "}
+            <strong>{t("about_source_review_date")}</strong>
+          </p>
+          <p style={{ fontSize: 13, marginBottom: 16 }}>
+            <a href="/corrections" style={{ color: COLORS.ink }}>→ {t("about_corrections_link")}</a>
+          </p>
         </div>
       )}
 
