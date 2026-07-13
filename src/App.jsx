@@ -210,6 +210,7 @@ export default function ClaimVerifierDemo() {
 
   return (
     <div
+      className="cv-root"
       dir={isRTL ? "rtl" : "ltr"}
       lang={lang}
       style={{
@@ -223,6 +224,12 @@ export default function ClaimVerifierDemo() {
       <style>{`
         @media (max-width: 640px) {
           .cv-grid { grid-template-columns: 1fr !important; }
+          .cv-header { flex-direction: column !important; gap: 12px !important; }
+          .cv-header-right { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+          .cv-lang-row { flex-wrap: wrap !important; }
+          .cv-tabs { flex-wrap: wrap !important; gap: 4px !important; }
+          .cv-root { padding: 16px 12px !important; }
+          .cv-textarea { font-size: 16px !important; }
         }
         .cv-btn:focus-visible, .cv-claim:focus-visible {
           outline: 2px solid ${COLORS.ink};
@@ -231,7 +238,7 @@ export default function ClaimVerifierDemo() {
       `}</style>
 
       <header style={{ marginBottom: 28, borderBottom: `1px solid ${COLORS.line}`, paddingBottom: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div className="cv-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace" }}>
               {t("module_label")}
@@ -243,8 +250,8 @@ export default function ClaimVerifierDemo() {
               {t("app_subtitle")}
             </p>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0, marginTop: 4 }}>
-            <div style={{ display: "flex", gap: 4 }}>
+          <div className="cv-header-right" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0, marginTop: 4 }}>
+            <div className="cv-lang-row" style={{ display: "flex", gap: 4 }}>
             {["sk", "en", "ar", "he"].map((l) => (
               <button
                 key={l}
@@ -299,7 +306,7 @@ export default function ClaimVerifierDemo() {
         </div>
       </header>
 
-      <div style={{ display: "flex", gap: 6, marginBottom: 22 }}>
+      <div className="cv-tabs" style={{ display: "flex", gap: 6, marginBottom: 22 }}>
         {[
           { id: "text", label: t("tab_text"), icon: FileText },
           { id: "image", label: t("tab_image"), icon: ImageIcon },
@@ -339,6 +346,7 @@ export default function ClaimVerifierDemo() {
       <>
       <div style={{ marginBottom: 20 }}>
         <textarea
+          className="cv-textarea"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           rows={5}
