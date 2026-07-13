@@ -975,6 +975,30 @@ export default function ClaimVerifierDemo() {
               ar: "تحسينات أمنية: تحديد معدل صارم لنقاط نهاية المسؤول، والتحقق من صحة نص الإدخال.",
               he: "שיפורי אבטחה: הגבלת קצב קפדנית לנקודות קצה של מנהל, אימות טקסט קלט.",
             },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Pridaná stránka opráv palizra.org/corrections – verejný záznam opráv chýb v súlade s požiadavkami IFCN na corrections policy.",
+              en: "Added corrections page palizra.org/corrections – a public record of error corrections in accordance with IFCN corrections policy requirements.",
+              ar: "تمت إضافة صفحة التصحيحات palizra.org/corrections وفقاً لمتطلبات IFCN.",
+              he: "נוספה דף תיקונים palizra.org/corrections בהתאם לדרישות IFCN.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Zavedená verzia metodológie (v1.0) a dátum revízie zdrojov – viditeľné v sekcii O nástroji pre plnú transparentnosť.",
+              en: "Introduced methodology version (v1.0) and source list review date – visible in the About section for full transparency.",
+              ar: "تم تقديم إصدار المنهجية (v1.0) وتاريخ مراجعة المصادر.",
+              he: "הוצגה גרסת מתודולוגיה (v1.0) ותאריך סקירת מקורות.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Doplnený Imprint – meno autora, kontakt a krajina pôvodu viditeľné v sekcii O nástroji (požiadavka európskych mediálnych štandardov).",
+              en: "Added Imprint – author name, contact and country of origin visible in the About section (requirement of European media standards).",
+              ar: "تمت إضافة بيانات الناشر في قسم 'حول الأداة'.",
+              he: "נוספה רשומת מוציא לאור בסעיף 'אודות הכלי'.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
