@@ -71,7 +71,7 @@ export const translations = {
     feedback_error: "Odoslanie zlyhalo, sk\u00fas to znova.",
     about_updated: "Posledn\u00e1 aktualiz\u00e1cia tejto str\u00e1nky:",
     about_h_what: "\u010co tento n\u00e1stroj rob\u00ed",
-    about_what: "N\u00e1stroj rozklad\u00e1 text alebo obr\u00e1zky s\u00favisiace s izraelsko-palest\u00ednsk\u00fdm konfliktom na overite\u013en\u00e9 jednotky. N\u00e1stroj z\u00e1merne nevyd\u00e1va jedn oduch\u00e9 verdikty. Toto je z\u00e1mern\u00e9 rozhodnutie \u2014 pri tomto konflikte je bin\u00e1rny verdikt \u010dasto zavadz\u00e1j\u00faci.",
+    about_what: "N\u00e1stroj rozklad\u00e1 text alebo obr\u00e1zky s\u00favisiace s izraelsko-palest\u00ednsk\u00fdm konfliktom na overite\u013en\u00e9 jednotky. N\u00e1stroj z\u00e1merne nevyd\u00e1va jednoduch\u00e9 verdikty. Toto je z\u00e1mern\u00e9 rozhodnutie \u2014 pri tomto konflikte je bin\u00e1rny verdikt \u010dasto zavadz\u00e1j\u00faci.",
     about_h_how: "Ako to funguje",
     about_how_1: "Text sa rozlo\u017e\u00ed na jednotky typu: overite\u013en\u00fd fakt, cit\u00e1cia/v\u00fdrok, interpret\u00e1cia, neoversite\u013en\u00e9.",
     about_how_2: "Pre overite\u013en\u00e9 fakty sa spust\u00ed vyh\u013ead\u00e1vanie v kur\u00e1torovanom zozname zdrojov.",
