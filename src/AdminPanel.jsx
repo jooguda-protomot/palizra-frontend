@@ -165,8 +165,8 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
                 {a.deleted && <span style={{ marginLeft: 8, color: "#8B0000", fontWeight: 600 }}>ZMAZANE</span>}
                 {a.hasUpdateNotice && <span style={{ marginLeft: 8, color: "#7B5EA7", fontWeight: 600 }}>AKTUALIZOVANE</span>}
               </div>
-              <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.line, marginBottom: 3, userSelect: "all" }}>
-                ID: {a.id}
+              <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.line, marginBottom: 3 }}>
+                ID: <span style={{ userSelect: "all" }}>{a.id}</span>
               </div>
               <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "..." : ""}
