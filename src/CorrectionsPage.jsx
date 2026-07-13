@@ -111,10 +111,8 @@ export default function CorrectionsPage() {
         <div>
           <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.inkSoft, fontFamily: "monospace" }}>{u.subtitle}</div>
           <h1 style={{ fontSize: 26, fontWeight: 600, margin: "6px 0 4px" }}>{u.title}</h1>
-          <p style={{ fontSize: 14, color: COLORS.inkSoft, margin: 0 }}>
-            {u.desc}
-            <a href={`/?lang=${lang}`} style={{ marginLeft: 12, color: COLORS.inkSoft, fontSize: 13 }}>{u.back}</a>
-          </p>
+          <p style={{ fontSize: 14, color: COLORS.inkSoft, margin: "0 0 6px" }}>{u.desc}</p>
+          <a href={`/?lang=${lang}`} style={{ fontSize: 13, color: COLORS.inkSoft }}>{u.back}</a>
         </div>
         <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
           {["sk","en","ar","he"].map(l => (
