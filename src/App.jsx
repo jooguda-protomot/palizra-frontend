@@ -919,6 +919,38 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة آلية الإبلاغ عن الأخطاء.",
               he: "נוספה מנגנון דיווח על שגיאות.",
             },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Spustený verejný archív analýz na palizra.org/analyses – analýzy kategorizované podľa lokality, kategórie a jazyka.",
+              en: "Launched public analyses archive at palizra.org/analyses – analyses categorised by location, category and language.",
+              ar: "تم إطلاق أرشيف التحليلات العام على palizra.org/analyses.",
+              he: "הושק ארכיון ניתוחים ציבורי בכתובת palizra.org/analyses.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Vlastná doména palizra.org – nástroj dostupný na profesionálnej doméne namiesto pôvodnej Vercel URL.",
+              en: "Custom domain palizra.org – tool available at a professional domain instead of the original Vercel URL.",
+              ar: "نطاق مخصص palizra.org.",
+              he: "דומיין מותאם אישית palizra.org.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Zavedený systém aktualizačných upozornení – zverejnené analýzy môžu byť označené upozornením ak sa nové informácie líšia od pôvodných, s odkazom na aktualizovanú analýzu.",
+              en: "Introduced update notice system – published analyses can be flagged with a notice if new information differs from the original, with a link to the updated analysis.",
+              ar: "تم إدخال نظام إشعارات التحديث للتحليلات المنشورة.",
+              he: "הוצג מערכת הודעות עדכון לניתוחים שפורסמו.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "fix",
+              sk: "Bezpečnostné vylepšenia: prísny rate limiting pre admin endpointy (5 req/15 min), validácia vstupného textu (max 5000 znakov, blokovanie škodlivého obsahu).",
+              en: "Security improvements: strict rate limiting for admin endpoints (5 req/15 min), input text validation (max 5,000 characters, blocking malicious content).",
+              ar: "تحسينات أمنية: تحديد معدل صارم لنقاط نهاية المسؤول، والتحقق من صحة نص الإدخال.",
+              he: "שיפורי אבטחה: הגבלת קצב קפדנית לנקודות קצה של מנהל, אימות טקסט קלט.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
