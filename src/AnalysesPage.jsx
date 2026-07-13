@@ -122,8 +122,9 @@ const UI = {
 };
 
 export default function AnalysesPage() {
-  // Jazyk z URL query stringu, napr. /analyses?lang=en
-  const urlLang = new URLSearchParams(window.location.search).get("lang") || "en";
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get("lang") || "en";
+  const urlId = urlParams.get("id") || null;
   const [lang, setLang] = useState(["sk","en","ar","he"].includes(urlLang) ? urlLang : "en");
   const u = UI[lang] || UI.en;
   const isRTL = lang === "ar" || lang === "he";
@@ -165,6 +166,14 @@ export default function AnalysesPage() {
   }
 
   useEffect(() => { fetchAnalyses(); }, [page, filters]);
+
+  // Ak je v URL ?id=..., automaticky vyber tú analýzu
+  useEffect(() => {
+    if (urlId) {
+      setSelected(urlId);
+      fetchDetail(urlId);
+    }
+  }, [urlId]);
 
   function handleFilter(key, value) {
     const allLabel = u.all;
