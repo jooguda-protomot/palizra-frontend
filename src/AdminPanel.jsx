@@ -93,6 +93,7 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       setActionStatus(s => ({ ...s, [`notice_${id}`]: "error" }));
     }
   }
+  async function toggleDelete(id, currentlyDeleted) {
     setActionStatus(s => ({ ...s, [`del_${id}`]: "loading" }));
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/delete`, {
