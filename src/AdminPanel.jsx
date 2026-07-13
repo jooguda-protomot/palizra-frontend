@@ -18,12 +18,11 @@ function parseCSV(text) {
   if (lines.length < 2) return [];
   const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
   return lines.slice(1).map(line => {
-    // Jednoduchý CSV parser - rešpektuje úvodzovky
     const values = [];
     let current = "";
     let inQuotes = false;
     for (const ch of line) {
-      if (ch === '"' || ch === '„' || ch === '“' || ch === '‘' || ch === '’') { inQuotes = !inQuotes; }
+      if (ch === '"' || ch === '\u201e' || ch === '\u201c' || ch === '\u2018' || ch === '\u2019') { inQuotes = !inQuotes; }
       else if (ch === "," && !inQuotes) { values.push(current.trim()); current = ""; }
       else { current += ch; }
     }
@@ -32,11 +31,12 @@ function parseCSV(text) {
   }).filter(r => r.url);
 }
 
-function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
+function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
   const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionStatus, setActionStatus] = useState({});
   const [translateStatus, setTranslateStatus] = useState("idle");
+  const [noticeForm, setNoticeForm] = useState({});
 
   async function handleTranslateAll(force = false) {
     if (!adminKey) return;
@@ -57,21 +57,17 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
     if (!adminKey) return;
     setLoading(true);
     try {
-      // Admin vidí všetky analýzy – použijeme index endpoint s veľkým limitom
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses`, {
         headers: { "x-admin-key": adminKey }
       });
       const data = await res.json();
-      // Načítame aj nepublikované – zobrazíme všetky
       setAnalyses(data.analyses || []);
     } catch (err) {
-      console.error("Chyba pri načítaní analýz:", err);
+      console.error("Chyba pri nacitani analyzz:", err);
     } finally {
       setLoading(false);
     }
   }
-
-  const [noticeForm, setNoticeForm] = useState({});
 
   async function handleUpdateNotice(id) {
     const form = noticeForm[id];
@@ -93,6 +89,7 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       setActionStatus(s => ({ ...s, [`notice_${id}`]: "error" }));
     }
   }
+
   async function toggleDelete(id, currentlyDeleted) {
     setActionStatus(s => ({ ...s, [`del_${id}`]: "loading" }));
     try {
@@ -113,6 +110,7 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       setActionStatus(s => ({ ...s, [`del_${id}`]: "error" }));
     }
   }
+
   async function togglePublish(id, currentlyPublished) {
     setActionStatus(s => ({ ...s, [id]: "loading" }));
     try {
@@ -134,104 +132,92 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
   return (
     <div style={{ marginTop: 40, borderTop: `2px solid ${COLORS.ink}`, paddingTop: 24 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <div style={{ fontSize: 14, fontWeight: 600 }}>Správa analýz</div>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>Sprava analyzz</div>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => handleTranslateAll(false)} disabled={!adminKey || translateStatus === "loading"}
             style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: "#5A6B60", color: "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
-            {translateStatus === "loading" ? "PREKLADÁM…" : translateStatus === "done" ? "✓ SPUSTENÉ" : "PRELOŽIŤ NOVÉ"}
+            {translateStatus === "loading" ? "PREKLADAM..." : translateStatus === "done" ? "SPUSTENE" : "PRELOZIT NOVE"}
           </button>
           <button onClick={() => handleTranslateAll(true)} disabled={!adminKey || translateStatus === "loading"}
             style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: "#8B4513", color: "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
-            PRELOŽIŤ ZNOVA (VŠETKY)
+            PRELOZIT ZNOVA (VSETKY)
           </button>
           <button onClick={loadAnalyses} disabled={!adminKey || loading}
-            style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
-            {loading ? "NAČÍTAVAM…" : "NAČÍTAŤ ANALÝZY"}
+            style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.bg, border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+            {loading ? "NACITAVAM..." : "NACITAT ANALYZY"}
           </button>
         </div>
       </div>
 
       {analyses.length === 0 && !loading && (
         <div style={{ fontSize: 13, color: COLORS.inkSoft }}>
-          {adminKey ? "Klikni na NAČÍTAŤ ANALÝZY." : "Najprv zadaj admin kľúč vyššie."}
+          {adminKey ? "Klikni na NACITAT ANALYZY." : "Najprv zadaj admin kluc vysie."}
         </div>
       )}
 
       {analyses.map(a => (
-        <div key={a.id} style={{ padding: "10px 12px", marginBottom: 8, border: `1px solid ${COLORS.line}`, borderRadius: 4, background: a.published ? "#f0faf3" : "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>
-              {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
-              {a.published && <span style={{ marginLeft: 8, color: "#2A6B3C", fontWeight: 600 }}>✓ ZVEREJNENÉ</span>}
-              {a.deleted && <span style={{ marginLeft: 8, color: "#8B0000", fontWeight: 600 }}>✕ ZMAZANÉ</span>}
-              {a.hasUpdateNotice && <span style={{ marginLeft: 8, color: "#7B5EA7", fontWeight: 600 }}>⚠ AKTUALIZOVANÉ</span>}
-            </div>
-            {/* Update notice form */}
-            {noticeForm[a.id]?.open && (
-              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-                <textarea
-                  placeholder="Text upozornenia (napr. 'Aktualizácia 13.7.: BBC uviedla nové čísla...')"
-                  value={noticeForm[a.id]?.notice || ""}
-                  onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], notice: e.target.value } }))}
-                  rows={2}
-                  style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
-                />
-                <input
-                  placeholder="ID súvisiacej analýzy (voliteľné)"
-                  value={noticeForm[a.id]?.relatedId || ""}
-                  onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], relatedId: e.target.value } }))}
-                  style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
-                />
-                <div style={{ display: "flex", gap: 6 }}>
-                  <button onClick={() => handleUpdateNotice(a.id)}
-                    disabled={!noticeForm[a.id]?.notice || actionStatus[`notice_${a.id}`] === "loading"}
-                    style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#7B5EA7", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
-                    {actionStatus[`notice_${a.id}`] === "loading" ? "…" : actionStatus[`notice_${a.id}`] === "done" ? "✓ ULOŽENÉ" : "ULOŽIŤ UPOZORNENIE"}
-                  </button>
-                  <button onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
-                    style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
-                    ZRUŠIŤ
-                  </button>
-                </div>
+        <div key={a.id} style={{ padding: "10px 12px", marginBottom: 8, border: `1px solid ${COLORS.line}`, borderRadius: 4, background: a.deleted ? "#fff0f0" : a.published ? "#f0faf3" : "#fff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>
+                {a.date} · {a.location} · {a.category} · {a.lang?.toUpperCase()}
+                {a.published && <span style={{ marginLeft: 8, color: "#2A6B3C", fontWeight: 600 }}>ZVEREJNENE</span>}
+                {a.deleted && <span style={{ marginLeft: 8, color: "#8B0000", fontWeight: 600 }}>ZMAZANE</span>}
+                {a.hasUpdateNotice && <span style={{ marginLeft: 8, color: "#7B5EA7", fontWeight: 600 }}>AKTUALIZOVANE</span>}
               </div>
-            )}
+              <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "..." : ""}
+              </div>
             </div>
-            <div style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {a.claim_text?.slice(0, 100)}{a.claim_text?.length > 100 ? "…" : ""}
+            <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => togglePublish(a.id, a.published)}
+                disabled={a.deleted || actionStatus[a.id] === "loading"}
+                style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: a.deleted ? "not-allowed" : "pointer", background: a.published ? COLORS.error : COLORS.success, color: "#fff", opacity: a.deleted ? 0.4 : 1 }}>
+                {actionStatus[a.id] === "loading" ? "..." : a.published ? "STIAHNÚT" : "ZVEREJNIT"}
+              </button>
+              <button
+                onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
+                style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: "#7B5EA7", color: "#fff" }}>
+                AKTUALIZOVAT
+              </button>
+              <button
+                onClick={() => toggleDelete(a.id, a.deleted)}
+                disabled={actionStatus[`del_${a.id}`] === "loading"}
+                style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: a.deleted ? "#5A6B60" : "#8B0000", color: "#fff" }}>
+                {actionStatus[`del_${a.id}`] === "loading" ? "..." : a.deleted ? "OBNOVIT" : "ZMAZAT"}
+              </button>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-            <button
-              onClick={() => togglePublish(a.id, a.published)}
-              disabled={a.deleted || actionStatus[a.id] === "loading"}
-              style={{
-                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
-                cursor: a.deleted ? "not-allowed" : "pointer",
-                background: a.published ? COLORS.error : COLORS.success,
-                color: "#fff", opacity: a.deleted ? 0.4 : 1,
-              }}>
-              {actionStatus[a.id] === "loading" ? "…" : a.published ? "STIAHNUŤ" : "ZVEREJNIŤ"}
-            </button>
-            <button
-              onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
-              style={{
-                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
-                cursor: "pointer", background: "#7B5EA7", color: "#fff",
-              }}>
-              ⚠ AKTUALIZOVAŤ
-            </button>
-            <button
-              onClick={() => toggleDelete(a.id, a.deleted)}
-              disabled={actionStatus[`del_${a.id}`] === "loading"}
-              style={{
-                fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none",
-                cursor: "pointer",
-                background: a.deleted ? "#5A6B60" : "#8B0000",
-                color: "#fff",
-              }}>
-              {actionStatus[`del_${a.id}`] === "loading" ? "…" : a.deleted ? "OBNOVIŤ" : "ZMAZAŤ"}
-            </button>
-          </div>
+
+          {noticeForm[a.id]?.open && (
+            <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+              <textarea
+                placeholder="Text upozornenia (napr. Aktualizacia 13.7.: BBC uviedla nove cisla...)"
+                value={noticeForm[a.id]?.notice || ""}
+                onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], notice: e.target.value } }))}
+                rows={2}
+                style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
+              />
+              <input
+                placeholder="ID suvisiacej analyzy (volitelne)"
+                value={noticeForm[a.id]?.relatedId || ""}
+                onChange={e => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], relatedId: e.target.value } }))}
+                style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
+              />
+              <div style={{ display: "flex", gap: 6 }}>
+                <button onClick={() => handleUpdateNotice(a.id)}
+                  disabled={!noticeForm[a.id]?.notice || actionStatus[`notice_${a.id}`] === "loading"}
+                  style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#7B5EA7", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
+                  {actionStatus[`notice_${a.id}`] === "loading" ? "..." : actionStatus[`notice_${a.id}`] === "done" ? "ULOZENE" : "ULOZIT UPOZORNENIE"}
+                </button>
+                <button onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
+                  style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
+                  ZRUSIT
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -263,8 +249,8 @@ export default function AdminPanel() {
   }
 
   async function handleImport() {
-    if (!adminKey.trim()) { setStatus({ type: "error", msg: "Zadaj admin kľúč." }); return; }
-    if (parsed.length === 0) { setStatus({ type: "error", msg: "Žiadne záznamy na import." }); return; }
+    if (!adminKey.trim()) { setStatus({ type: "error", msg: "Zadaj admin kluc." }); return; }
+    if (parsed.length === 0) { setStatus({ type: "error", msg: "Ziadne zaznamy na import." }); return; }
     setLoading(true);
     setStatus(null);
     try {
@@ -280,7 +266,7 @@ export default function AdminPanel() {
       if (!res.ok) {
         setStatus({ type: "error", msg: data.error || `HTTP ${res.status}` });
       } else {
-        setStatus({ type: "success", msg: `Importované: ${data.added} obrázkov. Preskočené: ${data.skipped}. Chyby: ${data.errors?.length || 0}.`, errors: data.errors });
+        setStatus({ type: "success", msg: `Importovane: ${data.added} obrazkov. Preskocene: ${data.skipped}. Chyby: ${data.errors?.length || 0}.`, errors: data.errors });
       }
     } catch (err) {
       setStatus({ type: "error", msg: err.message });
@@ -289,50 +275,48 @@ export default function AdminPanel() {
     }
   }
 
-  const s = (style) => style;
-
   return (
-    <div style={s({ maxWidth: 720, margin: "40px auto", padding: "24px", fontFamily: "monospace", background: COLORS.bg, color: COLORS.ink, minHeight: "100vh" })}>
-      <h1 style={s({ fontSize: 22, fontWeight: 700, marginBottom: 4 })}>Palizra Analyzator</h1>
-      <div style={s({ fontSize: 12, color: COLORS.inkSoft, marginBottom: 28, borderBottom: `1px solid ${COLORS.line}`, paddingBottom: 14 })}>ADMIN PANEL · ARCHÍVNA DATABÁZA</div>
+    <div style={{ maxWidth: 720, margin: "40px auto", padding: "24px", fontFamily: "monospace", background: COLORS.bg, color: COLORS.ink, minHeight: "100vh" }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Palizra Analyzator</h1>
+      <div style={{ fontSize: 12, color: COLORS.inkSoft, marginBottom: 28, borderBottom: `1px solid ${COLORS.line}`, paddingBottom: 14 }}>ADMIN PANEL</div>
 
-      <div style={s({ marginBottom: 20 })}>
-        <label style={s({ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 })}>ADMIN KĽÚČ</label>
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 }}>ADMIN KLUC</label>
         <input
           type="password"
           value={adminKey}
           onChange={e => setAdminKey(e.target.value)}
           placeholder="Zadaj ADMIN_KEY z Railway Variables..."
-          style={s({ width: "100%", padding: "8px 12px", fontFamily: "monospace", fontSize: 13, border: `1px solid ${COLORS.line}`, borderRadius: 4, boxSizing: "border-box", background: "#fff" })}
+          style={{ width: "100%", padding: "8px 12px", fontFamily: "monospace", fontSize: 13, border: `1px solid ${COLORS.line}`, borderRadius: 4, boxSizing: "border-box", background: "#fff" }}
         />
       </div>
 
-      <div style={s({ marginBottom: 8 })}>
-        <label style={s({ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 })}>CSV SÚBOR</label>
-        <input type="file" accept=".csv" onChange={handleFileUpload} style={s({ marginBottom: 8, fontSize: 13 })} />
+      <div style={{ marginBottom: 8 }}>
+        <label style={{ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 }}>CSV SUBOR</label>
+        <input type="file" accept=".csv" onChange={handleFileUpload} style={{ marginBottom: 8, fontSize: 13 }} />
       </div>
 
-      <div style={s({ marginBottom: 8 })}>
-        <label style={s({ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 })}>ALEBO VLOŽ CSV TEXT</label>
+      <div style={{ marginBottom: 8 }}>
+        <label style={{ fontSize: 11, letterSpacing: "0.08em", color: COLORS.inkSoft, display: "block", marginBottom: 6 }}>ALEBO VLOZ CSV TEXT</label>
         <textarea
           value={csvText}
           onChange={handleTextChange}
           rows={6}
-          placeholder={"url,context,date,source\nhttps://example.com/image.jpg,\"Popis obrázka\",2023-10-07,Bellingcat"}
-          style={s({ width: "100%", fontFamily: "monospace", fontSize: 12, padding: "8px 12px", border: `1px solid ${COLORS.line}`, borderRadius: 4, boxSizing: "border-box", resize: "vertical", background: "#fff" })}
+          placeholder={"url,context,date,source\nhttps://example.com/image.jpg,\"Popis obrazka\",2023-10-07,Bellingcat"}
+          style={{ width: "100%", fontFamily: "monospace", fontSize: 12, padding: "8px 12px", border: `1px solid ${COLORS.line}`, borderRadius: 4, boxSizing: "border-box", resize: "vertical", background: "#fff" }}
         />
       </div>
 
       {parsed.length > 0 && (
-        <div style={s({ marginBottom: 16, padding: "10px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, fontSize: 13 })}>
-          <strong>{parsed.length} záznamov pripravených na import:</strong>
-          <div style={s({ marginTop: 8, maxHeight: 200, overflowY: "auto" })}>
+        <div style={{ marginBottom: 16, padding: "10px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, fontSize: 13 }}>
+          <strong>{parsed.length} zaznamov pripravených na import:</strong>
+          <div style={{ marginTop: 8, maxHeight: 200, overflowY: "auto" }}>
             {parsed.slice(0, 10).map((r, i) => (
-              <div key={i} style={s({ fontSize: 11, color: COLORS.inkSoft, marginBottom: 2 })}>
+              <div key={i} style={{ fontSize: 11, color: COLORS.inkSoft, marginBottom: 2 }}>
                 {i + 1}. {r.url?.slice(0, 60)}... {r.date ? `(${r.date})` : ""}
               </div>
             ))}
-            {parsed.length > 10 && <div style={s({ fontSize: 11, color: COLORS.inkSoft })}>... a ďalších {parsed.length - 10}</div>}
+            {parsed.length > 10 && <div style={{ fontSize: 11, color: COLORS.inkSoft }}>... a dalsich {parsed.length - 10}</div>}
           </div>
         </div>
       )}
@@ -340,7 +324,7 @@ export default function AdminPanel() {
       <button
         onClick={handleImport}
         disabled={loading || parsed.length === 0 || !adminKey}
-        style={s({
+        style={{
           background: loading || parsed.length === 0 || !adminKey ? COLORS.inkSoft : COLORS.ink,
           color: COLORS.bg,
           border: "none",
@@ -350,13 +334,13 @@ export default function AdminPanel() {
           fontSize: 13,
           cursor: loading || parsed.length === 0 || !adminKey ? "not-allowed" : "pointer",
           letterSpacing: "0.06em",
-        })}
+        }}
       >
-        {loading ? "IMPORTUJEM…" : `IMPORTOVAŤ ${parsed.length > 0 ? `(${parsed.length})` : ""}`}
+        {loading ? "IMPORTUJEM..." : `IMPORTOVAT ${parsed.length > 0 ? `(${parsed.length})` : ""}`}
       </button>
 
       {status && (
-        <div style={s({
+        <div style={{
           marginTop: 16,
           padding: "12px 16px",
           borderRadius: 4,
@@ -364,25 +348,23 @@ export default function AdminPanel() {
           border: `1px solid ${status.type === "success" ? COLORS.success : COLORS.error}`,
           fontSize: 13,
           color: status.type === "success" ? COLORS.success : COLORS.error,
-        })}>
+        }}>
           {status.msg}
           {status.errors?.length > 0 && (
-            <div style={s({ marginTop: 8, fontSize: 11 })}>
-              {status.errors.map((e, i) => <div key={i}>⚠ {e.url?.slice(0, 50)} – {e.error}</div>)}
+            <div style={{ marginTop: 8, fontSize: 11 }}>
+              {status.errors.map((e, i) => <div key={i}>{e.url?.slice(0, 50)} - {e.error}</div>)}
             </div>
           )}
         </div>
       )}
 
-      <div style={s({ marginTop: 40, fontSize: 11, color: COLORS.inkSoft, borderTop: `1px solid ${COLORS.line}`, paddingTop: 14 })}>
-        <strong>Formát CSV:</strong><br/>
+      <div style={{ marginTop: 40, fontSize: 11, color: COLORS.inkSoft, borderTop: `1px solid ${COLORS.line}`, paddingTop: 14 }}>
+        <strong>Format CSV:</strong><br/>
         <code>url,context,date,source</code><br/>
-        <code>https://example.com/img.jpg,"Popis kontextu",2023-10-07,Bellingcat</code><br/><br/>
-        Stĺpce <code>context</code>, <code>date</code> a <code>source</code> sú voliteľné. Povinný je len <code>url</code>.
+        <code>https://example.com/img.jpg,"Popis kontextu",2023-10-07,Bellingcat</code>
       </div>
 
-      {/* Správa analýz */}
-      <AnalysesManager adminKey={adminKey} s={s} COLORS={COLORS} API_BASE_URL={API_BASE_URL} />
+      <AnalysesManager adminKey={adminKey} COLORS={COLORS} API_BASE_URL={API_BASE_URL} />
     </div>
   );
 }
