@@ -91,6 +91,7 @@ function AnalysesManager({ adminKey, s, COLORS, API_BASE_URL }) {
       setActionStatus(s => ({ ...s, [`del_${id}`]: "error" }));
     }
   }
+  async function togglePublish(id, currentlyPublished) {
     setActionStatus(s => ({ ...s, [id]: "loading" }));
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/publish`, {
