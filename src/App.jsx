@@ -1121,20 +1121,29 @@ async function saveAnalysisViaBackend({ claimText, type, location, category, lan
 }
 
 const LOCATION_OPTIONS = [
-  { value: "Gaza",       label: { sk: "Gaza",          en: "Gaza",        ar: "غزة",              he: "עזה" } },
-  { value: "Lebanon",    label: { sk: "Libanon",       en: "Lebanon",     ar: "لبنان",            he: "לבנון" } },
-  { value: "Syria",      label: { sk: "Sýria",         en: "Syria",       ar: "سوريا",            he: "סוריה" } },
-  { value: "Israel",     label: { sk: "Izrael",        en: "Israel",      ar: "إسرائيل",          he: "ישראל" } },
-  { value: "West Bank",  label: { sk: "Západný breh",  en: "West Bank",   ar: "الضفة الغربية",   he: "הגדה המערבית" } },
-  { value: "Other",      label: { sk: "Iné",           en: "Other",       ar: "أخرى",             he: "אחר" } },
+  { value: "Gaza",          label: { sk: "Gaza",               en: "Gaza",              ar: "غزة",              he: "עזה" } },
+  { value: "West Bank",     label: { sk: "Západný breh",       en: "West Bank",         ar: "الضفة الغربية",   he: "הגדה המערבית" } },
+  { value: "Israel",        label: { sk: "Izrael",             en: "Israel",            ar: "إسرائيل",          he: "ישראל" } },
+  { value: "Lebanon",       label: { sk: "Libanon",            en: "Lebanon",           ar: "لبنان",            he: "לבנון" } },
+  { value: "Syria",         label: { sk: "Sýria",              en: "Syria",             ar: "سوريا",            he: "סוריה" } },
+  { value: "Iran",          label: { sk: "Irán",               en: "Iran",              ar: "إيران",            he: "איראן" } },
+  { value: "Yemen",         label: { sk: "Jemen",              en: "Yemen",             ar: "اليمن",            he: "תימן" } },
+  { value: "Egypt",         label: { sk: "Egypt",              en: "Egypt",             ar: "مصر",              he: "מצרים" } },
+  { value: "Jordan",        label: { sk: "Jordánsko",          en: "Jordan",            ar: "الأردن",           he: "ירדן" } },
+  { value: "International", label: { sk: "OSN/Medzinarodne",   en: "UN/International",  ar: "دولي/الأمم المتحدة", he: "בינלאומי/האום" } },
+  { value: "Other",         label: { sk: "Iné",                en: "Other",             ar: "أخرى",             he: "אחר" } },
 ];
 
 const CATEGORY_OPTIONS = [
-  { value: "casualties",     label: { sk: "obete",          en: "casualties",     ar: "ضحايا",        he: "נפגעים" } },
-  { value: "infrastructure", label: { sk: "infraštruktúra", en: "infrastructure", ar: "بنية تحتية",  he: "תשתיות" } },
-  { value: "diplomatic",     label: { sk: "diplomatické",   en: "diplomatic",     ar: "دبلوماسي",     he: "דיפלומטי" } },
-  { value: "image",          label: { sk: "obrázok",        en: "image",          ar: "صورة",          he: "תמונה" } },
-  { value: "other",          label: { sk: "iné",            en: "other",          ar: "أخرى",          he: "אחר" } },
+  { value: "casualties",     label: { sk: "Obete a straty",           en: "Casualties",              ar: "ضحايا وخسائر",        he: "נפגעים ואבידות" } },
+  { value: "attacks",        label: { sk: "Útoky a operácie",         en: "Attacks & operations",    ar: "هجمات وعمليات",       he: "תקיפות ומבצעים" } },
+  { value: "infrastructure", label: { sk: "Infraštruktúra a pomoc",   en: "Infrastructure & aid",    ar: "بنية تحتية ومساعدات", he: "תשתיות וסיוע" } },
+  { value: "diplomatic",     label: { sk: "Diplomatické vyhlásenia",  en: "Diplomatic statements",   ar: "تصريحات دبلوماسية",   he: "הצהרות דיפלומטיות" } },
+  { value: "military",       label: { sk: "Vojenské tvrdenia",        en: "Military claims",         ar: "ادعاءات عسكرية",      he: "טענות צבאיות" } },
+  { value: "media",          label: { sk: "Médiá a dezinformácie",    en: "Media & disinformation",  ar: "إعلام ومعلومات مضللة", he: "מדיה ודיסאינפורמציה" } },
+  { value: "image",          label: { sk: "Obrázok/Video",            en: "Image/Video",             ar: "صورة/فيديو",           he: "תמונה/וידאו" } },
+  { value: "statistics",     label: { sk: "Čísla a štatistiky",       en: "Numbers & statistics",    ar: "أرقام وإحصاءات",      he: "מספרים וסטטיסטיקות" } },
+  { value: "other",          label: { sk: "Iné",                      en: "Other",                   ar: "أخرى",                he: "אחר" } },
 ];
 
 function SaveAnalysisButton({ claimText, type, lang, result, t }) {
