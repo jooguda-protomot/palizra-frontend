@@ -118,6 +118,7 @@ export default function ClaimVerifierDemo() {
   const [selectedClaimId, setSelectedClaimId] = useState(null);
   const [comparison, setComparison] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
   const [error, setError] = useState(null);
 
   // Obrazové overenie
@@ -126,7 +127,34 @@ export default function ClaimVerifierDemo() {
   const [claimedContext, setClaimedContext] = useState("");
   const [imageAnalysis, setImageAnalysis] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
+  const [imageLoadingMsg, setImageLoadingMsg] = useState("");
   const [imageError, setImageError] = useState(null);
+
+  // Progresívne loading správy
+  const TEXT_LOADING_MSGS = {
+    sk: ["Rozkladám tvrdenia…", "Kontrolujem konzistentnosť…", "Vyhľadávam zdroje…", "Porovnávam zdroje…", "Dokončujem analýzu…"],
+    en: ["Breaking down claims…", "Checking consistency…", "Searching sources…", "Comparing sources…", "Finishing analysis…"],
+    ar: ["تحليل الادعاءات…", "فحص الاتساق…", "البحث في المصادر…", "مقارنة المصادر…", "إنهاء التحليل…"],
+    he: ["מפרק טענות…", "בודק עקביות…", "מחפש מקורות…", "משווה מקורות…", "מסיים ניתוח…"],
+  };
+  const IMAGE_LOADING_MSGS = {
+    sk: ["Nahrávam obrázok…", "Analyzujem vizuálny obsah…", "Hľadám podobné obrázky…", "Overujem geolokáciu…", "Dokončujem overenie…"],
+    en: ["Uploading image…", "Analyzing visual content…", "Searching for similar images…", "Verifying geolocation…", "Finishing verification…"],
+    ar: ["رفع الصورة…", "تحليل المحتوى المرئي…", "البحث عن صور مماثلة…", "التحقق من الموقع…", "إنهاء التحقق…"],
+    he: ["מעלה תמונה…", "מנתח תוכן חזותי…", "מחפש תמונות דומות…", "מאמת מיקום…", "מסיים אימות…"],
+  };
+
+  function startProgressMsgs(msgs, setMsg, intervalRef) {
+    let i = 0;
+    setMsg(msgs[0]);
+    intervalRef.current = setInterval(() => {
+      i = Math.min(i + 1, msgs.length - 1);
+      setMsg(msgs[i]);
+    }, 4000);
+  }
+
+  const textProgressRef = React.useRef(null);
+  const imageProgressRef = React.useRef(null);
 
   function handleImageUpload(e) {
     const file = e.target.files?.[0];
@@ -143,6 +171,7 @@ export default function ClaimVerifierDemo() {
     if (!imageFile) return;
     setImageLoading(true);
     setImageError(null);
+    startProgressMsgs(IMAGE_LOADING_MSGS[lang] || IMAGE_LOADING_MSGS.en, setImageLoadingMsg, imageProgressRef);
     try {
       const result = await describeImageViaBackend(imageFile, claimedContext, lang);
       setImageAnalysis(result);
@@ -153,6 +182,8 @@ export default function ClaimVerifierDemo() {
           : e.message || "Analýza obrázka sa nepodarila."
       );
     } finally {
+      clearInterval(imageProgressRef.current);
+      setImageLoadingMsg("");
       setImageLoading(false);
     }
   }
@@ -165,6 +196,7 @@ export default function ClaimVerifierDemo() {
     setSelectedClaimId(null);
     setConsistencyIssues(null);
     setConsistencyLoading(false);
+    startProgressMsgs(TEXT_LOADING_MSGS[lang] || TEXT_LOADING_MSGS.en, setLoadingMsg, textProgressRef);
     try {
       const result = await extractClaimsViaBackend(inputText, lang);
       const claimsList = result.claims || [];
@@ -185,6 +217,8 @@ export default function ClaimVerifierDemo() {
           : e.message || t("error_extract")
       );
     } finally {
+      clearInterval(textProgressRef.current);
+      setLoadingMsg("");
       setLoading(false);
     }
   }
@@ -222,6 +256,10 @@ export default function ClaimVerifierDemo() {
       }}
     >
       <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
         @media (max-width: 640px) {
           .cv-grid { grid-template-columns: 1fr !important; }
           .cv-header { flex-direction: column !important; gap: 12px !important; }
@@ -388,6 +426,12 @@ export default function ClaimVerifierDemo() {
           <Search size={14} />
           {loading ? t("btn_analyzing") : t("btn_analyze")}
         </button>
+        {loading && loadingMsg && (
+          <div style={{ marginTop: 10, fontSize: 12, color: COLORS.inkSoft, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: COLORS.inkSoft, animation: "pulse 1.2s infinite" }} />
+            {loadingMsg}
+          </div>
+        )}
         {error && (
           <div style={{ marginTop: 10, color: COLORS.discrepancy, fontSize: 13 }}>{error}</div>
         )}
@@ -644,6 +688,12 @@ export default function ClaimVerifierDemo() {
               <Search size={14} />
               {imageLoading ? t("btn_verifying_image") : t("btn_verify_image")}
             </button>
+            {imageLoading && imageLoadingMsg && (
+              <div style={{ marginTop: 10, fontSize: 12, color: COLORS.inkSoft, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: COLORS.inkSoft, animation: "pulse 1.2s infinite" }} />
+                {imageLoadingMsg}
+              </div>
+            )}
             {imageError && <div style={{ marginTop: 10, color: COLORS.discrepancy, fontSize: 13 }}>{imageError}</div>}
           </div>
 
@@ -1014,6 +1064,14 @@ export default function ClaimVerifierDemo() {
               en: "Mobile optimisation – responsive header, tabs and textarea; fixed automatic zoom on iOS.",
               ar: "تحسين الجوال – رأس صفحة متجاوب، علامات تبويب وحقل نصي; إصلاح التكبير التلقائي على iOS.",
               he: "אופטימיזציה לנייד – כותרת, לשוניות ותיבת טקסט רספונסיבית; תיקון הגדלה אוטומטית ב-iOS.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Pridané progresívne loading správy – počas analýzy sa každé 4 sekundy zobrazí aktuálna fáza spracovania namiesto statického 'ANALYZUJEM…'.",
+              en: "Added progressive loading messages – during analysis, the current processing phase is shown every 4 seconds instead of a static 'ANALYZING…'.",
+              ar: "تمت إضافة رسائل تحميل تدريجية أثناء التحليل.",
+              he: "נוספו הודעות טעינה מתקדמות במהלך הניתוח.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
