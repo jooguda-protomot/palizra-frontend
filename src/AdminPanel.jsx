@@ -94,6 +94,18 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
     }
   }
 
+  const [detailCache, setDetailCache] = useState({});
+
+  async function loadDetail(id) {
+    if (detailCache[id]) return detailCache[id];
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/analyses/${id}`);
+      const data = await res.json();
+      setDetailCache(c => ({ ...c, [id]: data }));
+      return data;
+    } catch { return null; }
+  }
+
   async function handleRemoveNotice(id) {
     setActionStatus(s => ({ ...s, [`notice_rm_${id}`]: "loading" }));
     try {
@@ -225,12 +237,29 @@ setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000)
                 {actionStatus[a.id] === "loading" ? "..." : a.published ? "STIAHNÚT" : "ZVEREJNIT"}
               </button>
               <button
-                onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
+                onClick={async () => {
+                  const detail = await loadDetail(a.id);
+                  setNoticeForm(f => ({ ...f, [a.id]: {
+                    ...f[a.id],
+                    open: !f[a.id]?.open,
+                    notice: f[a.id]?.notice || detail?.updateNotice?.text || "",
+                    relatedId: f[a.id]?.relatedId || detail?.updateNotice?.relatedAnalysisId || "",
+                  }}));
+                }}
                 style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: "#7B5EA7", color: "#fff" }}>
                 AKTUALIZOVAT
               </button>
               <button
-                onClick={() => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
+                onClick={async () => {
+                  const detail = await loadDetail(a.id);
+                  setSourceForm(f => ({ ...f, [a.id]: {
+                    ...f[a.id],
+                    open: !f[a.id]?.open,
+                    url: f[a.id]?.url !== undefined ? f[a.id].url : (detail?.source_url || ""),
+                    platform: f[a.id]?.platform || detail?.source_platform || "other",
+                    date: f[a.id]?.date || detail?.source_date || "",
+                  }}));
+                }}
                 style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: "#2A6B3C", color: "#fff" }}>
                 {actionStatus[`source_${a.id}`] === "done" ? "✓ ULOZENE" : "ZDROJ"}
               </button>
