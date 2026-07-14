@@ -14,9 +14,6 @@ Sentry.init({
   integrations: [Sentry.browserTracingIntegration()],
 });
 
-// Testovací event - odstrán po overení
-Sentry.captureMessage("Sentry frontend test - palizra.org");
-
 const path = window.location.pathname;
 const isAdmin = path === "/admin";
 const isAnalyses = path === "/analyses" || path.startsWith("/analyses/");
