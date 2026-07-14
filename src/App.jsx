@@ -1007,6 +1007,14 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة بيانات الناشر في قسم 'حول الأداة'.",
               he: "נוספה רשומת מוציא לאור בסעיף 'אודות הכלי'.",
             },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Mobilná optimalizácia – responzívny header, taby a textové pole; oprava automatického zoomu na iOS.",
+              en: "Mobile optimisation – responsive header, tabs and textarea; fixed automatic zoom on iOS.",
+              ar: "تحسين الجوال – رأس صفحة متجاوب، علامات تبويب وحقل نصي; إصلاح التكبير التلقائي على iOS.",
+              he: "אופטימיזציה לנייד – כותרת, לשוניות ותיבת טקסט רספונסיבית; תיקון הגדלה אוטומטית ב-iOS.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
