@@ -131,6 +131,46 @@ const UI = {
   },
 };
 
+function ShareButton({ id, lang }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleShare() {
+    const url = `${window.location.origin}/analyses?id=${id}&lang=${lang}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
+
+  const label = copied
+    ? (lang === "ar" ? "✓ تم النسخ" : lang === "he" ? "✓ הועתק" : lang === "en" ? "✓ Copied" : "✓ Skopírované")
+    : (lang === "ar" ? "مشاركة" : lang === "he" ? "שתף" : lang === "en" ? "Share" : "Zdieľať");
+
+  return (
+    <button
+      onClick={handleShare}
+      style={{
+        fontFamily: "monospace", fontSize: 11, padding: "3px 10px",
+        background: copied ? COLORS.consensusBg : "transparent",
+        color: copied ? COLORS.consensus : COLORS.inkSoft,
+        border: `1px solid ${copied ? COLORS.consensus : COLORS.line}`,
+        borderRadius: 3, cursor: "pointer", flexShrink: 0,
+        transition: "all 0.2s",
+      }}>
+      {label}
+    </button>
+  );
+}
+
 export default function AnalysesPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const urlLang = urlParams.get("lang") || "en";
@@ -290,11 +330,14 @@ export default function AnalysesPage() {
             {detailLoading && <div style={{ color: COLORS.inkSoft, fontFamily: "monospace" }}>{u.loadingDetail}</div>}
             {detail && (
               <>
-                <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 8 }}>
-                  {new Date(detail.date).toLocaleDateString(
-                    lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
-                    { day: "numeric", month: "long", year: "numeric" }
-                  )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft }}>
+                    {new Date(detail.date).toLocaleDateString(
+                      lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
+                      { day: "numeric", month: "long", year: "numeric" }
+                    )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
+                  </div>
+                  <ShareButton id={detail.id} lang={lang} />
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
 
