@@ -1163,7 +1163,9 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
   }
 
   if (status === "saved") {
-    return <div style={{ fontSize: 12, color: COLORS.consensus }}>✓ Analýza uložená do archívu.</div>;
+    return <div style={{ fontSize: 12, color: COLORS.consensus }}>
+      {lang === "ar" ? "✓ تم الحفظ في الأرشيف." : lang === "he" ? "✓ נשמר בארכיון." : lang === "en" ? "✓ Analysis saved to archive." : "✓ Analýza uložená do archívu."}
+    </div>;
   }
 
   return (
@@ -1173,7 +1175,7 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
           onClick={() => setOpen(true)}
           style={{ background: "none", border: `1px solid ${COLORS.line}`, color: COLORS.inkSoft, fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: "3px 8px", borderRadius: 3, letterSpacing: "0.04em" }}
         >
-          ULOŽIŤ DO ARCHÍVU
+          {lang === "ar" ? "حفظ في الأرشيف" : lang === "he" ? "שמור בארכיון" : lang === "en" ? "SAVE TO ARCHIVE" : "ULOŽIŤ DO ARCHÍVU"}
         </button>
       ) : (
         <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -1189,9 +1191,13 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
           </select>
           <button onClick={handleSave} disabled={status === "saving"}
             style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
-            {status === "saving" ? "UKLADÁM…" : "ULOŽIŤ"}
+            {status === "saving"
+              ? (lang === "ar" ? "جاري الحفظ…" : lang === "he" ? "שומר…" : lang === "en" ? "SAVING…" : "UKLADÁM…")
+              : (lang === "ar" ? "حفظ" : lang === "he" ? "שמור" : lang === "en" ? "SAVE" : "ULOŽIŤ")}
           </button>
-          {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>Chyba, skús znova.</span>}
+          {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>
+            {lang === "ar" ? "خطأ، حاول مجدداً." : lang === "he" ? "שגיאה, נסה שוב." : lang === "en" ? "Error, try again." : "Chyba, skús znova."}
+          </span>}
           <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
         </div>
       )}
