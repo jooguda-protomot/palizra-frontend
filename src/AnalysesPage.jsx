@@ -339,7 +339,30 @@ export default function AnalysesPage() {
                   </div>
                   <ShareButton id={detail.id} lang={lang} />
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
+                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, lineHeight: 1.4 }}>{detail.claim_text}</div>
+
+                {/* Zdroj tvrdenia */}
+                {(detail.source_url || detail.source_platform) && (
+                  <div style={{ fontSize: 12, fontFamily: "monospace", marginBottom: 14, padding: "8px 12px", background: "#f8f6f1", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
+                    <span style={{ color: COLORS.inkSoft, marginRight: 6 }}>
+                      {lang === "ar" ? "المصدر:" : lang === "he" ? "מקור:" : lang === "en" ? "Source:" : "Zdroj:"}
+                    </span>
+                    {detail.source_platform && (
+                      <span style={{ background: COLORS.ink, color: COLORS.paper, padding: "1px 6px", borderRadius: 2, fontSize: 10, marginRight: 8 }}>
+                        {detail.source_platform.toUpperCase()}
+                      </span>
+                    )}
+                    {detail.source_date && (
+                      <span style={{ color: COLORS.inkSoft, marginRight: 8 }}>{detail.source_date}</span>
+                    )}
+                    {detail.source_url && (
+                      <a href={detail.source_url} target="_blank" rel="noopener noreferrer"
+                        style={{ color: COLORS.ink, wordBreak: "break-all" }}>
+                        {detail.source_url.length > 60 ? detail.source_url.slice(0, 60) + "…" : detail.source_url}
+                      </a>
+                    )}
+                  </div>
+                )}
 
                 {/* Update notice */}
                 {detail.updateNotice && (

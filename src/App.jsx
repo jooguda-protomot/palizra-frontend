@@ -1089,6 +1089,14 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة مشاركة التحليل – زر المشاركة ينسخ الرابط أو يفتح لوحة المشاركة الأصلية على الجوال.",
               he: "נוספה שיתוף ניתוח – כפתור שתף מעתיק את ה-URL ללוח או פותח חלונית שיתוף מקורית בנייד.",
             },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Pridané pole pôvodu tvrdenia pri ukladaní analýzy – URL zdroja, platforma (Facebook, X, Telegram...) a dátum šírenia. Zobrazuje sa v archíve analýz v súlade so štandardmi IFCN.",
+              en: "Added claim source fields when saving analysis – source URL, platform (Facebook, X, Telegram...) and date of circulation. Displayed in the analyses archive in accordance with IFCN standards.",
+              ar: "تمت إضافة حقول مصدر الادعاء عند حفظ التحليل وفقاً لمعايير IFCN.",
+              he: "נוספו שדות מקור הטענה בעת שמירת הניתוח בהתאם לתקני IFCN.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
@@ -1125,11 +1133,11 @@ export default function ClaimVerifierDemo() {
   );
 }
 
-async function saveAnalysisViaBackend({ claimText, type, location, category, lang, result }) {
+async function saveAnalysisViaBackend({ claimText, type, location, category, lang, result, sourceUrl, sourcePlatform, sourceDate }) {
   const response = await fetch(`${API_BASE_URL}/api/analyses/save`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ claim_text: claimText, type, location, category, lang, result }),
+    body: JSON.stringify({ claim_text: claimText, type, location, category, lang, result, source_url: sourceUrl || null, source_platform: sourcePlatform || null, source_date: sourceDate || null }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error || "Uloženie zlyhalo.");
@@ -1166,12 +1174,15 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
   const [open, setOpen] = useState(false);
   const [location, setLocation] = useState("Gaza");
   const [category, setCategory] = useState("casualties");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [sourcePlatform, setSourcePlatform] = useState("other");
+  const [sourceDate, setSourceDate] = useState("");
   const [status, setStatus] = useState("idle");
 
   async function handleSave() {
     setStatus("saving");
     try {
-      await saveAnalysisViaBackend({ claimText, type, location, category, lang, result });
+      await saveAnalysisViaBackend({ claimText, type, location, category, lang, result, sourceUrl, sourcePlatform, sourceDate });
       setStatus("saved");
     } catch {
       setStatus("error");
@@ -1184,6 +1195,17 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
     </div>;
   }
 
+  const PLATFORMS = [
+    { value: "facebook", label: "Facebook" },
+    { value: "x", label: "X / Twitter" },
+    { value: "telegram", label: "Telegram" },
+    { value: "tiktok", label: "TikTok" },
+    { value: "instagram", label: "Instagram" },
+    { value: "youtube", label: "YouTube" },
+    { value: "article", label: lang === "ar" ? "مقال / موقع" : lang === "he" ? "כתבה / אתר" : lang === "en" ? "Article / Web" : "Článok / Web" },
+    { value: "other", label: lang === "ar" ? "أخرى" : lang === "he" ? "אחר" : lang === "en" ? "Other" : "Iné" },
+  ];
+
   return (
     <div>
       {!open ? (
@@ -1194,27 +1216,57 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
           {lang === "ar" ? "حفظ في الأرشيف" : lang === "he" ? "שמור בארכיון" : lang === "en" ? "SAVE TO ARCHIVE" : "ULOŽIŤ DO ARCHÍVU"}
         </button>
       ) : (
-        <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-          <select value={location} onChange={e => setLocation(e.target.value)}
+        <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+          {/* Riadok 1: lokalita + kategória */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <select value={location} onChange={e => setLocation(e.target.value)}
+              onClick={e => e.stopPropagation()}
+              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+              {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
+            </select>
+            <select value={category} onChange={e => setCategory(e.target.value)}
+              onClick={e => e.stopPropagation()}
+              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+              {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
+            </select>
+          </div>
+          {/* Riadok 2: zdroj tvrdenia */}
+          <input
+            type="url"
+            value={sourceUrl}
+            onChange={e => setSourceUrl(e.target.value)}
             onClick={e => e.stopPropagation()}
-            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-            {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
-          </select>
-          <select value={category} onChange={e => setCategory(e.target.value)}
-            onClick={e => e.stopPropagation()}
-            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-            {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
-          </select>
-          <button onClick={handleSave} disabled={status === "saving"}
-            style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
-            {status === "saving"
-              ? (lang === "ar" ? "جاري الحفظ…" : lang === "he" ? "שומר…" : lang === "en" ? "SAVING…" : "UKLADÁM…")
-              : (lang === "ar" ? "حفظ" : lang === "he" ? "שמור" : lang === "en" ? "SAVE" : "ULOŽIŤ")}
-          </button>
-          {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>
-            {lang === "ar" ? "خطأ، حاول مجدداً." : lang === "he" ? "שגיאה, נסה שוב." : lang === "en" ? "Error, try again." : "Chyba, skús znova."}
-          </span>}
-          <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
+            placeholder={lang === "ar" ? "رابط المصدر الأصلي (اختياري)" : lang === "he" ? "קישור למקור המקורי (אופציונלי)" : lang === "en" ? "Source URL (optional)" : "URL pôvodného zdroja (voliteľné)"}
+            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3, width: "100%", boxSizing: "border-box" }}
+          />
+          {/* Riadok 3: platforma + dátum */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <select value={sourcePlatform} onChange={e => setSourcePlatform(e.target.value)}
+              onClick={e => e.stopPropagation()}
+              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+              {PLATFORMS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+            <input
+              type="date"
+              value={sourceDate}
+              onChange={e => setSourceDate(e.target.value)}
+              onClick={e => e.stopPropagation()}
+              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
+            />
+          </div>
+          {/* Riadok 4: tlačidlá */}
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button onClick={handleSave} disabled={status === "saving"}
+              style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
+              {status === "saving"
+                ? (lang === "ar" ? "جاري الحفظ…" : lang === "he" ? "שומר…" : lang === "en" ? "SAVING…" : "UKLADÁM…")
+                : (lang === "ar" ? "حفظ" : lang === "he" ? "שמור" : lang === "en" ? "SAVE" : "ULOŽIŤ")}
+            </button>
+            {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>
+              {lang === "ar" ? "خطأ، حاول مجدداً." : lang === "he" ? "שגיאה, נסה שוב." : lang === "en" ? "Error, try again." : "Chyba, skús znova."}
+            </span>}
+            <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
+          </div>
         </div>
       )}
     </div>
