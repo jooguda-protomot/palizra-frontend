@@ -1167,12 +1167,14 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
           ULOŽIŤ DO ARCHÍVU
         </button>
       ) : (
-        <div style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <select value={location} onChange={e => setLocation(e.target.value)}
+            onClick={e => e.stopPropagation()}
             style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
             {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
           </select>
           <select value={category} onChange={e => setCategory(e.target.value)}
+            onClick={e => e.stopPropagation()}
             style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
             {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
           </select>
