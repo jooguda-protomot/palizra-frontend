@@ -94,6 +94,25 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
     }
   }
 
+  async function handleRemoveNotice(id) {
+    setActionStatus(s => ({ ...s, [`notice_rm_${id}`]: "loading" }));
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/update-notice`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ remove: true }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setAnalyses(prev => prev.map(a => a.id === id ? { ...a, hasUpdateNotice: false } : a));
+        setActionStatus(s => ({ ...s, [`notice_rm_${id}`]: null }));
+        setNoticeForm(f => ({ ...f, [id]: { ...f[id], open: false } }));
+      }
+    } catch {
+      setActionStatus(s => ({ ...s, [`notice_rm_${id}`]: "error" }));
+    }
+  }
+
   async function handleUpdateNotice(id) {
     const form = noticeForm[id];
     if (!form?.notice) return;
@@ -257,6 +276,13 @@ setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000)
                   style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#7B5EA7", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
                   {actionStatus[`notice_${a.id}`] === "loading" ? "..." : actionStatus[`notice_${a.id}`] === "done" ? "ULOZENE" : "ULOZIT UPOZORNENIE"}
                 </button>
+                {a.hasUpdateNotice && (
+                  <button onClick={() => handleRemoveNotice(a.id)}
+                    disabled={actionStatus[`notice_rm_${a.id}`] === "loading"}
+                    style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#8B0000", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
+                    {actionStatus[`notice_rm_${a.id}`] === "loading" ? "..." : "ODSTRANIT"}
+                  </button>
+                )}
                 <button onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
                   style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
                   ZRUSIT
