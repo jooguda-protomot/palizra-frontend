@@ -37,6 +37,31 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
   const [actionStatus, setActionStatus] = useState({});
   const [translateStatus, setTranslateStatus] = useState("idle");
   const [noticeForm, setNoticeForm] = useState({});
+  const [sourceForm, setSourceForm] = useState({});
+
+  async function handleUpdateSource(id) {
+    const form = sourceForm[id];
+    setActionStatus(s => ({ ...s, [`source_${id}`]: "loading" }));
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/analyses/${id}/update-source`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({
+          source_url: form?.url || null,
+          source_platform: form?.platform || null,
+          source_date: form?.date || null,
+        }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setActionStatus(s => ({ ...s, [`source_${id}`]: "done" }));
+        setSourceForm(f => ({ ...f, [id]: { ...f[id], open: false } }));
+        setTimeout(() => setActionStatus(s => ({ ...s, [`source_${id}`]: null })), 2000);
+      }
+    } catch {
+      setActionStatus(s => ({ ...s, [`source_${id}`]: "error" }));
+    }
+  }
 
   async function handleTranslateAll(force = false) {
     if (!adminKey) return;
@@ -186,6 +211,11 @@ setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000)
                 AKTUALIZOVAT
               </button>
               <button
+                onClick={() => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], open: !f[a.id]?.open } }))}
+                style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: "#2A6B3C", color: "#fff" }}>
+                {actionStatus[`source_${a.id}`] === "done" ? "✓ ULOZENE" : "ZDROJ"}
+              </button>
+              <button
                 onClick={() => toggleDelete(a.id, a.deleted)}
                 disabled={actionStatus[`del_${a.id}`] === "loading"}
                 style={{ fontFamily: "monospace", fontSize: 11, padding: "4px 10px", borderRadius: 3, border: "none", cursor: "pointer", background: a.deleted ? "#5A6B60" : "#8B0000", color: "#fff" }}>
@@ -228,6 +258,51 @@ setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000)
                   {actionStatus[`notice_${a.id}`] === "loading" ? "..." : actionStatus[`notice_${a.id}`] === "done" ? "ULOZENE" : "ULOZIT UPOZORNENIE"}
                 </button>
                 <button onClick={() => setNoticeForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
+                  style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
+                  ZRUSIT
+                </button>
+              </div>
+            </div>
+          )}
+
+          {sourceForm[a.id]?.open && (
+            <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6, padding: "10px 12px", background: "#f0faf3", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
+              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 2 }}>ZDROJ TVRDENIA</div>
+              <input
+                type="url"
+                placeholder="URL pôvodného zdroja (napr. https://x.com/...)"
+                value={sourceForm[a.id]?.url || ""}
+                onChange={e => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], url: e.target.value } }))}
+                style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
+              />
+              <div style={{ display: "flex", gap: 8 }}>
+                <select
+                  value={sourceForm[a.id]?.platform || "other"}
+                  onChange={e => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], platform: e.target.value } }))}
+                  style={{ fontFamily: "monospace", fontSize: 12, padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+                  <option value="facebook">Facebook</option>
+                  <option value="x">X / Twitter</option>
+                  <option value="telegram">Telegram</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="article">Článok / Web</option>
+                  <option value="other">Iné</option>
+                </select>
+                <input
+                  type="date"
+                  value={sourceForm[a.id]?.date || ""}
+                  onChange={e => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], date: e.target.value } }))}
+                  style={{ fontFamily: "monospace", fontSize: 12, padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button onClick={() => handleUpdateSource(a.id)}
+                  disabled={actionStatus[`source_${a.id}`] === "loading"}
+                  style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#2A6B3C", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
+                  {actionStatus[`source_${a.id}`] === "loading" ? "..." : "ULOZIT ZDROJ"}
+                </button>
+                <button onClick={() => setSourceForm(f => ({ ...f, [a.id]: { ...f[a.id], open: false } }))}
                   style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 8px", background: "transparent", border: `1px solid ${COLORS.line}`, borderRadius: 3, cursor: "pointer" }}>
                   ZRUSIT
                 </button>
