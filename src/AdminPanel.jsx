@@ -83,6 +83,7 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
       if (data.status === "ok") {
         setAnalyses(prev => prev.map(a => a.id === id ? { ...a, hasUpdateNotice: true } : a));
         setActionStatus(s => ({ ...s, [`notice_${id}`]: "done" }));
+setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000);
         setNoticeForm(f => ({ ...f, [id]: { ...f[id], open: false } }));
       }
     } catch {
@@ -222,7 +223,7 @@ function AnalysesManager({ adminKey, COLORS, API_BASE_URL }) {
               />
               <div style={{ display: "flex", gap: 6 }}>
                 <button onClick={() => handleUpdateNotice(a.id)}
-                  disabled={!noticeForm[a.id]?.notice || actionStatus[`notice_${a.id}`] === "loading"}
+                  disabled={!noticeForm[a.id]?.notice || actionStatus[`notice_${a.id}`] === "loading" || actionStatus[`notice_${a.id}`] === "done"}
                   style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: "#7B5EA7", color: "#fff", border: "none", borderRadius: 3, cursor: "pointer" }}>
                   {actionStatus[`notice_${a.id}`] === "loading" ? "..." : actionStatus[`notice_${a.id}`] === "done" ? "ULOZENE" : "ULOZIT UPOZORNENIE"}
                 </button>
