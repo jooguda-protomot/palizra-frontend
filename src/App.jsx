@@ -1073,6 +1073,22 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة رسائل تحميل تدريجية أثناء التحليل.",
               he: "נוספו הודעות טעינה מתקדמות במהלך הניתוח.",
             },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Rozšírený zoznam lokality (11) a kategórií (9) pre presnejšiu klasifikáciu analýz – pridané: Irán, Jemen, Egypt, Jordánsko, OSN/Medzinárodné, Útoky a operácie, Vojenské tvrdenia, Médiá a dezinformácie, Čísla a štatistiky.",
+              en: "Expanded location list (11) and category list (9) for more precise classification – added: Iran, Yemen, Egypt, Jordan, UN/International, Attacks & operations, Military claims, Media & disinformation, Numbers & statistics.",
+              ar: "تم توسيع قائمة المواقع (11) والفئات (9) لتصنيف أكثر دقة.",
+              he: "הורחבה רשימת המיקומים (11) והקטגוריות (9) לסיווג מדויק יותר.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Pridaná funkcia zdieľania analýzy – tlačidlo Zdieľať skopíruje URL analýzy do schránky alebo otvorí natívny zdieľací panel na mobile.",
+              en: "Added analysis sharing – the Share button copies the analysis URL to clipboard or opens the native share panel on mobile.",
+              ar: "تمت إضافة مشاركة التحليل – زر المشاركة ينسخ الرابط أو يفتح لوحة المشاركة الأصلية على الجوال.",
+              he: "נוספה שיתוף ניתוח – כפתור שתף מעתיק את ה-URL ללוח או פותח חלונית שיתוף מקורית בנייד.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
