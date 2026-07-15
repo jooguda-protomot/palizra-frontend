@@ -491,7 +491,16 @@ export default function AnalysesPage() {
                               {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location && (
                                 <div style={{ fontSize: 13, marginBottom: 4 }}>
                                   <strong>{lang === "en" ? "Consistency: " : lang === "ar" ? "التوافق: " : lang === "he" ? "עקביות: " : "Súlad: "}</strong>
-                                  {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location}
+                                  {(() => {
+  const val = imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location?.toLowerCase();
+  if (val?.includes("konzistent") || val?.includes("consistent")) {
+    return lang === "ar" ? "متوافق" : lang === "he" ? "עקבי" : lang === "en" ? "consistent" : "konzistentné";
+  }
+  if (val?.includes("nekonzistent") || val?.includes("inconsistent")) {
+    return lang === "ar" ? "غير متوافق" : lang === "he" ? "לא עקבי" : lang === "en" ? "inconsistent" : "nekonzistentné";
+  }
+  return imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location;
+})()}
                                 </div>
                               )}
                               {imageAnalysis.llmAnalysis.geolocation_assessment.explanation && (
