@@ -450,6 +450,47 @@ export default function AnalysesPage() {
                 {(() => {
                   // Použi preloženú verziu ak existuje, inak pôvodnú
                   const comparison = detail.translations?.[lang]?.comparison || detail.result?.comparison;
+                  const imageAnalysis = detail.result?.imageAnalysis;
+
+                  // Obrazová analýza
+                  if (imageAnalysis) return (
+                    <>
+                      {detail.result?.imageUrl && (
+                        <div style={{ marginBottom: 12 }}>
+                          <img src={detail.result.imageUrl} alt="verified"
+                            style={{ maxWidth: "100%", borderRadius: 4, border: `1px solid ${COLORS.line}` }} />
+                        </div>
+                      )}
+                      {imageAnalysis.llmAnalysis?.visual_description && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "الوصف البصري" : lang === "he" ? "תיאור חזותי" : lang === "en" ? "VISUAL DESCRIPTION" : "VIZUÁLNY POPIS"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.visual_description}</div>
+                        </div>
+                      )}
+                      {imageAnalysis.llmAnalysis?.geolocation_assessment && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "تحديد الموقع" : lang === "he" ? "גיאולוקציה" : lang === "en" ? "GEOLOCATION" : "GEOLOKÁCIA"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment}</div>
+                        </div>
+                      )}
+                      {imageAnalysis.aiDetection?.ai_probability !== undefined && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "كشف الذكاء الاصطناعي" : lang === "he" ? "זיהוי בינה מלאכותית" : lang === "en" ? "AI DETECTION" : "AI DETEKCIA"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>
+                            {lang === "en" ? "AI probability:" : lang === "ar" ? "احتمالية الذكاء الاصطناعي:" : lang === "he" ? "הסתברות AI:" : "Pravdepodobnosť AI:"} {(imageAnalysis.aiDetection.ai_probability * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+
+                  // Textová analýza
                   return comparison && (<>
                     {comparison.consensus_points?.length > 0 && (
                       <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>

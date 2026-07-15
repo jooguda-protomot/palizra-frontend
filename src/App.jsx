@@ -843,7 +843,7 @@ export default function ClaimVerifierDemo() {
                     claimText={claimedContext || imageAnalysis.imageUrl || "Image verification"}
                     type="image"
                     lang={lang}
-                    result={{ imageAnalysis }}
+                    result={{ type: "image", imageAnalysis, imageUrl: imageAnalysis.imageUrl }}
                     t={t}
                   />
                 </div>
