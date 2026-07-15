@@ -832,21 +832,12 @@ export default function ClaimVerifierDemo() {
                   </div>
                 )}
 
-                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
-                  <FeedbackButton
-                    context="image_verification"
-                    subject={claimedContext || imageAnalysis.imageUrl || null}
-                    relatedData={imageAnalysis}
-                    t={t}
-                  />
-                  <SaveAnalysisButton
-                    claimText={claimedContext || imageAnalysis.imageUrl || "Image verification"}
-                    type="image"
-                    lang={lang}
-                    result={{ type: "image", imageAnalysis, imageUrl: imageAnalysis.imageUrl }}
-                    t={t}
-                  />
-                </div>
+                <FeedbackButton
+                  context="image_verification"
+                  subject={claimedContext || imageAnalysis.imageUrl || null}
+                  relatedData={imageAnalysis}
+                  t={t}
+                />
               </div>
             )}
           </div>
@@ -1101,10 +1092,26 @@ export default function ClaimVerifierDemo() {
             {
               date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "methodology",
-              sk: "Pridané pole pôvodu tvrdenia pri ukladaní analýzy – URL zdroja, platforma (Facebook, X, Telegram...) a dátum šírenia. Zobrazuje sa v archíve analýz v súlade so štandardmi IFCN.",
-              en: "Added claim source fields when saving analysis – source URL, platform (Facebook, X, Telegram...) and date of circulation. Displayed in the analyses archive in accordance with IFCN standards.",
+              sk: "Pridané pole pôvodu tvrdenia pri ukladaní analýzy – URL zdroja, platforma (Facebook, X, Telegram...) a dátum šírenia v súlade so štandardmi IFCN. Existujúce analýzy možno doplniť cez admin panel (tlačidlo ZDROJ).",
+              en: "Added claim source fields when saving an analysis – source URL, platform (Facebook, X, Telegram...) and date of circulation, in accordance with IFCN standards. Existing analyses can be updated via the admin panel (ZDROJ button).",
               ar: "تمت إضافة حقول مصدر الادعاء عند حفظ التحليل وفقاً لمعايير IFCN.",
               he: "נוספו שדות מקור הטענה בעת שמירת הניתוח בהתאם לתקני IFCN.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Možnosť editácie a odstránenia aktualizačného upozornenia v admin paneli. Ukladanie obrazovej analýzy do archívu. Kompletné zobrazenie výsledkov overenia obrázkov v archíve analýz (EXIF, reverse image search, archívna kontrola, AI detekcia).",
+              en: "Added editing and removal of update notices in the admin panel. Image analysis can now be saved to the archive. Complete image verification results are now displayed in the analyses archive (EXIF, reverse image search, archive check, AI detection).",
+              ar: "تمت إضافة تحرير وإزالة إشعارات التحديث. يمكن الآن حفظ تحليل الصور في الأرشيف مع عرض كامل للنتائج.",
+              he: "נוספה עריכה והסרה של הודעות עדכון. ניתוח תמונות ניתן כעת לשמור בארכיון עם תצוגה מלאה של התוצאות.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Pridané tlačidlo Nahlásiť problém priamo pri každej zverejnenej analýze v archíve.",
+              en: "Added Report an issue button directly within each published analysis in the archive.",
+              ar: "تمت إضافة زر الإبلاغ عن مشكلة مباشرة في كل تحليل منشور في الأرشيف.",
+              he: "נוסף כפתור דיווח על בעיה ישירות בתוך כל ניתוח מפורסם בארכיון.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
@@ -1142,11 +1149,11 @@ export default function ClaimVerifierDemo() {
   );
 }
 
-async function saveAnalysisViaBackend({ claimText, type, location, category, lang, result, sourceUrl, sourcePlatform, sourceDate }) {
+async function saveAnalysisViaBackend({ claimText, type, location, category, lang, result }) {
   const response = await fetch(`${API_BASE_URL}/api/analyses/save`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ claim_text: claimText, type, location, category, lang, result, source_url: sourceUrl || null, source_platform: sourcePlatform || null, source_date: sourceDate || null }),
+    body: JSON.stringify({ claim_text: claimText, type, location, category, lang, result }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error || "Uloženie zlyhalo.");
@@ -1183,15 +1190,12 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
   const [open, setOpen] = useState(false);
   const [location, setLocation] = useState("Gaza");
   const [category, setCategory] = useState("casualties");
-  const [sourceUrl, setSourceUrl] = useState("");
-  const [sourcePlatform, setSourcePlatform] = useState("other");
-  const [sourceDate, setSourceDate] = useState("");
   const [status, setStatus] = useState("idle");
 
   async function handleSave() {
     setStatus("saving");
     try {
-      await saveAnalysisViaBackend({ claimText, type, location, category, lang, result, sourceUrl, sourcePlatform, sourceDate });
+      await saveAnalysisViaBackend({ claimText, type, location, category, lang, result });
       setStatus("saved");
     } catch {
       setStatus("error");
@@ -1204,17 +1208,6 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
     </div>;
   }
 
-  const PLATFORMS = [
-    { value: "facebook", label: "Facebook" },
-    { value: "x", label: "X / Twitter" },
-    { value: "telegram", label: "Telegram" },
-    { value: "tiktok", label: "TikTok" },
-    { value: "instagram", label: "Instagram" },
-    { value: "youtube", label: "YouTube" },
-    { value: "article", label: lang === "ar" ? "مقال / موقع" : lang === "he" ? "כתבה / אתר" : lang === "en" ? "Article / Web" : "Článok / Web" },
-    { value: "other", label: lang === "ar" ? "أخرى" : lang === "he" ? "אחר" : lang === "en" ? "Other" : "Iné" },
-  ];
-
   return (
     <div>
       {!open ? (
@@ -1225,57 +1218,27 @@ function SaveAnalysisButton({ claimText, type, lang, result, t }) {
           {lang === "ar" ? "حفظ في الأرشيف" : lang === "he" ? "שמור בארכיון" : lang === "en" ? "SAVE TO ARCHIVE" : "ULOŽIŤ DO ARCHÍVU"}
         </button>
       ) : (
-        <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", flexDirection: "column", gap: 8 }}>
-          {/* Riadok 1: lokalita + kategória */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <select value={location} onChange={e => setLocation(e.target.value)}
-              onClick={e => e.stopPropagation()}
-              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-              {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
-            </select>
-            <select value={category} onChange={e => setCategory(e.target.value)}
-              onClick={e => e.stopPropagation()}
-              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-              {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
-            </select>
-          </div>
-          {/* Riadok 2: zdroj tvrdenia */}
-          <input
-            type="url"
-            value={sourceUrl}
-            onChange={e => setSourceUrl(e.target.value)}
+        <div onClick={e => e.stopPropagation()} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, padding: 10, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <select value={location} onChange={e => setLocation(e.target.value)}
             onClick={e => e.stopPropagation()}
-            placeholder={lang === "ar" ? "رابط المصدر الأصلي (اختياري)" : lang === "he" ? "קישור למקור המקורי (אופציונלי)" : lang === "en" ? "Source URL (optional)" : "URL pôvodného zdroja (voliteľné)"}
-            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3, width: "100%", boxSizing: "border-box" }}
-          />
-          {/* Riadok 3: platforma + dátum */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <select value={sourcePlatform} onChange={e => setSourcePlatform(e.target.value)}
-              onClick={e => e.stopPropagation()}
-              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
-              {PLATFORMS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-            </select>
-            <input
-              type="date"
-              value={sourceDate}
-              onChange={e => setSourceDate(e.target.value)}
-              onClick={e => e.stopPropagation()}
-              style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}
-            />
-          </div>
-          {/* Riadok 4: tlačidlá */}
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <button onClick={handleSave} disabled={status === "saving"}
-              style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
-              {status === "saving"
-                ? (lang === "ar" ? "جاري الحفظ…" : lang === "he" ? "שומר…" : lang === "en" ? "SAVING…" : "UKLADÁM…")
-                : (lang === "ar" ? "حفظ" : lang === "he" ? "שמור" : lang === "en" ? "SAVE" : "ULOŽIŤ")}
-            </button>
-            {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>
-              {lang === "ar" ? "خطأ، حاول مجدداً." : lang === "he" ? "שגיאה, נסה שוב." : lang === "en" ? "Error, try again." : "Chyba, skús znova."}
-            </span>}
-            <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
-          </div>
+            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+            {LOCATION_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.label[lang] || l.label.en}</option>)}
+          </select>
+          <select value={category} onChange={e => setCategory(e.target.value)}
+            onClick={e => e.stopPropagation()}
+            style={{ fontSize: 12, fontFamily: "monospace", padding: "3px 6px", border: `1px solid ${COLORS.line}`, borderRadius: 3 }}>
+            {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label[lang] || c.label.en}</option>)}
+          </select>
+          <button onClick={handleSave} disabled={status === "saving"}
+            style={{ background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, padding: "3px 10px", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }}>
+            {status === "saving"
+              ? (lang === "ar" ? "جاري الحفظ…" : lang === "he" ? "שומר…" : lang === "en" ? "SAVING…" : "UKLADÁM…")
+              : (lang === "ar" ? "حفظ" : lang === "he" ? "שמור" : lang === "en" ? "SAVE" : "ULOŽIŤ")}
+          </button>
+          {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>
+            {lang === "ar" ? "خطأ، حاول مجدداً." : lang === "he" ? "שגיאה, נסה שוב." : lang === "en" ? "Error, try again." : "Chyba, skús znova."}
+          </span>}
+          <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
         </div>
       )}
     </div>
