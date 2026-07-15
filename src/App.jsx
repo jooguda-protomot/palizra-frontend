@@ -832,12 +832,21 @@ export default function ClaimVerifierDemo() {
                   </div>
                 )}
 
-                <FeedbackButton
-                  context="image_verification"
-                  subject={claimedContext || imageAnalysis.imageUrl || null}
-                  relatedData={imageAnalysis}
-                  t={t}
-                />
+                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
+                  <FeedbackButton
+                    context="image_verification"
+                    subject={claimedContext || imageAnalysis.imageUrl || null}
+                    relatedData={imageAnalysis}
+                    t={t}
+                  />
+                  <SaveAnalysisButton
+                    claimText={claimedContext || imageAnalysis.imageUrl || "Image verification"}
+                    type="image"
+                    lang={lang}
+                    result={{ imageAnalysis }}
+                    t={t}
+                  />
+                </div>
               </div>
             )}
           </div>
