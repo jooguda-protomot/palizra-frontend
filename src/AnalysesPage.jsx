@@ -461,14 +461,24 @@ export default function AnalysesPage() {
                             style={{ maxWidth: "100%", borderRadius: 4, border: `1px solid ${COLORS.line}` }} />
                         </div>
                       )}
+
+                      {/* Vizuálny popis */}
                       {imageAnalysis.llmAnalysis?.visual_description && (
                         <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
                             {lang === "ar" ? "الوصف البصري" : lang === "he" ? "תיאור חזותי" : lang === "en" ? "VISUAL DESCRIPTION" : "VIZUÁLNY POPIS"}
                           </div>
                           <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.visual_description}</div>
+                          {imageAnalysis.llmAnalysis.earliest_known_appearance && (
+                            <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 6 }}>
+                              <strong>{lang === "en" ? "Earliest known appearance: " : lang === "ar" ? "أقدم ظهور معروف: " : lang === "he" ? "הופעה ראשונה ידועה: " : "Najstarší známy výskyt: "}</strong>
+                              {imageAnalysis.llmAnalysis.earliest_known_appearance}
+                            </div>
+                          )}
                         </div>
                       )}
+
+                      {/* Geolokácia */}
                       {imageAnalysis.llmAnalysis?.geolocation_assessment && (
                         <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, marginBottom: 6, letterSpacing: "0.06em" }}>
@@ -491,13 +501,78 @@ export default function AnalysesPage() {
                           )}
                         </div>
                       )}
+
+                      {/* EXIF Metadata */}
+                      <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                        <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
+                          {lang === "ar" ? "بيانات EXIF" : lang === "he" ? "מטאדאטה EXIF" : "METADATA (EXIF)"}
+                        </div>
+                        {imageAnalysis.exif?.date || imageAnalysis.exif?.device ? (
+                          <>
+                            {imageAnalysis.exif.date && <div style={{ fontSize: 13 }}>{lang === "en" ? "Date: " : "Dátum: "}{imageAnalysis.exif.date}</div>}
+                            {imageAnalysis.exif.device && <div style={{ fontSize: 13 }}>{lang === "en" ? "Device: " : "Zariadenie: "}{imageAnalysis.exif.device}</div>}
+                          </>
+                        ) : (
+                          <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
+                            {lang === "ar" ? "لا توجد بيانات EXIF." : lang === "he" ? "אין נתוני EXIF." : lang === "en" ? "No EXIF data found." : "Žiadne EXIF dáta."}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Reverse Image Search */}
+                      {imageAnalysis.reverseSearch && Object.keys(imageAnalysis.reverseSearch).length > 0 && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "بحث عكسي عن الصورة" : lang === "he" ? "חיפוש תמונה הפוך" : "REVERSE IMAGE SEARCH"}
+                          </div>
+                          {Object.entries(imageAnalysis.reverseSearch).map(([engine, results]) => (
+                            Array.isArray(results) && results.length > 0 ? (
+                              <div key={engine} style={{ marginBottom: 8 }}>
+                                <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 4 }}>{engine.toUpperCase()} – {results.length} results</div>
+                                {results.slice(0, 5).map((r, i) => (
+                                  <div key={i} style={{ fontSize: 12, marginBottom: 2 }}>
+                                    <a href={r.url || r.link} target="_blank" rel="noopener noreferrer"
+                                      style={{ color: COLORS.ink }}>
+                                      {(r.title || r.url || r.link || "").slice(0, 80)}
+                                    </a>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Archívna kontrola */}
+                      {imageAnalysis.archiveMatch && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.discrepancyBg, border: `1px solid ${COLORS.discrepancy}`, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.discrepancy, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "en" ? "⚠ ARCHIVE MATCH" : lang === "ar" ? "⚠ تطابق الأرشيف" : lang === "he" ? "⚠ התאמת ארכיון" : "⚠ ZHODA V ARCHÍVE"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>{imageAnalysis.archiveMatch.context}</div>
+                          {imageAnalysis.archiveMatch.date && (
+                            <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
+                              {lang === "en" ? "Original date: " : "Pôvodný dátum: "}{imageAnalysis.archiveMatch.date}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* AI Detekcia */}
                       {imageAnalysis.aiDetection?.ai_probability !== undefined && (
                         <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
                             {lang === "ar" ? "كشف الذكاء الاصطناعي" : lang === "he" ? "זיהוי בינה מלאכותית" : lang === "en" ? "AI DETECTION" : "AI DETEKCIA"}
                           </div>
                           <div style={{ fontSize: 13 }}>
-                            {lang === "en" ? "AI probability:" : lang === "ar" ? "احتمالية الذكاء الاصطناعي:" : lang === "he" ? "הסתברות AI:" : "Pravdepodobnosť AI:"} {(imageAnalysis.aiDetection.ai_probability * 100).toFixed(0)}%
+                            {lang === "en" ? "AI probability: " : lang === "ar" ? "احتمالية الذكاء الاصطناعي: " : lang === "he" ? "הסתברות AI: " : "Pravdepodobnosť AI: "}
+                            <strong>{(imageAnalysis.aiDetection.ai_probability * 100).toFixed(0)}%</strong>
+                          </div>
+                          <div style={{ fontSize: 11, color: COLORS.inkSoft, marginTop: 4 }}>
+                            {lang === "en" ? "AI detectors have high error rates for compressed images. Use as one signal only."
+                              : lang === "ar" ? "كاشفات الذكاء الاصطناعي لها معدل خطأ عال للصور المضغوطة."
+                              : lang === "he" ? "גלאי AI עלולים לטעות עבור תמונות דחוסות."
+                              : "AI detektory majú vysokú chybovosť pri kompresovaných obrázkoch. Použiť len ako jeden signál."}
                           </div>
                         </div>
                       )}
