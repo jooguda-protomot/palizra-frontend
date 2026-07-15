@@ -131,6 +131,71 @@ const UI = {
   },
 };
 
+const API_BASE_URL_FEEDBACK = "https://palizraanalyzator-production.up.railway.app";
+
+function FeedbackButton({ analysisId, claimText, lang }) {
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("idle");
+
+  const LABELS = {
+    btn: { sk: "Nahlásiť problém", en: "Report an issue", ar: "الإبلاغ عن مشكلة", he: "דווח על בעיה" },
+    placeholder: { sk: "Opíšte problém s touto analýzou...", en: "Describe the issue with this analysis...", ar: "صف المشكلة في هذا التحليل...", he: "תאר את הבעיה בניתוח זה..." },
+    send: { sk: "Odoslať", en: "Send", ar: "إرسال", he: "שלח" },
+    sending: { sk: "Odosiela sa…", en: "Sending…", ar: "جاري الإرسال…", he: "שולח…" },
+    sent: { sk: "✓ Ďakujeme, problém bol nahlásený.", en: "✓ Thank you, issue reported.", ar: "✓ شكراً، تم الإبلاغ.", he: "✓ תודה, הבעיה דווחה." },
+    error: { sk: "Chyba, skús znova.", en: "Error, try again.", ar: "خطأ، حاول مجدداً.", he: "שגיאה, נסה שוב." },
+  };
+  const t = key => LABELS[key][lang] || LABELS[key].en;
+
+  async function handleSend() {
+    if (!description.trim()) return;
+    setStatus("sending");
+    try {
+      await fetch(`${API_BASE_URL_FEEDBACK}/api/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ context: "analyses_archive", subject: claimText, description, relatedData: { analysisId } }),
+      });
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") return <div style={{ fontSize: 12, color: COLORS.consensus }}>{t("sent")}</div>;
+
+  return (
+    <div>
+      {!open ? (
+        <button onClick={() => setOpen(true)}
+          style={{ background: "none", border: `1px solid ${COLORS.line}`, color: COLORS.inkSoft, fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: "3px 8px", borderRadius: 3 }}>
+          ⚑ {t("btn")}
+        </button>
+      ) : (
+        <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+          <textarea
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder={t("placeholder")}
+            rows={3}
+            style={{ fontFamily: "monospace", fontSize: 12, padding: "6px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
+          />
+          <div style={{ display: "flex", gap: 6 }}>
+            <button onClick={handleSend} disabled={status === "sending" || !description.trim()}
+              style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, cursor: "pointer" }}>
+              {status === "sending" ? t("sending") : t("send")}
+            </button>
+            {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>{t("error")}</span>}
+            <button onClick={() => setOpen(false)}
+              style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ShareButton({ id, lang }) {
   const [copied, setCopied] = useState(false);
 
@@ -338,6 +403,7 @@ export default function AnalysesPage() {
                     )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                   </div>
                   <ShareButton id={detail.id} lang={lang} />
+                  <FeedbackButton analysisId={detail.id} claimText={detail.claim_text} lang={lang} />
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, lineHeight: 1.4 }}>{detail.claim_text}</div>
 
