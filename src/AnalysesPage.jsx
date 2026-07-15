@@ -507,33 +507,34 @@ export default function AnalysesPage() {
                         <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
                           {lang === "ar" ? "بيانات EXIF" : lang === "he" ? "מטאדאטה EXIF" : "METADATA (EXIF)"}
                         </div>
-                        {imageAnalysis.exif?.date || imageAnalysis.exif?.device ? (
-                          <>
-                            {imageAnalysis.exif.date && <div style={{ fontSize: 13 }}>{lang === "en" ? "Date: " : "Dátum: "}{imageAnalysis.exif.date}</div>}
-                            {imageAnalysis.exif.device && <div style={{ fontSize: 13 }}>{lang === "en" ? "Device: " : "Zariadenie: "}{imageAnalysis.exif.device}</div>}
-                          </>
-                        ) : (
+                        {imageAnalysis.metadata?.present === false ? (
                           <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
-                            {lang === "ar" ? "لا توجد بيانات EXIF." : lang === "he" ? "אין נתוני EXIF." : lang === "en" ? "No EXIF data found." : "Žiadne EXIF dáta."}
+                            {lang === "ar" ? "لا توجد بيانات EXIF." : lang === "he" ? "אין נתוני EXIF." : lang === "en" ? "No EXIF data found. Common for images shared via social media — absence of EXIF is NOT evidence of manipulation." : "Žiadne EXIF dáta. Bežné pri obrázkoch zo sociálnych sietí — absencia EXIF NIE JE dôkaz manipulácie."}
                           </div>
+                        ) : (
+                          <>
+                            {imageAnalysis.metadata?.date && <div style={{ fontSize: 13 }}>{lang === "en" ? "Date: " : "Dátum: "}{imageAnalysis.metadata.date}</div>}
+                            {imageAnalysis.metadata?.device && <div style={{ fontSize: 13 }}>{lang === "en" ? "Device: " : "Zariadenie: "}{imageAnalysis.metadata.device}</div>}
+                          </>
                         )}
                       </div>
 
                       {/* Reverse Image Search */}
-                      {imageAnalysis.reverseSearch && Object.keys(imageAnalysis.reverseSearch).length > 0 && (
+                      {imageAnalysis.reverseResults?.length > 0 && (
                         <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
                             {lang === "ar" ? "بحث عكسي عن الصورة" : lang === "he" ? "חיפוש תמונה הפוך" : "REVERSE IMAGE SEARCH"}
                           </div>
-                          {Object.entries(imageAnalysis.reverseSearch).map(([engine, results]) => (
-                            Array.isArray(results) && results.length > 0 ? (
-                              <div key={engine} style={{ marginBottom: 8 }}>
-                                <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 4 }}>{engine.toUpperCase()} – {results.length} results</div>
-                                {results.slice(0, 5).map((r, i) => (
+                          {imageAnalysis.reverseResults.map((engineResult, ei) => (
+                            engineResult.matches?.length > 0 ? (
+                              <div key={ei} style={{ marginBottom: 8 }}>
+                                <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 4 }}>
+                                  {engineResult.engine?.toUpperCase()} – {engineResult.matches.length} results
+                                </div>
+                                {engineResult.matches.slice(0, 5).map((m, i) => (
                                   <div key={i} style={{ fontSize: 12, marginBottom: 2 }}>
-                                    <a href={r.url || r.link} target="_blank" rel="noopener noreferrer"
-                                      style={{ color: COLORS.ink }}>
-                                      {(r.title || r.url || r.link || "").slice(0, 80)}
+                                    <a href={m.url} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.ink }}>
+                                      {(m.title || m.url || "").slice(0, 80)}
                                     </a>
                                   </div>
                                 ))}
@@ -544,29 +545,34 @@ export default function AnalysesPage() {
                       )}
 
                       {/* Archívna kontrola */}
-                      {imageAnalysis.archiveMatch && (
+                      {imageAnalysis.archiveCheck?.matched_in_archive && (
                         <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.discrepancyBg, border: `1px solid ${COLORS.discrepancy}`, borderRadius: 4 }}>
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.discrepancy, marginBottom: 6, letterSpacing: "0.06em" }}>
                             {lang === "en" ? "⚠ ARCHIVE MATCH" : lang === "ar" ? "⚠ تطابق الأرشيف" : lang === "he" ? "⚠ התאמת ארכיון" : "⚠ ZHODA V ARCHÍVE"}
                           </div>
-                          <div style={{ fontSize: 13 }}>{imageAnalysis.archiveMatch.context}</div>
-                          {imageAnalysis.archiveMatch.date && (
-                            <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
-                              {lang === "en" ? "Original date: " : "Pôvodný dátum: "}{imageAnalysis.archiveMatch.date}
+                          {imageAnalysis.archiveCheck.known_context && (
+                            <div style={{ fontSize: 13, marginBottom: 4 }}>
+                              <strong>{lang === "en" ? "Original context: " : lang === "ar" ? "السياق الأصلي: " : lang === "he" ? "הקשר מקורי: " : "Pôvodný kontext: "}</strong>
+                              {imageAnalysis.archiveCheck.known_context}
+                            </div>
+                          )}
+                          {imageAnalysis.archiveCheck.known_date && (
+                            <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
+                              {lang === "en" ? "First seen: " : "Prvý výskyt: "}{imageAnalysis.archiveCheck.known_date}
                             </div>
                           )}
                         </div>
                       )}
 
                       {/* AI Detekcia */}
-                      {imageAnalysis.aiDetection?.ai_probability !== undefined && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.ai_probability > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
+                      {imageAnalysis.aiDetection?.probability_ai_generated !== undefined && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
                             {lang === "ar" ? "كشف الذكاء الاصطناعي" : lang === "he" ? "זיהוי בינה מלאכותית" : lang === "en" ? "AI DETECTION" : "AI DETEKCIA"}
                           </div>
                           <div style={{ fontSize: 13 }}>
                             {lang === "en" ? "AI probability: " : lang === "ar" ? "احتمالية الذكاء الاصطناعي: " : lang === "he" ? "הסתברות AI: " : "Pravdepodobnosť AI: "}
-                            <strong>{(imageAnalysis.aiDetection.ai_probability * 100).toFixed(0)}%</strong>
+                            <strong>{(imageAnalysis.aiDetection.probability_ai_generated * 100).toFixed(0)}%</strong>
                           </div>
                           <div style={{ fontSize: 11, color: COLORS.inkSoft, marginTop: 4 }}>
                             {lang === "en" ? "AI detectors have high error rates for compressed images. Use as one signal only."
