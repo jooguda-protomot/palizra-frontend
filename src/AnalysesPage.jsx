@@ -474,7 +474,21 @@ export default function AnalysesPage() {
                           <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, marginBottom: 6, letterSpacing: "0.06em" }}>
                             {lang === "ar" ? "تحديد الموقع" : lang === "he" ? "גיאולוקציה" : lang === "en" ? "GEOLOCATION" : "GEOLOKÁCIA"}
                           </div>
-                          <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment}</div>
+                          {typeof imageAnalysis.llmAnalysis.geolocation_assessment === "string" ? (
+                            <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment}</div>
+                          ) : (
+                            <>
+                              {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location && (
+                                <div style={{ fontSize: 13, marginBottom: 4 }}>
+                                  <strong>{lang === "en" ? "Consistency: " : lang === "ar" ? "التوافق: " : lang === "he" ? "עקביות: " : "Súlad: "}</strong>
+                                  {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location}
+                                </div>
+                              )}
+                              {imageAnalysis.llmAnalysis.geolocation_assessment.explanation && (
+                                <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment.explanation}</div>
+                              )}
+                            </>
+                          )}
                         </div>
                       )}
                       {imageAnalysis.aiDetection?.ai_probability !== undefined && (
