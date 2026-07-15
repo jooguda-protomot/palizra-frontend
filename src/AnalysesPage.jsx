@@ -458,7 +458,7 @@ export default function AnalysesPage() {
                       {detail.result?.imageUrl && (
                         <div style={{ marginBottom: 12 }}>
                           <img src={detail.result.imageUrl} alt="verified"
-                            style={{ maxWidth: "100%", borderRadius: 4, border: `1px solid ${COLORS.line}` }} />
+                            style={{ maxWidth: "100%", maxHeight: 280, objectFit: "contain", borderRadius: 4, border: `1px solid ${COLORS.line}`, display: "block" }} />
                         </div>
                       )}
 
