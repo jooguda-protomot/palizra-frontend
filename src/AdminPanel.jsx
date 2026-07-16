@@ -370,6 +370,100 @@ setTimeout(() => setActionStatus(s => ({ ...s, [`notice_${id}`]: null })), 2000)
   );
 }
 
+function SuggestionsManager({ adminKey, COLORS, API_BASE_URL }) {
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const STATUS_LABELS = { pending: "ČAKÁ", in_progress: "SPRACOVÁVA SA", done: "HOTOVO", rejected: "ZAMIETNUTÉ" };
+  const STATUS_COLORS = { pending: "#7B5EA7", in_progress: "#2A6B3C", done: "#5A6B60", rejected: "#C8392B" };
+
+  async function loadSuggestions() {
+    if (!adminKey) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/suggestions`, {
+        headers: { "x-admin-key": adminKey }
+      });
+      const data = await res.json();
+      setSuggestions(data.suggestions || []);
+    } catch (err) {
+      console.error("Chyba pri načítaní návrhov:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateStatus(id, status) {
+    try {
+      await fetch(`${API_BASE_URL}/api/admin/suggestions/${id}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ status }),
+      });
+      setSuggestions(prev => prev.map(s => s.id === id ? { ...s, status } : s));
+    } catch (err) {
+      console.error("Chyba pri zmene stavu:", err);
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 40, borderTop: `2px solid ${COLORS.ink}`, paddingTop: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>Návrhy na overenie</div>
+        <button onClick={loadSuggestions} disabled={!adminKey || loading}
+          style={{ fontFamily: "monospace", fontSize: 12, padding: "4px 12px", background: COLORS.ink, color: COLORS.paper || "#EFEAE0", border: "none", borderRadius: 4, cursor: adminKey ? "pointer" : "not-allowed" }}>
+          {loading ? "NACITAVAM..." : "NACITAT NAVRHY"}
+        </button>
+      </div>
+
+      {suggestions.length === 0 && !loading && (
+        <div style={{ fontSize: 13, color: COLORS.inkSoft }}>
+          {adminKey ? "Klikni na NACITAT NAVRHY." : "Najprv zadaj admin kluc vysie."}
+        </div>
+      )}
+
+      {suggestions.map(s => (
+        <div key={s.id} style={{ padding: "10px 12px", marginBottom: 8, border: `1px solid ${COLORS.line}`, borderRadius: 4, background: "#fff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>
+                {s.createdAt?.slice(0, 10)} · {s.source_platform || "—"}
+                <span style={{ marginLeft: 8, background: STATUS_COLORS[s.status] || "#999", color: "#fff", padding: "1px 6px", borderRadius: 2, fontSize: 10 }}>
+                  {STATUS_LABELS[s.status] || s.status}
+                </span>
+              </div>
+              <div style={{ fontSize: 13, marginBottom: 4 }}>
+                {s.claim_text?.slice(0, 120)}{s.claim_text?.length > 120 ? "…" : ""}
+              </div>
+              {s.source_url && (
+                <a href={s.source_url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 11, color: COLORS.inkSoft, wordBreak: "break-all" }}>
+                  {s.source_url.slice(0, 60)}…
+                </a>
+              )}
+              {s.email && <div style={{ fontSize: 11, color: COLORS.inkSoft, marginTop: 2 }}>✉ {s.email}</div>}
+              {s.comment && <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4, fontStyle: "italic" }}>"{s.comment}"</div>}
+            </div>
+            <div style={{ display: "flex", gap: 4, flexShrink: 0, flexDirection: "column" }}>
+              {["pending", "in_progress", "done", "rejected"].map(st => (
+                <button key={st} onClick={() => updateStatus(s.id, st)}
+                  style={{
+                    fontFamily: "monospace", fontSize: 10, padding: "2px 8px", borderRadius: 3, border: "none",
+                    cursor: "pointer",
+                    background: s.status === st ? STATUS_COLORS[st] : "#eee",
+                    color: s.status === st ? "#fff" : "#666",
+                  }}>
+                  {STATUS_LABELS[st]}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminPanel() {
   const [adminKey, setAdminKey] = useState("");
   const [csvText, setCsvText] = useState("");
@@ -511,6 +605,7 @@ export default function AdminPanel() {
       </div>
 
       <AnalysesManager adminKey={adminKey} COLORS={COLORS} API_BASE_URL={API_BASE_URL} />
+      <SuggestionsManager adminKey={adminKey} COLORS={COLORS} API_BASE_URL={API_BASE_URL} />
     </div>
   );
 }

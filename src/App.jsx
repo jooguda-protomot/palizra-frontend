@@ -326,6 +326,21 @@ export default function ClaimVerifierDemo() {
               {lang === "ar" ? "أرشيف التحليلات" : lang === "he" ? "ארכיון ניתוחים" : lang === "en" ? "ANALYSES ARCHIVE" : "ARCHÍV ANALÝZ"} →
             </a>
             <a
+              href={`/suggest?lang=${lang}`}
+              style={{
+                fontSize: 11,
+                fontFamily: "monospace",
+                color: COLORS.inkSoft,
+                textDecoration: "none",
+                letterSpacing: "0.06em",
+                border: `1px solid ${COLORS.line}`,
+                borderRadius: 3,
+                padding: "3px 8px",
+              }}
+            >
+              {lang === "ar" ? "اقتراح" : lang === "he" ? "הצע לבדיקה" : lang === "en" ? "SUGGEST" : "NAVRHNÚŤ"}
+            </a>
+            <a
               href="mailto:palizra@proton.me"
               style={{
                 fontSize: 11,
@@ -1112,6 +1127,14 @@ export default function ClaimVerifierDemo() {
               en: "Added Report an issue button directly within each published analysis in the archive.",
               ar: "تمت إضافة زر الإبلاغ عن مشكلة مباشرة في كل تحليل منشور في الأرشيف.",
               he: "נוסף כפתור דיווח על בעיה ישירות בתוך כל ניתוח מפורסם בארכיון.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Formulár na návrh overenia – návštevníci môžu navrhnúť tvrdenie alebo obrázok na overenie cez palizra.org/suggest. Návrhy sú viditeľné v admin paneli.",
+              en: "Claim suggestion form – visitors can suggest a claim or image for verification at palizra.org/suggest. Suggestions are visible in the admin panel.",
+              ar: "نموذج اقتراح للتحقق – يمكن للزوار اقتراح ادعاء أو صورة للتحقق منها على palizra.org/suggest.",
+              he: "טופס הצעת טענות – מבקרים יכולים להציע טענה או תמונה לאימות בכתובת palizra.org/suggest.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
