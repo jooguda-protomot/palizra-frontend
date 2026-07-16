@@ -35,6 +35,7 @@ const UI = {
     error: "Odoslanie zlyhalo, skúste to znova.",
     required: "* Povinné polia",
     note: "Návrhy nie sú automaticky overované. Každý návrh posúdime manuálne.",
+    imageLabel: "OBRÁZOK (voliteľné)",
     platforms: ["Facebook", "X / Twitter", "Telegram", "TikTok", "Instagram", "YouTube", "Článok / Web", "Iné"],
   },
   en: {
@@ -58,6 +59,7 @@ const UI = {
     error: "Submission failed, please try again.",
     required: "* Required fields",
     note: "Suggestions are not automatically verified. Each submission is reviewed manually.",
+    imageLabel: "IMAGE (optional)",
     platforms: ["Facebook", "X / Twitter", "Telegram", "TikTok", "Instagram", "YouTube", "Article / Web", "Other"],
   },
   ar: {
@@ -81,6 +83,7 @@ const UI = {
     error: "فشل الإرسال، يرجى المحاولة مرة أخرى.",
     required: "* حقول مطلوبة",
     note: "لا يتم التحقق من الاقتراحات تلقائياً. يتم مراجعة كل اقتراح يدوياً.",
+    imageLabel: "صورة (اختياري)",
     platforms: ["فيسبوك", "X / تويتر", "تيليغرام", "تيك توك", "إنستغرام", "يوتيوب", "مقال / موقع", "أخرى"],
   },
   he: {
@@ -104,6 +107,7 @@ const UI = {
     error: "השליחה נכשלה, נסה שוב.",
     required: "* שדות חובה",
     note: "הצעות אינן מאומתות אוטומטית. כל הצעה נבחנת ידנית.",
+    imageLabel: "תמונה (אופציונלי)",
     platforms: ["פייסבוק", "X / טוויטר", "טלגרם", "טיקטוק", "אינסטגרם", "יוטיוב", "כתבה / אתר", "אחר"],
   },
 };
@@ -141,23 +145,33 @@ export default function SuggestPage() {
   const [sourceDate, setSourceDate] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [status, setStatus] = useState("idle");
 
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
   async function handleSubmit() {
-    if (!claimText.trim()) return;
+    if (!claimText.trim() || !sourceUrl.trim()) return;
     setStatus("submitting");
     try {
+      const formData = new FormData();
+      formData.append("claim_text", claimText);
+      formData.append("source_url", sourceUrl);
+      if (sourcePlatform) formData.append("source_platform", sourcePlatform);
+      if (sourceDate) formData.append("source_date", sourceDate);
+      if (email) formData.append("email", email);
+      if (comment) formData.append("comment", comment);
+      if (imageFile) formData.append("image", imageFile);
+
       const res = await fetch(`${API_BASE_URL}/api/suggestions`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          claim_text: claimText,
-          source_url: sourceUrl || null,
-          source_platform: sourcePlatform || null,
-          source_date: sourceDate || null,
-          email: email || null,
-          comment: comment || null,
-        }),
+        body: formData,
       });
       if (res.ok) {
         setStatus("sent");
@@ -239,6 +253,23 @@ export default function SuggestPage() {
             <label style={labelStyle}>{u.emailLabel}</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)}
               placeholder={u.emailPlaceholder} style={inputStyle} />
+          </div>
+
+          {/* Obrázok */}
+          <div>
+            <label style={labelStyle}>{u.imageLabel}</label>
+            <input type="file" accept="image/*" onChange={handleImageChange}
+              style={{ fontSize: 13, fontFamily: "monospace" }} />
+            {imagePreview && (
+              <div style={{ marginTop: 8 }}>
+                <img src={imagePreview} alt="preview"
+                  style={{ maxWidth: "100%", maxHeight: 200, objectFit: "contain", borderRadius: 4, border: `1px solid ${COLORS.line}` }} />
+                <button onClick={() => { setImageFile(null); setImagePreview(null); }}
+                  style={{ display: "block", marginTop: 4, background: "none", border: "none", cursor: "pointer", fontSize: 12, color: COLORS.inkSoft }}>
+                  ✕ {lang === "en" ? "Remove image" : lang === "ar" ? "إزالة الصورة" : lang === "he" ? "הסר תמונה" : "Odstrániť obrázok"}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Komentár */}

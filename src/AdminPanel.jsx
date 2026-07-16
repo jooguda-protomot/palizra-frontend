@@ -443,6 +443,12 @@ function SuggestionsManager({ adminKey, COLORS, API_BASE_URL }) {
               )}
               {s.email && <div style={{ fontSize: 11, color: COLORS.inkSoft, marginTop: 2 }}>✉ {s.email}</div>}
               {s.comment && <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4, fontStyle: "italic" }}>"{s.comment}"</div>}
+              {s.image_url && (
+                <div style={{ marginTop: 6 }}>
+                  <img src={s.image_url} alt="suggestion"
+                    style={{ maxWidth: 200, maxHeight: 120, objectFit: "contain", borderRadius: 3, border: `1px solid ${COLORS.line}` }} />
+                </div>
+              )}
             </div>
             <div style={{ display: "flex", gap: 4, flexShrink: 0, flexDirection: "column" }}>
               {["pending", "in_progress", "done", "rejected"].map(st => (
