@@ -21,7 +21,7 @@ const UI = {
     back: "← Späť na nástroj",
     claimLabel: "TVRDENIE *",
     claimPlaceholder: "Vložte text tvrdenia, ktoré chcete overiť...",
-    urlLabel: "URL ZDROJA (voliteľné)",
+    urlLabel: "URL ZDROJA *",
     urlPlaceholder: "https://...",
     platformLabel: "PLATFORMA (voliteľné)",
     dateLabel: "DÁTUM ŠÍRENIA (voliteľné)",
@@ -33,8 +33,8 @@ const UI = {
     submitting: "ODOSIELA SA…",
     sent: "✓ Ďakujeme za návrh. Posúdime ho a ak spĺňa naše kritériá, zaradíme ho do fronty na overenie.",
     error: "Odoslanie zlyhalo, skúste to znova.",
-    required: "* Povinné pole",
-    note: "Poznámka: Návrhy nie sú automaticky overované. Každý návrh posúdime manuálne.",
+    required: "* Povinné polia",
+    note: "Návrhy nie sú automaticky overované. Každý návrh posúdime manuálne.",
     platforms: ["Facebook", "X / Twitter", "Telegram", "TikTok", "Instagram", "YouTube", "Článok / Web", "Iné"],
   },
   en: {
@@ -44,7 +44,7 @@ const UI = {
     back: "← Back to tool",
     claimLabel: "CLAIM *",
     claimPlaceholder: "Paste the text of the claim you want verified...",
-    urlLabel: "SOURCE URL (optional)",
+    urlLabel: "SOURCE URL *",
     urlPlaceholder: "https://...",
     platformLabel: "PLATFORM (optional)",
     dateLabel: "DATE OF CIRCULATION (optional)",
@@ -56,8 +56,8 @@ const UI = {
     submitting: "SUBMITTING…",
     sent: "✓ Thank you for your suggestion. We will review it and if it meets our criteria, we will add it to the verification queue.",
     error: "Submission failed, please try again.",
-    required: "* Required field",
-    note: "Note: Suggestions are not automatically verified. Each submission is reviewed manually.",
+    required: "* Required fields",
+    note: "Suggestions are not automatically verified. Each submission is reviewed manually.",
     platforms: ["Facebook", "X / Twitter", "Telegram", "TikTok", "Instagram", "YouTube", "Article / Web", "Other"],
   },
   ar: {
@@ -67,7 +67,7 @@ const UI = {
     back: "← العودة إلى الأداة",
     claimLabel: "الادعاء *",
     claimPlaceholder: "الصق نص الادعاء الذي تريد التحقق منه...",
-    urlLabel: "رابط المصدر (اختياري)",
+    urlLabel: "رابط المصدر *",
     urlPlaceholder: "https://...",
     platformLabel: "المنصة (اختياري)",
     dateLabel: "تاريخ التداول (اختياري)",
@@ -79,8 +79,8 @@ const UI = {
     submitting: "جاري الإرسال…",
     sent: "✓ شكراً لاقتراحك. سنراجعه وإذا استوفى معاييرنا، سنضيفه إلى قائمة الانتظار.",
     error: "فشل الإرسال، يرجى المحاولة مرة أخرى.",
-    required: "* حقل مطلوب",
-    note: "ملاحظة: لا يتم التحقق من الاقتراحات تلقائياً. يتم مراجعة كل اقتراح يدوياً.",
+    required: "* حقول مطلوبة",
+    note: "لا يتم التحقق من الاقتراحات تلقائياً. يتم مراجعة كل اقتراح يدوياً.",
     platforms: ["فيسبوك", "X / تويتر", "تيليغرام", "تيك توك", "إنستغرام", "يوتيوب", "مقال / موقع", "أخرى"],
   },
   he: {
@@ -90,7 +90,7 @@ const UI = {
     back: "← חזרה לכלי",
     claimLabel: "טענה *",
     claimPlaceholder: "הדבק את טקסט הטענה שברצונך לאמת...",
-    urlLabel: "קישור למקור (אופציונלי)",
+    urlLabel: "קישור למקור *",
     urlPlaceholder: "https://...",
     platformLabel: "פלטפורמה (אופציונלי)",
     dateLabel: "תאריך הפצה (אופציונלי)",
@@ -102,8 +102,8 @@ const UI = {
     submitting: "שולח…",
     sent: "✓ תודה על הצעתך. נבחן אותה ואם היא עומדת בקריטריונים שלנו, נוסיף אותה לתור.",
     error: "השליחה נכשלה, נסה שוב.",
-    required: "* שדה חובה",
-    note: "הערה: הצעות אינן מאומתות אוטומטית. כל הצעה נבחנת ידנית.",
+    required: "* שדות חובה",
+    note: "הצעות אינן מאומתות אוטומטית. כל הצעה נבחנת ידנית.",
     platforms: ["פייסבוק", "X / טוויטר", "טלגרם", "טיקטוק", "אינסטגרם", "יוטיוב", "כתבה / אתר", "אחר"],
   },
 };
@@ -261,16 +261,16 @@ export default function SuggestPage() {
           {/* Tlačidlo */}
           <button
             onClick={handleSubmit}
-            disabled={!claimText.trim() || status === "submitting"}
+            disabled={!claimText.trim() || !sourceUrl.trim() || status === "submitting"}
             style={{
-              background: !claimText.trim() ? COLORS.inkSoft : COLORS.ink,
+              background: (!claimText.trim() || !sourceUrl.trim()) ? COLORS.inkSoft : COLORS.ink,
               color: COLORS.paper,
               border: "none",
               borderRadius: 4,
               padding: "10px 20px",
               fontFamily: "monospace",
               fontSize: 13,
-              cursor: !claimText.trim() ? "not-allowed" : "pointer",
+              cursor: (!claimText.trim() || !sourceUrl.trim()) ? "not-allowed" : "pointer",
               letterSpacing: "0.06em",
             }}>
             {status === "submitting" ? u.submitting : u.submit}
