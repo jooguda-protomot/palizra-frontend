@@ -355,6 +355,18 @@ export default function ClaimVerifierDemo() {
             >
               {lang === "ar" ? "اتصل بنا" : lang === "he" ? "צור קשר" : lang === "en" ? "CONTACT" : "KONTAKT"}
             </a>
+            <a href="https://www.linkedin.com/in/peter-sramka-b3445a422/" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, textDecoration: "none", letterSpacing: "0.06em", border: `1px solid ${COLORS.line}`, borderRadius: 3, padding: "3px 8px" }}>
+              LinkedIn
+            </a>
+            <a href="https://x.com/PalizraAnalyza" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, textDecoration: "none", letterSpacing: "0.06em", border: `1px solid ${COLORS.line}`, borderRadius: 3, padding: "3px 8px" }}>
+              X
+            </a>
+            <a href="https://t.me/PalizraAnalyzator" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, textDecoration: "none", letterSpacing: "0.06em", border: `1px solid ${COLORS.line}`, borderRadius: 3, padding: "3px 8px" }}>
+              Telegram
+            </a>
           </div>
         </div>
       </header>
