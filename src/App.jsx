@@ -505,8 +505,34 @@ export default function ClaimVerifierDemo() {
           const sorted = [...datedClaims].sort((a, b) => {
             const parseDate = d => {
               if (!d) return 0;
-              const parsed = new Date(d);
-              return isNaN(parsed) ? d.localeCompare(b.date || "") : parsed.getTime();
+              // Skús priamo
+              let parsed = new Date(d);
+              if (!isNaN(parsed)) return parsed.getTime();
+              // Nahraď slovenské/české mesiace anglickými
+              const monthMap = {
+                "január": "January", "februára": "February", "marca": "March", "apríla": "April",
+                "mája": "May", "júna": "June", "júla": "July", "augusta": "August",
+                "septembra": "September", "októbra": "October", "novembra": "November", "decembra": "December",
+                "január": "January", "február": "February", "marec": "March", "apríl": "April",
+                "máj": "May", "jún": "June", "júl": "July", "august": "August",
+                "september": "September", "október": "October", "november": "November", "december": "December",
+                // Arabské mesiace
+                "يناير": "January", "فبراير": "February", "مارس": "March", "أبريل": "April",
+                "مايو": "May", "يونيو": "June", "يوليو": "July", "أغسطس": "August",
+                "سبتمبر": "September", "أكتوبر": "October", "نوفمبر": "November", "ديسمبر": "December",
+                // Hebrejské mesiace
+                "ינואר": "January", "פברואר": "February", "מרץ": "March", "אפריל": "April",
+                "מאי": "May", "יוני": "June", "יולי": "July", "אוגוסט": "August",
+                "ספטמבר": "September", "אוקטובר": "October", "נובמבר": "November", "דצמבר": "December",
+              };
+              let normalized = d;
+              for (const [local, en] of Object.entries(monthMap)) {
+                normalized = normalized.replace(new RegExp(local, "gi"), en);
+              }
+              // Odstráň bodky za číslami (napr. "17." → "17")
+              normalized = normalized.replace(/(\d+)\./g, "$1");
+              parsed = new Date(normalized);
+              return isNaN(parsed) ? 0 : parsed.getTime();
             };
             return parseDate(a.date) - parseDate(b.date);
           });
