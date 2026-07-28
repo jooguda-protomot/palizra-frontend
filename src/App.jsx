@@ -914,13 +914,12 @@ export default function ClaimVerifierDemo() {
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_sources")}</h3>
           <p style={{ marginBottom: 8 }}>{t("about_sources_intro")}</p>
           <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
-            <li><strong>{t("about_sources_wire")}</strong> Reuters, Associated Press, AFP, Anadolu Agency</li>
-            <li><strong>{t("about_sources_israeli")}</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet, i24 News</li>
-            <li><strong>{t("about_sources_arabic")}</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye, Palestine Chronicle</li>
-            <li><strong>{t("about_sources_factcheck")}</strong> AFP Fact Check, Reuters Fact Check, Bellingcat, Snopes</li>
-            <li><strong>{t("about_sources_hr")}</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International, PCHR, UNRWA, Euro-Med Monitor</li>
+            <li><strong>{t("about_sources_wire")}</strong> Reuters, Associated Press, AFP</li>
+            <li><strong>{t("about_sources_israeli")}</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet</li>
+            <li><strong>{t("about_sources_arabic")}</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye</li>
+            <li><strong>{t("about_sources_factcheck")}</strong> AFP Fact Check, Reuters Fact Check, Bellingcat</li>
+            <li><strong>{t("about_sources_hr")}</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International</li>
             <li><strong>{t("about_sources_conflict")}</strong> ACLED, Institute for the Study of War</li>
-            <li><strong>{t("about_sources_international")}</strong> UN News, ICRC, WHO</li>
           </ul>
           <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
             {t("about_sources_other")}
@@ -1161,10 +1160,26 @@ export default function ClaimVerifierDemo() {
             {
               date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "methodology",
-              sk: "Rozšírený kurátorovaný zoznam zdrojov – pridané: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. Nová kategória: Medzinárodné inštitúcie.",
-              en: "Expanded curated source list – added: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. New category: International institutions.",
-              ar: "تم توسيع قائمة المصادر المنتقاة – تمت إضافة: وكالة الأناضول، i24، فلسطين كرونيكل، سنوبس، PCHR، UNRWA، يورو-ميد مونيتور، أخبار الأمم المتحدة، ICRC، WHO.",
-              he: "הורחבה רשימת המקורות המאוצרת – נוספו: סוכנות אנדולו, i24, פלסטין כרוניקל, סנופס, PCHR, UNRWA, יורו-מד מוניטור, חדשות האו\"ם, ICRC, WHO.",
+              sk: "Reaktivovaná archivácia zdrojov cez Wayback Machine – každý citovaný zdroj sa automaticky archivuje, aby zostal overiteľný aj po zmene alebo zmazaní pôvodného článku.",
+              en: "Reactivated source archiving via Wayback Machine – every cited source is automatically archived to remain verifiable even if the original article is changed or removed.",
+              ar: "تم إعادة تفعيل أرشفة المصادر عبر Wayback Machine.",
+              he: "הופעל מחדש ארכוב מקורות דרך Wayback Machine.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Rozšírený kurátorovaný zoznam zdrojov – pridané: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. Nová kategória: Medzinárodné inštitúcie. Všetky zdroje spĺňajú požiadavku editorskej nezávislosti podľa štandardov IFCN.",
+              en: "Expanded curated source list – added: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. New category: International institutions. All sources meet the editorial independence requirement of IFCN standards.",
+              ar: "تم توسيع قائمة المصادر المنتقاة. جميع المصادر تستوفي متطلبات الاستقلالية التحريرية وفق معايير IFCN.",
+              he: "הורחבה רשימת המקורות המאוצרת. כל המקורות עומדים בדרישת העצמאות העיתונאית של תקני IFCN.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "feature",
+              sk: "Pridané odkazy na sociálne siete v headeri – LinkedIn, X a Telegram kanál @PalizraAnalyzator.",
+              en: "Added social media links in the header – LinkedIn, X and Telegram channel @PalizraAnalyzator.",
+              ar: "تمت إضافة روابط وسائل التواصل الاجتماعي في الرأس – LinkedIn وX وقناة Telegram.",
+              he: "נוספו קישורי מדיה חברתית בכותרת – LinkedIn, X וערוץ Telegram.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
