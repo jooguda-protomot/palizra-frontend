@@ -502,7 +502,14 @@ export default function ClaimVerifierDemo() {
         {(() => {
           const datedClaims = (claims || []).filter(c => c.date);
           if (datedClaims.length < 2) return null;
-          const sorted = [...datedClaims].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+          const sorted = [...datedClaims].sort((a, b) => {
+            const parseDate = d => {
+              if (!d) return 0;
+              const parsed = new Date(d);
+              return isNaN(parsed) ? d.localeCompare(b.date || "") : parsed.getTime();
+            };
+            return parseDate(a.date) - parseDate(b.date);
+          });
           return (
             <div style={{ marginBottom: 20, padding: "12px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
               <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, letterSpacing: "0.06em", marginBottom: 10 }}>
