@@ -497,6 +497,38 @@ export default function ClaimVerifierDemo() {
             {t("consistency_none")}
           </div>
         )}
+
+        {/* Časová os – zobrazí sa len ak aspoň 2 tvrdenia majú dátumy */}
+        {(() => {
+          const datedClaims = (claims || []).filter(c => c.date);
+          if (datedClaims.length < 2) return null;
+          const sorted = [...datedClaims].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+          return (
+            <div style={{ marginBottom: 20, padding: "12px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
+              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, letterSpacing: "0.06em", marginBottom: 10 }}>
+                {lang === "ar" ? "الجدول الزمني" : lang === "he" ? "ציר זמן" : lang === "en" ? "TIMELINE" : "ČASOVÁ OS"}
+              </div>
+              <div style={{ position: "relative", paddingLeft: 20 }}>
+                {/* Vertikálna čiara */}
+                <div style={{ position: "absolute", left: 6, top: 6, bottom: 6, width: 2, background: COLORS.line }} />
+                {sorted.map((c, i) => (
+                  <div key={c.id}
+                    onClick={() => handleSelectClaim(c)}
+                    style={{ display: "flex", gap: 12, marginBottom: 10, cursor: "pointer", alignItems: "flex-start" }}>
+                    {/* Bodka na časovej osi */}
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: selectedClaimId === c.id ? COLORS.ink : COLORS.line, flexShrink: 0, marginTop: 3, position: "relative", zIndex: 1 }} />
+                    <div>
+                      <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 2 }}>{c.date}</div>
+                      <div style={{ fontSize: 13, color: selectedClaimId === c.id ? COLORS.ink : COLORS.inkSoft, lineHeight: 1.4 }}>
+                        {c.original_text?.slice(0, 80)}{c.original_text?.length > 80 ? "…" : ""}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
         <div className="cv-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 20 }}>
           {/* Ľavý panel: zoznam tvrdení */}
           <div>
@@ -1159,27 +1191,11 @@ export default function ClaimVerifierDemo() {
             },
             {
               date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
-              type: "methodology",
-              sk: "Reaktivovaná archivácia zdrojov cez Wayback Machine – každý citovaný zdroj sa automaticky archivuje, aby zostal overiteľný aj po zmene alebo zmazaní pôvodného článku.",
-              en: "Reactivated source archiving via Wayback Machine – every cited source is automatically archived to remain verifiable even if the original article is changed or removed.",
-              ar: "تم إعادة تفعيل أرشفة المصادر عبر Wayback Machine.",
-              he: "הופעל מחדש ארכוב מקורות דרך Wayback Machine.",
-            },
-            {
-              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
-              type: "methodology",
-              sk: "Rozšírený kurátorovaný zoznam zdrojov – pridané: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. Nová kategória: Medzinárodné inštitúcie. Všetky zdroje spĺňajú požiadavku editorskej nezávislosti podľa štandardov IFCN.",
-              en: "Expanded curated source list – added: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. New category: International institutions. All sources meet the editorial independence requirement of IFCN standards.",
-              ar: "تم توسيع قائمة المصادر المنتقاة. جميع المصادر تستوفي متطلبات الاستقلالية التحريرية وفق معايير IFCN.",
-              he: "הורחבה רשימת המקורות המאוצרת. כל המקורות עומדים בדרישת העצמאות העיתונאית של תקני IFCN.",
-            },
-            {
-              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
               type: "feature",
-              sk: "Pridané odkazy na sociálne siete v headeri – LinkedIn, X a Telegram kanál @PalizraAnalyzator.",
-              en: "Added social media links in the header – LinkedIn, X and Telegram channel @PalizraAnalyzator.",
-              ar: "تمت إضافة روابط وسائل التواصل الاجتماعي في الرأس – LinkedIn وX وقناة Telegram.",
-              he: "נוספו קישורי מדיה חברתית בכותרת – LinkedIn, X וערוץ Telegram.",
+              sk: "Pridaná časová os tvrdení – pri analýze textu s viacerými datovanými tvrdeniami sa zobrazí chronologická os udalostí. Kliknutím na udalosť sa spustí porovnanie zdrojov.",
+              en: "Added claims timeline – when analysing text with multiple dated claims, a chronological timeline of events is displayed. Clicking an event triggers source comparison.",
+              ar: "تمت إضافة جدول زمني للادعاءات – عند تحليل نص يحتوي على ادعاءات متعددة مؤرخة، يُعرض جدول زمني.",
+              he: "נוסף ציר זמן לטענות – בעת ניתוח טקסט עם טענות מתוארכות מרובות, מוצג ציר זמן כרונולוגי.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
