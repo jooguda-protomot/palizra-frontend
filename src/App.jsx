@@ -914,12 +914,13 @@ export default function ClaimVerifierDemo() {
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_sources")}</h3>
           <p style={{ marginBottom: 8 }}>{t("about_sources_intro")}</p>
           <ul style={{ marginBottom: 16, paddingLeft: 20 }}>
-            <li><strong>{t("about_sources_wire")}</strong> Reuters, Associated Press, AFP</li>
-            <li><strong>{t("about_sources_israeli")}</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet</li>
-            <li><strong>{t("about_sources_arabic")}</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye</li>
-            <li><strong>{t("about_sources_factcheck")}</strong> AFP Fact Check, Reuters Fact Check, Bellingcat</li>
-            <li><strong>{t("about_sources_hr")}</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International</li>
+            <li><strong>{t("about_sources_wire")}</strong> Reuters, Associated Press, AFP, Anadolu Agency</li>
+            <li><strong>{t("about_sources_israeli")}</strong> Haaretz, Times of Israel, Jerusalem Post, Ynet, i24 News</li>
+            <li><strong>{t("about_sources_arabic")}</strong> Al Jazeera, WAFA, Al-Ahram, Middle East Eye, Palestine Chronicle</li>
+            <li><strong>{t("about_sources_factcheck")}</strong> AFP Fact Check, Reuters Fact Check, Bellingcat, Snopes</li>
+            <li><strong>{t("about_sources_hr")}</strong> OCHA, B'Tselem, Human Rights Watch, Amnesty International, PCHR, UNRWA, Euro-Med Monitor</li>
             <li><strong>{t("about_sources_conflict")}</strong> ACLED, Institute for the Study of War</li>
+            <li><strong>{t("about_sources_international")}</strong> UN News, ICRC, WHO</li>
           </ul>
           <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>
             {t("about_sources_other")}
@@ -1156,6 +1157,14 @@ export default function ClaimVerifierDemo() {
               en: "Claim suggestion form – visitors can suggest a claim or image for verification at palizra.org/suggest. Suggestions are visible in the admin panel.",
               ar: "نموذج اقتراح للتحقق – يمكن للزوار اقتراح ادعاء أو صورة للتحقق منها على palizra.org/suggest.",
               he: "טופס הצעת טענות – מבקרים יכולים להציע טענה או תמונה לאימות בכתובת palizra.org/suggest.",
+            },
+            {
+              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              type: "methodology",
+              sk: "Rozšírený kurátorovaný zoznam zdrojov – pridané: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. Nová kategória: Medzinárodné inštitúcie.",
+              en: "Expanded curated source list – added: Anadolu Agency, i24 News, Palestine Chronicle, Snopes, PCHR, UNRWA, Euro-Med Monitor, UN News, ICRC, WHO. New category: International institutions.",
+              ar: "تم توسيع قائمة المصادر المنتقاة – تمت إضافة: وكالة الأناضول، i24، فلسطين كرونيكل، سنوبس، PCHR، UNRWA، يورو-ميد مونيتور، أخبار الأمم المتحدة، ICRC، WHO.",
+              he: "הורחבה רשימת המקורות המאוצרת – נוספו: סוכנות אנדולו, i24, פלסטין כרוניקל, סנופס, PCHR, UNRWA, יורו-מד מוניטור, חדשות האו\"ם, ICRC, WHO.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
