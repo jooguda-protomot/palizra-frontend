@@ -93,6 +93,7 @@ export const translations = {
     about_sources_factcheck: "Fact-checking organiz\u00e1cie:",
     about_sources_hr: "\u013dudskopr\u00e1vn\u00e9 organiz\u00e1cie:",
     about_sources_conflict: "Konfliktn\u00e9 datab\u00e1zy:",
+    about_sources_international: "Medzin\u00e1rodn\u00e9 in\u0161tit\u00facie:",
     about_sources_other: "V\u00fdsledky mimo tohto zoznamu sa nezahadzuj\u00fa \u2014 zobrazuj\u00fa sa v kateg\u00f3rii Ine zdroje, jasne ozn\u00e1mkovan\u00e9.",
     about_h_tech: "Pou\u017eit\u00e9 technol\u00f3gie",
     about_tech: "Extr\u00e1kcia textu, porovnanie a vizu\u00e1lna anal\u00fdza obr\u00e1zkov pou\u017e\u00edvaj\u00fa jazykov\u00fd model Claude (Anthropic). Vyh\u013ead\u00e1vanie zdrojov pou\u017e\u00edva SerpAPI. Fact-check agr\u00e9g\u00e1cia pou\u017e\u00edva Google Fact Check Tools API.",
