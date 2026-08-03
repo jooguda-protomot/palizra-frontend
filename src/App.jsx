@@ -497,71 +497,6 @@ export default function ClaimVerifierDemo() {
             {t("consistency_none")}
           </div>
         )}
-
-        {/* Časová os – zobrazí sa len ak aspoň 2 tvrdenia majú dátumy */}
-        {(() => {
-          const datedClaims = (claims || []).filter(c => c.date);
-          if (datedClaims.length < 2) return null;
-          const sorted = [...datedClaims].sort((a, b) => {
-            const parseDate = d => {
-              if (!d) return 0;
-              // Skús priamo
-              let parsed = new Date(d);
-              if (!isNaN(parsed)) return parsed.getTime();
-              // Nahraď slovenské/české mesiace anglickými
-              const monthMap = {
-                "január": "January", "februára": "February", "marca": "March", "apríla": "April",
-                "mája": "May", "júna": "June", "júla": "July", "augusta": "August",
-                "septembra": "September", "októbra": "October", "novembra": "November", "decembra": "December",
-                "január": "January", "február": "February", "marec": "March", "apríl": "April",
-                "máj": "May", "jún": "June", "júl": "July", "august": "August",
-                "september": "September", "október": "October", "november": "November", "december": "December",
-                // Arabské mesiace
-                "يناير": "January", "فبراير": "February", "مارس": "March", "أبريل": "April",
-                "مايو": "May", "يونيو": "June", "يوليو": "July", "أغسطس": "August",
-                "سبتمبر": "September", "أكتوبر": "October", "نوفمبر": "November", "ديسمبر": "December",
-                // Hebrejské mesiace
-                "ינואר": "January", "פברואר": "February", "מרץ": "March", "אפריל": "April",
-                "מאי": "May", "יוני": "June", "יולי": "July", "אוגוסט": "August",
-                "ספטמבר": "September", "אוקטובר": "October", "נובמבר": "November", "דצמבר": "December",
-              };
-              let normalized = d;
-              for (const [local, en] of Object.entries(monthMap)) {
-                normalized = normalized.replace(new RegExp(local, "gi"), en);
-              }
-              // Odstráň bodky za číslami (napr. "17." → "17")
-              normalized = normalized.replace(/(\d+)\./g, "$1");
-              parsed = new Date(normalized);
-              return isNaN(parsed) ? 0 : parsed.getTime();
-            };
-            return parseDate(a.date) - parseDate(b.date);
-          });
-          return (
-            <div style={{ marginBottom: 20, padding: "12px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
-              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, letterSpacing: "0.06em", marginBottom: 10 }}>
-                {lang === "ar" ? "الجدول الزمني" : lang === "he" ? "ציר זמן" : lang === "en" ? "TIMELINE" : "ČASOVÁ OS"}
-              </div>
-              <div style={{ position: "relative", paddingLeft: 20 }}>
-                {/* Vertikálna čiara */}
-                <div style={{ position: "absolute", left: 6, top: 6, bottom: 6, width: 2, background: COLORS.line }} />
-                {sorted.map((c, i) => (
-                  <div key={c.id}
-                    onClick={() => handleSelectClaim(c)}
-                    style={{ display: "flex", gap: 12, marginBottom: 10, cursor: "pointer", alignItems: "flex-start" }}>
-                    {/* Bodka na časovej osi */}
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: selectedClaimId === c.id ? COLORS.ink : COLORS.line, flexShrink: 0, marginTop: 3, position: "relative", zIndex: 1 }} />
-                    <div>
-                      <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 2 }}>{c.date}</div>
-                      <div style={{ fontSize: 13, color: selectedClaimId === c.id ? COLORS.ink : COLORS.inkSoft, lineHeight: 1.4 }}>
-                        {c.original_text?.slice(0, 80)}{c.original_text?.length > 80 ? "…" : ""}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
         <div className="cv-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 20 }}>
           {/* Ľavý panel: zoznam tvrdení */}
           <div>
@@ -1005,6 +940,52 @@ export default function ClaimVerifierDemo() {
           <p style={{ marginBottom: 8 }}>{t("about_balance_1")}</p>
           <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>{t("about_balance_2")}</p>
 
+          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
+            {lang === "ar" ? "معايير مستوى الثقة" : lang === "he" ? "קריטריוני רמת הביטחון" : lang === "en" ? "Confidence Level Criteria" : "Kritériá miery istoty"}
+          </h3>
+          <div style={{ marginBottom: 16, fontSize: 13 }}>
+            {[
+              {
+                level: lang === "ar" ? "عالية" : lang === "he" ? "גבוהה" : lang === "en" ? "High" : "Vysoká",
+                color: COLORS.consensus,
+                bg: COLORS.consensusBg,
+                desc: lang === "ar" ? "مصدران مستقلان منتقيان على الأقل يؤكدان الادعاء الأساسي، ولا يتعارض معه أي مصدر منتقى."
+                  : lang === "he" ? "לפחות 2 מקורות עצמאיים מאוצרים מאשרים את הטענה המרכזית, ואף מקור מאוצר אינו סותר אותה."
+                  : lang === "en" ? "At least 2 curated independent sources confirm the core claim, and no curated source directly contradicts it."
+                  : "Aspoň 2 kurátorované nezávislé zdroje potvrdzujú tvrdenie a žiadny kurátorovaný zdroj ho priamo nepopiera.",
+              },
+              {
+                level: lang === "ar" ? "متوسطة" : lang === "he" ? "בינונית" : lang === "en" ? "Medium" : "Stredná",
+                color: COLORS.framing,
+                bg: COLORS.framingBg,
+                desc: lang === "ar" ? "مصدر منتقى واحد على الأقل يؤكد الادعاء جزئياً، أو تتعارض المصادر المنتقاة مع بعضها."
+                  : lang === "he" ? "לפחות מקור מאוצר אחד מאשר חלקית, או מקורות מאוצרים סותרים זה את זה."
+                  : lang === "en" ? "At least 1 curated source partially confirms the claim, or curated sources conflict with each other."
+                  : "Aspoň 1 kurátorovaný zdroj čiastočne potvrdzuje tvrdenie, alebo si kurátorované zdroje navzájom odporujú.",
+              },
+              {
+                level: lang === "ar" ? "منخفضة" : lang === "he" ? "נמוכה" : lang === "en" ? "Low" : "Nízka",
+                color: COLORS.discrepancy,
+                bg: COLORS.discrepancyBg,
+                desc: lang === "ar" ? "لا يوجد مصدر منتقى يؤكد الادعاء، أو يؤكده فقط مصادر حزبية/تابعة للدولة، أو تظل التفاصيل الرئيسية غير مؤكدة."
+                  : lang === "he" ? "אף מקור מאוצר אינו מאשר את הטענה, או שאושרה רק על ידי מקורות מפלגתיים/ממלכתיים."
+                  : lang === "en" ? "No curated source confirms the claim, or it is confirmed only by partisan/state-affiliated sources, or key details remain unverified."
+                  : "Žiadny kurátorovaný zdroj tvrdenie nepotvrdil, alebo ho potvrdzujú len stranícke/štátne zdroje, alebo kľúčové detaily zostávajú neoverené.",
+              },
+            ].map(({ level, color, bg, desc }) => (
+              <div key={level} style={{ display: "flex", gap: 10, marginBottom: 8, padding: "8px 12px", background: bg, borderRadius: 4 }}>
+                <span style={{ fontFamily: "monospace", fontSize: 11, color, fontWeight: 600, flexShrink: 0, paddingTop: 2 }}>{level.toUpperCase()}</span>
+                <span style={{ color: COLORS.ink }}>{desc}</span>
+              </div>
+            ))}
+            <p style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
+              {lang === "ar" ? "هذه المعايير متوافقة مع معايير IFCN وتُطبَّق بشكل متسق بغض النظر عن الجانب الذي يتعلق به الادعاء."
+                : lang === "he" ? "קריטריונים אלה תואמים את תקני IFCN ומיושמים באופן עקבי ללא קשר לצד שאליו מתייחסת הטענה."
+                : lang === "en" ? "These criteria are aligned with IFCN standards and applied consistently regardless of which side of the conflict the claim concerns."
+                : "Tieto kritériá sú v súlade so štandardmi IFCN a uplatňujú sa konzistentne bez ohľadu na to, ktorej strany konfliktu sa tvrdenie týka."}
+            </p>
+          </div>
+
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_contact")}</h3>
           <p style={{ marginBottom: 16 }}>
             {t("about_contact")} <em>palizra@proton.me</em>.
@@ -1224,11 +1205,11 @@ export default function ClaimVerifierDemo() {
             },
             {
               date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
-              type: "feature",
-              sk: "Pridaná časová os tvrdení – pri analýze textu s viacerými datovanými tvrdeniami sa zobrazí chronologická os udalostí. Kliknutím na udalosť sa spustí porovnanie zdrojov.",
-              en: "Added claims timeline – when analysing text with multiple dated claims, a chronological timeline of events is displayed. Clicking an event triggers source comparison.",
-              ar: "تمت إضافة جدول زمني للادعاءات – عند تحليل نص يحتوي على ادعاءات متعددة مؤرخة، يُعرض جدول زمني.",
-              he: "נוסף ציר זמן לטענות – בעת ניתוח טקסט עם טענות מתוארכות מרובות, מוצג ציר זמן כרונולוגי.",
+              type: "methodology",
+              sk: "Kalibrácia miery istoty podľa IFCN – zavedené explicitné kritériá: vysoká (≥2 kurátorované zdroje potvrdzujú), stredná (1 kurátorovaný zdroj alebo konflikt zdrojov), nízka (žiadny kurátorovaný zdroj nepotvrdil). Kritériá sú verejne dostupné v sekcii O nástroji.",
+              en: "Confidence level calibration per IFCN – explicit criteria introduced: high (≥2 curated sources confirm), medium (1 curated source or source conflict), low (no curated source confirmed). Criteria are publicly available in the About section.",
+              ar: "معايرة مستوى الثقة وفق IFCN – تم تقديم معايير صريحة. المعايير متاحة للعموم في قسم 'حول الأداة'.",
+              he: "כיול רמת הביטחון לפי IFCN – הוצגו קריטריונים מפורשים. הקריטריונים זמינים לציבור בסעיף 'אודות הכלי'.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
