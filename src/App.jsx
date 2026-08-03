@@ -1204,7 +1204,7 @@ export default function ClaimVerifierDemo() {
               he: "טופס הצעת טענות – מבקרים יכולים להציע טענה או תמונה לאימות בכתובת palizra.org/suggest.",
             },
             {
-              date: {"sk": "Júl 2026", "en": "July 2026", "ar": "يوليو 2026", "he": "יולי 2026"},
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
               type: "methodology",
               sk: "Kalibrácia miery istoty podľa IFCN – zavedené explicitné kritériá: vysoká (≥2 kurátorované zdroje potvrdzujú), stredná (1 kurátorovaný zdroj alebo konflikt zdrojov), nízka (žiadny kurátorovaný zdroj nepotvrdil). Kritériá sú verejne dostupné v sekcii O nástroji.",
               en: "Confidence level calibration per IFCN – explicit criteria introduced: high (≥2 curated sources confirm), medium (1 curated source or source conflict), low (no curated source confirmed). Criteria are publicly available in the About section.",
