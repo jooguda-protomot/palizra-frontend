@@ -103,7 +103,18 @@ async function verifyClaimViaBackend(claim, lang) {
 }
 
 export default function ClaimVerifierDemo() {
-  const [lang, setLang] = useState("en");
+  // Detekcia jazyka z nastavení prehliadača
+  function detectBrowserLang() {
+    const supported = ["sk", "en", "ar", "he"];
+    const browserLangs = navigator.languages || [navigator.language || "en"];
+    for (const bl of browserLangs) {
+      const code = bl.split("-")[0].toLowerCase();
+      if (supported.includes(code)) return code;
+    }
+    return "en";
+  }
+
+  const [lang, setLang] = useState(() => detectBrowserLang());
   const t = (key) => {
     const val = translations[lang]?.[key] ?? translations["sk"]?.[key] ?? key;
     return typeof val === "string" ? val.replace("{year}", new Date().getFullYear()) : val;
@@ -188,7 +199,9 @@ export default function ClaimVerifierDemo() {
     }
   }
 
+  // Automatická detekcia jazyka z textu
   async function handleAnalyze() {
+    const effectiveLang = lang;
     setLoading(true);
     setError(null);
     setClaims(null);
@@ -196,9 +209,9 @@ export default function ClaimVerifierDemo() {
     setSelectedClaimId(null);
     setConsistencyIssues(null);
     setConsistencyLoading(false);
-    startProgressMsgs(TEXT_LOADING_MSGS[lang] || TEXT_LOADING_MSGS.en, setLoadingMsg, textProgressRef);
+    startProgressMsgs(TEXT_LOADING_MSGS[effectiveLang] || TEXT_LOADING_MSGS.en, setLoadingMsg, textProgressRef);
     try {
-      const result = await extractClaimsViaBackend(inputText, lang);
+      const result = await extractClaimsViaBackend(inputText, effectiveLang);
       const claimsList = result.claims || [];
       setClaims(claimsList);
 
@@ -940,52 +953,6 @@ export default function ClaimVerifierDemo() {
           <p style={{ marginBottom: 8 }}>{t("about_balance_1")}</p>
           <p style={{ marginBottom: 16, color: COLORS.inkSoft, fontSize: 13 }}>{t("about_balance_2")}</p>
 
-          <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
-            {lang === "ar" ? "معايير مستوى الثقة" : lang === "he" ? "קריטריוני רמת הביטחון" : lang === "en" ? "Confidence Level Criteria" : "Kritériá miery istoty"}
-          </h3>
-          <div style={{ marginBottom: 16, fontSize: 13 }}>
-            {[
-              {
-                level: lang === "ar" ? "عالية" : lang === "he" ? "גבוהה" : lang === "en" ? "High" : "Vysoká",
-                color: COLORS.consensus,
-                bg: COLORS.consensusBg,
-                desc: lang === "ar" ? "مصدران مستقلان منتقيان على الأقل يؤكدان الادعاء الأساسي، ولا يتعارض معه أي مصدر منتقى."
-                  : lang === "he" ? "לפחות 2 מקורות עצמאיים מאוצרים מאשרים את הטענה המרכזית, ואף מקור מאוצר אינו סותר אותה."
-                  : lang === "en" ? "At least 2 curated independent sources confirm the core claim, and no curated source directly contradicts it."
-                  : "Aspoň 2 kurátorované nezávislé zdroje potvrdzujú tvrdenie a žiadny kurátorovaný zdroj ho priamo nepopiera.",
-              },
-              {
-                level: lang === "ar" ? "متوسطة" : lang === "he" ? "בינונית" : lang === "en" ? "Medium" : "Stredná",
-                color: COLORS.framing,
-                bg: COLORS.framingBg,
-                desc: lang === "ar" ? "مصدر منتقى واحد على الأقل يؤكد الادعاء جزئياً، أو تتعارض المصادر المنتقاة مع بعضها."
-                  : lang === "he" ? "לפחות מקור מאוצר אחד מאשר חלקית, או מקורות מאוצרים סותרים זה את זה."
-                  : lang === "en" ? "At least 1 curated source partially confirms the claim, or curated sources conflict with each other."
-                  : "Aspoň 1 kurátorovaný zdroj čiastočne potvrdzuje tvrdenie, alebo si kurátorované zdroje navzájom odporujú.",
-              },
-              {
-                level: lang === "ar" ? "منخفضة" : lang === "he" ? "נמוכה" : lang === "en" ? "Low" : "Nízka",
-                color: COLORS.discrepancy,
-                bg: COLORS.discrepancyBg,
-                desc: lang === "ar" ? "لا يوجد مصدر منتقى يؤكد الادعاء، أو يؤكده فقط مصادر حزبية/تابعة للدولة، أو تظل التفاصيل الرئيسية غير مؤكدة."
-                  : lang === "he" ? "אף מקור מאוצר אינו מאשר את הטענה, או שאושרה רק על ידי מקורות מפלגתיים/ממלכתיים."
-                  : lang === "en" ? "No curated source confirms the claim, or it is confirmed only by partisan/state-affiliated sources, or key details remain unverified."
-                  : "Žiadny kurátorovaný zdroj tvrdenie nepotvrdil, alebo ho potvrdzujú len stranícke/štátne zdroje, alebo kľúčové detaily zostávajú neoverené.",
-              },
-            ].map(({ level, color, bg, desc }) => (
-              <div key={level} style={{ display: "flex", gap: 10, marginBottom: 8, padding: "8px 12px", background: bg, borderRadius: 4 }}>
-                <span style={{ fontFamily: "monospace", fontSize: 11, color, fontWeight: 600, flexShrink: 0, paddingTop: 2 }}>{level.toUpperCase()}</span>
-                <span style={{ color: COLORS.ink }}>{desc}</span>
-              </div>
-            ))}
-            <p style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>
-              {lang === "ar" ? "هذه المعايير متوافقة مع معايير IFCN وتُطبَّق بشكل متسق بغض النظر عن الجانب الذي يتعلق به الادعاء."
-                : lang === "he" ? "קריטריונים אלה תואמים את תקני IFCN ומיושמים באופן עקבי ללא קשר לצד שאליו מתייחסת הטענה."
-                : lang === "en" ? "These criteria are aligned with IFCN standards and applied consistently regardless of which side of the conflict the claim concerns."
-                : "Tieto kritériá sú v súlade so štandardmi IFCN a uplatňujú sa konzistentne bez ohľadu na to, ktorej strany konfliktu sa tvrdenie týka."}
-            </p>
-          </div>
-
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_contact")}</h3>
           <p style={{ marginBottom: 16 }}>
             {t("about_contact")} <em>palizra@proton.me</em>.
@@ -1205,11 +1172,11 @@ export default function ClaimVerifierDemo() {
             },
             {
               date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "methodology",
-              sk: "Kalibrácia miery istoty podľa IFCN – zavedené explicitné kritériá: vysoká (≥2 kurátorované zdroje potvrdzujú), stredná (1 kurátorovaný zdroj alebo konflikt zdrojov), nízka (žiadny kurátorovaný zdroj nepotvrdil). Kritériá sú verejne dostupné v sekcii O nástroji.",
-              en: "Confidence level calibration per IFCN – explicit criteria introduced: high (≥2 curated sources confirm), medium (1 curated source or source conflict), low (no curated source confirmed). Criteria are publicly available in the About section.",
-              ar: "معايرة مستوى الثقة وفق IFCN – تم تقديم معايير صريحة. المعايير متاحة للعموم في قسم 'حول الأداة'.",
-              he: "כיול רמת הביטחון לפי IFCN – הוצגו קריטריונים מפורשים. הקריטריונים זמינים לציבור בסעיף 'אודות הכלי'.",
+              type: "feature",
+              sk: "Automatická detekcia jazyka – nástroj automaticky rozpozná jazyk vloženého textu (SK/EN/AR/HE) a prepne UI do správneho jazyka pred spustením analýzy.",
+              en: "Automatic language detection – the tool automatically recognises the language of the entered text (SK/EN/AR/HE) and switches the UI to the correct language before starting the analysis.",
+              ar: "الكشف التلقائي عن اللغة – تكتشف الأداة تلقائياً لغة النص المُدخل وتُبدّل واجهة المستخدم إلى اللغة الصحيحة.",
+              he: "זיהוי שפה אוטומטי – הכלי מזהה אוטומטית את שפת הטקסט המוזן ומעביר את ממשק המשתמש לשפה הנכונה.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
