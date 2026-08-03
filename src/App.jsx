@@ -961,6 +961,8 @@ export default function ClaimVerifierDemo() {
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_independence")}</h3>
           <p style={{ marginBottom: 8 }}>{t("about_independence")}</p>
           <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 8 }}>{t("about_imprint")}</p>
+          <p style={{ fontSize: 13, marginBottom: 8 }}><strong>{t("about_h_conflict")}</strong></p>
+          <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 16 }}>{t("about_conflict")}</p>
           <p style={{ fontSize: 13, marginBottom: 8 }}>
             <strong>{t("about_methodology_version")}</strong>
             {" · "}
@@ -1177,6 +1179,14 @@ export default function ClaimVerifierDemo() {
               en: "Automatic language detection – the tool automatically recognises the language of the entered text (SK/EN/AR/HE) and switches the UI to the correct language before starting the analysis.",
               ar: "الكشف التلقائي عن اللغة – تكتشف الأداة تلقائياً لغة النص المُدخل وتُبدّل واجهة المستخدم إلى اللغة الصحيحة.",
               he: "זיהוי שפה אוטומטי – הכלי מזהה אוטומטית את שפת הטקסט המוזן ומעביר את ממשק המשתמש לשפה הנכונה.",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Pridaná politika konfliktu záujmov – verejné vyhlásenie autora o absencii finančných, politických a osobných záujmov v konflikte, v súlade s požiadavkami IFCN.",
+              en: "Added conflict of interest policy – public statement by the author confirming the absence of financial, political and personal interests in the conflict, in accordance with IFCN requirements.",
+              ar: "تمت إضافة سياسة تضارب المصالح وفقاً لمتطلبات IFCN.",
+              he: "נוספה מדיניות ניגוד עניינים בהתאם לדרישות IFCN.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
