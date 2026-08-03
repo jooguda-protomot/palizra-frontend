@@ -134,8 +134,17 @@ const labelStyle = {
 };
 
 export default function SuggestPage() {
-  const urlLang = new URLSearchParams(window.location.search).get("lang") || "en";
-  const [lang, setLang] = useState(["sk","en","ar","he"].includes(urlLang) ? urlLang : "en");
+  const urlLang = new URLSearchParams(window.location.search).get("lang");
+  function detectBrowserLang() {
+    const supported = ["sk", "en", "ar", "he"];
+    const browserLangs = navigator.languages || [navigator.language || "en"];
+    for (const bl of browserLangs) {
+      const code = bl.split("-")[0].toLowerCase();
+      if (supported.includes(code)) return code;
+    }
+    return "en";
+  }
+  const [lang, setLang] = useState(urlLang && ["sk","en","ar","he"].includes(urlLang) ? urlLang : detectBrowserLang());
   const u = UI[lang] || UI.en;
   const isRTL = lang === "ar" || lang === "he";
 

@@ -131,71 +131,6 @@ const UI = {
   },
 };
 
-const API_BASE_URL_FEEDBACK = "https://palizraanalyzator-production.up.railway.app";
-
-function FeedbackButton({ analysisId, claimText, lang }) {
-  const [open, setOpen] = useState(false);
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("idle");
-
-  const LABELS = {
-    btn: { sk: "Nahlásiť problém", en: "Report an issue", ar: "الإبلاغ عن مشكلة", he: "דווח על בעיה" },
-    placeholder: { sk: "Opíšte problém s touto analýzou...", en: "Describe the issue with this analysis...", ar: "صف المشكلة في هذا التحليل...", he: "תאר את הבעיה בניתוח זה..." },
-    send: { sk: "Odoslať", en: "Send", ar: "إرسال", he: "שלח" },
-    sending: { sk: "Odosiela sa…", en: "Sending…", ar: "جاري الإرسال…", he: "שולח…" },
-    sent: { sk: "✓ Ďakujeme, problém bol nahlásený.", en: "✓ Thank you, issue reported.", ar: "✓ شكراً، تم الإبلاغ.", he: "✓ תודה, הבעיה דווחה." },
-    error: { sk: "Chyba, skús znova.", en: "Error, try again.", ar: "خطأ، حاول مجدداً.", he: "שגיאה, נסה שוב." },
-  };
-  const t = key => LABELS[key][lang] || LABELS[key].en;
-
-  async function handleSend() {
-    if (!description.trim()) return;
-    setStatus("sending");
-    try {
-      await fetch(`${API_BASE_URL_FEEDBACK}/api/feedback`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ context: "analyses_archive", subject: claimText, description, relatedData: { analysisId } }),
-      });
-      setStatus("sent");
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  if (status === "sent") return <div style={{ fontSize: 12, color: COLORS.consensus }}>{t("sent")}</div>;
-
-  return (
-    <div>
-      {!open ? (
-        <button onClick={() => setOpen(true)}
-          style={{ background: "none", border: `1px solid ${COLORS.line}`, color: COLORS.inkSoft, fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: "3px 8px", borderRadius: 3 }}>
-          ⚑ {t("btn")}
-        </button>
-      ) : (
-        <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            placeholder={t("placeholder")}
-            rows={3}
-            style={{ fontFamily: "monospace", fontSize: 12, padding: "6px 8px", border: `1px solid ${COLORS.line}`, borderRadius: 3, resize: "vertical" }}
-          />
-          <div style={{ display: "flex", gap: 6 }}>
-            <button onClick={handleSend} disabled={status === "sending" || !description.trim()}
-              style={{ fontFamily: "monospace", fontSize: 11, padding: "3px 10px", background: COLORS.ink, color: COLORS.paper, border: "none", borderRadius: 3, cursor: "pointer" }}>
-              {status === "sending" ? t("sending") : t("send")}
-            </button>
-            {status === "error" && <span style={{ fontSize: 11, color: COLORS.discrepancy }}>{t("error")}</span>}
-            <button onClick={() => setOpen(false)}
-              style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.inkSoft, fontSize: 12 }}>✕</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function ShareButton({ id, lang }) {
   const [copied, setCopied] = useState(false);
 
@@ -238,9 +173,22 @@ function ShareButton({ id, lang }) {
 
 export default function AnalysesPage() {
   const urlParams = new URLSearchParams(window.location.search);
-  const urlLang = urlParams.get("lang") || "en";
+  const urlLang = urlParams.get("lang");
   const urlId = urlParams.get("id") || null;
-  const [lang, setLang] = useState(["sk","en","ar","he"].includes(urlLang) ? urlLang : "en");
+
+  function detectBrowserLang() {
+    const supported = ["sk", "en", "ar", "he"];
+    const browserLangs = navigator.languages || [navigator.language || "en"];
+    for (const bl of browserLangs) {
+      const code = bl.split("-")[0].toLowerCase();
+      if (supported.includes(code)) return code;
+    }
+    return "en";
+  }
+
+  const [lang, setLang] = useState(
+    urlLang && ["sk","en","ar","he"].includes(urlLang) ? urlLang : detectBrowserLang()
+  );
   const u = UI[lang] || UI.en;
   const isRTL = lang === "ar" || lang === "he";
 
@@ -403,32 +351,8 @@ export default function AnalysesPage() {
                     )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
                   </div>
                   <ShareButton id={detail.id} lang={lang} />
-                  <FeedbackButton analysisId={detail.id} claimText={detail.claim_text} lang={lang} />
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, lineHeight: 1.4 }}>{detail.claim_text}</div>
-
-                {/* Zdroj tvrdenia */}
-                {(detail.source_url || detail.source_platform) && (
-                  <div style={{ fontSize: 12, fontFamily: "monospace", marginBottom: 14, padding: "8px 12px", background: "#f8f6f1", border: `1px solid ${COLORS.line}`, borderRadius: 4 }}>
-                    <span style={{ color: COLORS.inkSoft, marginRight: 6 }}>
-                      {lang === "ar" ? "المصدر:" : lang === "he" ? "מקור:" : lang === "en" ? "Source:" : "Zdroj:"}
-                    </span>
-                    {detail.source_platform && (
-                      <span style={{ background: COLORS.ink, color: COLORS.paper, padding: "1px 6px", borderRadius: 2, fontSize: 10, marginRight: 8 }}>
-                        {detail.source_platform.toUpperCase()}
-                      </span>
-                    )}
-                    {detail.source_date && (
-                      <span style={{ color: COLORS.inkSoft, marginRight: 8 }}>{detail.source_date}</span>
-                    )}
-                    {detail.source_url && (
-                      <a href={detail.source_url} target="_blank" rel="noopener noreferrer"
-                        style={{ color: COLORS.ink, wordBreak: "break-all" }}>
-                        {detail.source_url.length > 60 ? detail.source_url.slice(0, 60) + "…" : detail.source_url}
-                      </a>
-                    )}
-                  </div>
-                )}
+                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, lineHeight: 1.4 }}>{detail.claim_text}</div>
 
                 {/* Update notice */}
                 {detail.updateNotice && (
@@ -450,151 +374,6 @@ export default function AnalysesPage() {
                 {(() => {
                   // Použi preloženú verziu ak existuje, inak pôvodnú
                   const comparison = detail.translations?.[lang]?.comparison || detail.result?.comparison;
-                  const imageAnalysis = detail.result?.imageAnalysis;
-
-                  // Obrazová analýza
-                  if (imageAnalysis) return (
-                    <>
-                      {detail.result?.imageUrl && (
-                        <div style={{ marginBottom: 12 }}>
-                          <img src={detail.result.imageUrl} alt="verified"
-                            style={{ maxWidth: "100%", maxHeight: 280, objectFit: "contain", borderRadius: 4, border: `1px solid ${COLORS.line}`, display: "block" }} />
-                        </div>
-                      )}
-
-                      {/* Vizuálny popis */}
-                      {imageAnalysis.llmAnalysis?.visual_description && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
-                            {lang === "ar" ? "الوصف البصري" : lang === "he" ? "תיאור חזותי" : lang === "en" ? "VISUAL DESCRIPTION" : "VIZUÁLNY POPIS"}
-                          </div>
-                          <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.visual_description}</div>
-                          {imageAnalysis.llmAnalysis.earliest_known_appearance && (
-                            <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 6 }}>
-                              <strong>{lang === "en" ? "Earliest known appearance: " : lang === "ar" ? "أقدم ظهور معروف: " : lang === "he" ? "הופעה ראשונה ידועה: " : "Najstarší známy výskyt: "}</strong>
-                              {imageAnalysis.llmAnalysis.earliest_known_appearance}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Geolokácia */}
-                      {imageAnalysis.llmAnalysis?.geolocation_assessment && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, marginBottom: 6, letterSpacing: "0.06em" }}>
-                            {lang === "ar" ? "تحديد الموقع" : lang === "he" ? "גיאולוקציה" : lang === "en" ? "GEOLOCATION" : "GEOLOKÁCIA"}
-                          </div>
-                          {typeof imageAnalysis.llmAnalysis.geolocation_assessment === "string" ? (
-                            <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment}</div>
-                          ) : (
-                            <>
-                              {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location && (
-                                <div style={{ fontSize: 13, marginBottom: 4 }}>
-                                  <strong>{lang === "en" ? "Consistency: " : lang === "ar" ? "التوافق: " : lang === "he" ? "עקביות: " : "Súlad: "}</strong>
-                                  {(() => {
-  const val = imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location?.toLowerCase();
-  if (val?.includes("konzistent") || val?.includes("consistent")) {
-    return lang === "ar" ? "متوافق" : lang === "he" ? "עקבי" : lang === "en" ? "consistent" : "konzistentné";
-  }
-  if (val?.includes("nekonzistent") || val?.includes("inconsistent")) {
-    return lang === "ar" ? "غير متوافق" : lang === "he" ? "לא עקבי" : lang === "en" ? "inconsistent" : "nekonzistentné";
-  }
-  return imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location;
-})()}
-                                </div>
-                              )}
-                              {imageAnalysis.llmAnalysis.geolocation_assessment.explanation && (
-                                <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment.explanation}</div>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      )}
-
-                      {/* EXIF Metadata */}
-                      <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
-                        <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
-                          {lang === "ar" ? "بيانات EXIF" : lang === "he" ? "מטאדאטה EXIF" : "METADATA (EXIF)"}
-                        </div>
-                        {imageAnalysis.metadata?.present === false ? (
-                          <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
-                            {lang === "ar" ? "لا توجد بيانات EXIF." : lang === "he" ? "אין נתוני EXIF." : lang === "en" ? "No EXIF data found. Common for images shared via social media — absence of EXIF is NOT evidence of manipulation." : "Žiadne EXIF dáta. Bežné pri obrázkoch zo sociálnych sietí — absencia EXIF NIE JE dôkaz manipulácie."}
-                          </div>
-                        ) : (
-                          <>
-                            {imageAnalysis.metadata?.date && <div style={{ fontSize: 13 }}>{lang === "en" ? "Date: " : "Dátum: "}{imageAnalysis.metadata.date}</div>}
-                            {imageAnalysis.metadata?.device && <div style={{ fontSize: 13 }}>{lang === "en" ? "Device: " : "Zariadenie: "}{imageAnalysis.metadata.device}</div>}
-                          </>
-                        )}
-                      </div>
-
-                      {/* Reverse Image Search */}
-                      {imageAnalysis.reverseResults?.length > 0 && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
-                            {lang === "ar" ? "بحث عكسي عن الصورة" : lang === "he" ? "חיפוש תמונה הפוך" : "REVERSE IMAGE SEARCH"}
-                          </div>
-                          {imageAnalysis.reverseResults.map((engineResult, ei) => (
-                            engineResult.matches?.length > 0 ? (
-                              <div key={ei} style={{ marginBottom: 8 }}>
-                                <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 4 }}>
-                                  {engineResult.engine?.toUpperCase()} – {engineResult.matches.length} results
-                                </div>
-                                {engineResult.matches.slice(0, 5).map((m, i) => (
-                                  <div key={i} style={{ fontSize: 12, marginBottom: 2 }}>
-                                    <a href={m.url} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.ink }}>
-                                      {(m.title || m.url || "").slice(0, 80)}
-                                    </a>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : null
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Archívna kontrola */}
-                      {imageAnalysis.archiveCheck?.matched_in_archive && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.discrepancyBg, border: `1px solid ${COLORS.discrepancy}`, borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.discrepancy, marginBottom: 6, letterSpacing: "0.06em" }}>
-                            {lang === "en" ? "⚠ ARCHIVE MATCH" : lang === "ar" ? "⚠ تطابق الأرشيف" : lang === "he" ? "⚠ התאמת ארכיון" : "⚠ ZHODA V ARCHÍVE"}
-                          </div>
-                          {imageAnalysis.archiveCheck.known_context && (
-                            <div style={{ fontSize: 13, marginBottom: 4 }}>
-                              <strong>{lang === "en" ? "Original context: " : lang === "ar" ? "السياق الأصلي: " : lang === "he" ? "הקשר מקורי: " : "Pôvodný kontext: "}</strong>
-                              {imageAnalysis.archiveCheck.known_context}
-                            </div>
-                          )}
-                          {imageAnalysis.archiveCheck.known_date && (
-                            <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
-                              {lang === "en" ? "First seen: " : "Prvý výskyt: "}{imageAnalysis.archiveCheck.known_date}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* AI Detekcia */}
-                      {imageAnalysis.aiDetection?.probability_ai_generated !== undefined && (
-                        <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
-                          <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
-                            {lang === "ar" ? "كشف الذكاء الاصطناعي" : lang === "he" ? "זיהוי בינה מלאכותית" : lang === "en" ? "AI DETECTION" : "AI DETEKCIA"}
-                          </div>
-                          <div style={{ fontSize: 13 }}>
-                            {lang === "en" ? "AI probability: " : lang === "ar" ? "احتمالية الذكاء الاصطناعي: " : lang === "he" ? "הסתברות AI: " : "Pravdepodobnosť AI: "}
-                            <strong>{(imageAnalysis.aiDetection.probability_ai_generated * 100).toFixed(0)}%</strong>
-                          </div>
-                          <div style={{ fontSize: 11, color: COLORS.inkSoft, marginTop: 4 }}>
-                            {lang === "en" ? "AI detectors have high error rates for compressed images. Use as one signal only."
-                              : lang === "ar" ? "كاشفات الذكاء الاصطناعي لها معدل خطأ عال للصور المضغوطة."
-                              : lang === "he" ? "גלאי AI עלולים לטעות עבור תמונות דחוסות."
-                              : "AI detektory majú vysokú chybovosť pri kompresovaných obrázkoch. Použiť len ako jeden signál."}
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  );
-
-                  // Textová analýza
                   return comparison && (<>
                     {comparison.consensus_points?.length > 0 && (
                       <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
