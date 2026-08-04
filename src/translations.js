@@ -1,4 +1,4 @@
-Fexport const translations = {
+export const translations = {
   sk: {
     module_label: "PROTOTYP \u00B7 MODUL OVEROVANIA TVRDEN\u00CD",
     app_title: "Zlo\u017eka d\u00f4kazov",
