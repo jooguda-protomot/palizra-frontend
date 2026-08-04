@@ -197,7 +197,7 @@ export default function AnalysesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState({ location: "", category: "", lang: "" });
+  const [filters, setFilters] = useState({ location: "", category: "", lang: "", type: "" });
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState(null);
@@ -212,6 +212,7 @@ export default function AnalysesPage() {
       if (filters.location) params.set("location", filters.location);
       if (filters.category) params.set("category", filters.category);
       if (filters.lang) params.set("lang", filters.lang);
+      if (filters.type) params.set("type", filters.type);
       const res = await fetch(`${API_BASE_URL}/api/analyses?${params}`);
       const data = await res.json();
       setAnalyses(data.analyses || []);
@@ -241,7 +242,13 @@ export default function AnalysesPage() {
 
   function handleFilter(key, value) {
     const allLabel = u.all;
-    setFilters(f => ({ ...f, [key]: value === allLabel ? "" : value }));
+    let filterValue = value === allLabel ? "" : value;
+    // Normalizuj type filter na anglické hodnoty
+    if (key === "type" && filterValue) {
+      if (["Text", "Text", "نص", "טקסט"].includes(filterValue)) filterValue = "text";
+      if (["Obrázok", "Image", "صورة", "תמונה"].includes(filterValue)) filterValue = "image";
+    }
+    setFilters(f => ({ ...f, [key]: filterValue }));
     setPage(1); setSelected(null); setDetail(null);
   }
 
@@ -286,6 +293,7 @@ export default function AnalysesPage() {
           { label: u.location, key: "location", options: u.locations },
           { label: u.category, key: "category", options: u.categories },
           { label: u.lang, key: "lang", options: [u.all, "sk","en","ar","he"] },
+          { label: lang === "ar" ? "النوع" : lang === "he" ? "סוג" : lang === "en" ? "Type" : "Typ", key: "type", options: [u.all, lang === "ar" ? "نص" : lang === "he" ? "טקסט" : lang === "en" ? "Text" : "Text", lang === "ar" ? "صورة" : lang === "he" ? "תמונה" : lang === "en" ? "Image" : "Obrázok"] },
         ].map(({ label, key, options }) => (
           <div key={key}>
             <label style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, letterSpacing: "0.06em", display: "block", marginBottom: 4 }}>{label.toUpperCase()}</label>
@@ -315,6 +323,11 @@ export default function AnalysesPage() {
                   lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
                   { day: "numeric", month: "long", year: "numeric" }
                 )} · {tLocation(a.location, lang)} · {tCategory(a.category, lang)} · {a.lang?.toUpperCase()}
+                {a.type === "image" && (
+                  <span style={{ marginLeft: 8, background: COLORS.framing, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
+                    {lang === "ar" ? "صورة" : lang === "he" ? "תמונה" : lang === "en" ? "IMAGE" : "OBRÁZOK"}
+                  </span>
+                )}
               </div>
               <div style={{ fontSize: 14, lineHeight: 1.4 }}>
                 {a.claim_text?.slice(0, 120)}{a.claim_text?.length > 120 ? "…" : ""}
@@ -349,6 +362,11 @@ export default function AnalysesPage() {
                       lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
                       { day: "numeric", month: "long", year: "numeric" }
                     )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
+                    {detail.type === "image" && (
+                      <span style={{ marginLeft: 8, background: COLORS.framing, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
+                        {lang === "ar" ? "صورة" : lang === "he" ? "תמונה" : lang === "en" ? "IMAGE" : "OBRÁZOK"}
+                      </span>
+                    )}
                   </div>
                   <ShareButton id={detail.id} lang={lang} />
                 </div>
