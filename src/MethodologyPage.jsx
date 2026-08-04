@@ -19,7 +19,7 @@ const UI = {
     title: "Metodológia",
     desc: "Transparentný popis postupov, kritérií a testovania vyváženosti nástroja Palizra Analyzator v súlade so štandardmi IFCN.",
     back: "← Späť na nástroj",
-    version: "Verzia metodológie: 1.0 · Júl 2026",
+    version: "Verzia metodológie: 1.0 · August 2026",
     toc: "Obsah",
     sections: [
       { id: "how", title: "Ako nástroj funguje" },
@@ -34,7 +34,7 @@ const UI = {
     title: "Methodology",
     desc: "A transparent description of the procedures, criteria and impartiality testing of Palizra Analyzator, in accordance with IFCN standards.",
     back: "← Back to tool",
-    version: "Methodology version: 1.0 · July 2026",
+    version: "Methodology version: 1.0 · August 2026",
     toc: "Contents",
     sections: [
       { id: "how", title: "How the tool works" },
@@ -49,7 +49,7 @@ const UI = {
     title: "المنهجية",
     desc: "وصف شفاف للإجراءات والمعايير واختبار الحياد لمحلل بالزرا، وفقاً لمعايير IFCN.",
     back: "← العودة إلى الأداة",
-    version: "إصدار المنهجية: 1.0 · يوليو 2026",
+    version: "إصدار المنهجية: 1.0 · أغسطس 2026",
     toc: "المحتويات",
     sections: [
       { id: "how", title: "كيف تعمل الأداة" },
@@ -64,7 +64,7 @@ const UI = {
     title: "מתודולוגיה",
     desc: "תיאור שקוף של הנהלים, הקריטריונים ובדיקת הנייטרליות של פליזרה אנלייזר, בהתאם לתקני IFCN.",
     back: "← חזרה לכלי",
-    version: "גרסת מתודולוגיה: 1.0 · יולי 2026",
+    version: "גרסת מתודולוגיה: 1.0 · אוגוסט 2026",
     toc: "תוכן עניינים",
     sections: [
       { id: "how", title: "כיצד הכלי עובד" },
@@ -152,9 +152,216 @@ Analyses are not deleted after publication. If an analysis requires a substantia
 };
 
 // Jednoduché kopírovanie EN obsahu pre ostatné jazyky (v produkcii by boli preložené)
-CONTENT.sk = CONTENT.en;
-CONTENT.ar = CONTENT.en;
-CONTENT.he = CONTENT.en;
+CONTENT.sk = {
+  how: {
+    title: "Ako nástroj funguje",
+    body: `Palizra Analyzator je AI-asistovaný nástroj na overovanie tvrdení a obrázkov súvisiacich s izraelsko-palestínskym konfliktom. Nevydáva jednoduché verdikty pravda/nepravda. Namiesto toho rozkladá text na overiteľné jednotky a porovnáva ich naprieč nezávislými zdrojmi.
+
+Proces analýzy pozostáva zo štyroch krokov:
+
+1. Extrakcia tvrdení — Nástroj rozloží vstupný text na jednotlivé tvrdenia, pričom každé klasifikuje ako overiteľný fakt, citáciu/výrok, interpretáciu alebo neoveriteľné tvrdenie.
+
+2. Kontrola vnútornej konzistentnosti — Nástroj skontroluje, či si tvrdenia v rámci toho istého textu neodporujú z hľadiska dátumov, čísel alebo logiky.
+
+3. Porovnanie zdrojov — Pre každý overiteľný fakt nástroj vyhľadá kurátorované nezávislé zdroje a porovná, čo každý zdroj hovorí, pričom identifikuje zhodu, nezhody a rozdiely v rámcovaní.
+
+4. Priradenie miery istoty — Na základe zhromaždených dôkazov nástroj priraďuje mieru istoty (vysoká, stredná, nízka) podľa explicitných kritérií (pozri sekciu 3).
+
+Pri obrázkoch nástroj navyše vykonáva spätné vyhľadávanie obrázkov, geolokačné hodnotenie, analýzu metadát EXIF a detekciu AI generovania.`,
+  },
+  sources: {
+    title: "Výber zdrojov",
+    body: `Zdroje sú vyberané podľa nasledujúcich kritérií, uplatňovaných konzistentne pre všetky médiá bez ohľadu na to, ktorej strane konfliktu sú priradené:
+
+1. Editorská nezávislosť — Zdroj musí byť slobodný od vládnej alebo štátnej kontroly a nesmie byť financovaný stranou konfliktu.
+
+2. História overovania — Zdroj musí mať zdokumentovanú históriu presnosti a opráv.
+
+3. Geografické a jazykové pokrytie — Zoznam zdrojov musí zahŕňať médiá pokrývajúce obe strany konfliktu.
+
+4. Inštitucionálna dôveryhodnosť — Pre údaje o ľudských právach musí byť zdroj uznávanou medzinárodnou alebo regionálnou organizáciou.
+
+Kurátorovaný zoznam zdrojov sa reviduje kvartálne. Úplný zoznam a dokumentácia auditu sú dostupné na palizra.org/analyses a v dokumente Palizra Source Audit.
+
+Explicitne vylúčené zdroje: vládou kontrolované alebo štátom financované médiá, zdroje so zdokumentovanou systematickou zaujatosťou a neoverené účty na sociálnych sieťach.`,
+  },
+  confidence: {
+    title: "Kritériá miery istoty",
+    body: `Miera istoty sa priraďuje podľa nasledujúcich explicitných kritérií, uplatňovaných konzistentne bez ohľadu na pôvod tvrdenia:
+
+VYSOKÁ: Aspoň 2 kurátorované nezávislé zdroje potvrdzujú jadro tvrdenia a žiadny kurátorovaný zdroj ho priamo nepopiera.
+
+STREDNÁ: Aspoň 1 kurátorovaný nezávislý zdroj potvrdzuje alebo čiastočne potvrdzuje jadro tvrdenia, ALEBO si kurátorované zdroje v kľúčových detailoch odporujú.
+
+NÍZKA: Žiadny kurátorovaný nezávislý zdroj tvrdenie nepotvrdil, ALEBO ho potvrdzujú len stranícke či štátom napojené zdroje, ALEBO kľúčové detaily (čísla, miesto, pôvodca) zostávajú neoverené žiadnym kurátorovaným zdrojom.
+
+Tieto kritériá odrážajú redakčnú vyváženosť, nie mechanickú vyváženosť. Miera istoty sa určuje na základe kvality a množstva dostupných dôkazov, nie na základe pôvodu tvrdenia.`,
+  },
+  balance: {
+    title: "Testovanie vyváženosti",
+    body: `Na overenie, že nástroj uplatňuje konzistentné štandardy bez ohľadu na to, z ktorej strany konfliktu tvrdenie pochádza, sa vykonávajú kvartálne testy vyváženosti.
+
+Každý test pozostáva zo spárovaných dvojíc tvrdení — jedno z palestínskeho/arabského zdroja a jedno štruktúrne ekvivalentné tvrdenie z izraelského zdroja — ktoré sa do nástroja zadávajú nezávisle. Výsledky sa porovnávajú v štyroch kategóriách: obete, infraštruktúra, štatistiky a diplomatické vyhlásenia.
+
+Ak sa zistí nekonzistentnosť, preskúma sa jej príčina a implementuje sa oprava. Všetky záznamy z testov sa uchovávajú a výsledky sa zverejňujú v Changelogu na palizra.org.
+
+Nástroj uplatňuje redakčnú vyváženosť, nie mechanickú (falošnú) vyváženosť. To znamená, že tvrdenie z palestínskeho zdroja a tvrdenie z izraelského zdroja, ktoré sú podložené rovnakou kvalitou dôkazov, dostanú rovnakú mieru istoty.
+
+Prvý kvartálny test: Q3 2026.`,
+  },
+  corrections: {
+    title: "Opravy a aktualizácie",
+    body: `Palizra Analyzator sa zaväzuje k transparentnému opravovaniu chýb v súlade so štandardmi IFCN.
+
+Ak sa v zverejnenej analýze zistí chyba — či už autorom alebo nahlásená čitateľom — podniknú sa nasledujúce kroky:
+
+1. Chyba sa posúdi a ak sa potvrdí, čo najskôr sa opraví.
+2. Zverejnená analýza sa aktualizuje viditeľným upozornením o aktualizácii s dátumom opravy a popisom zmeny.
+3. Oprava sa zdokumentuje vo verejnom zozname opráv na palizra.org/corrections.
+
+Chyby možno nahlásiť prostredníctvom tlačidla Nahlásiť problém pri každej zverejnenej analýze alebo e-mailom na adresu palizra@proton.me.
+
+Analýzy sa po zverejnení neodstraňujú. Ak analýza vyžaduje podstatnú aktualizáciu, pôvodná verzia zostane zachovaná a pridá sa odkaz na aktualizovanú analýzu.`,
+  },
+};
+
+CONTENT.ar = {
+  how: {
+    title: "كيف تعمل الأداة",
+    body: `محلل بالزرا هو أداة للتحقق من الحقائق بمساعدة الذكاء الاصطناعي للادعاءات والصور المتعلقة بالصراع الإسرائيلي الفلسطيني. لا تصدر أحكاماً بسيطة بالصواب أو الخطأ. بدلاً من ذلك، تقسّم النص إلى وحدات قابلة للتحقق وتقارنها عبر مصادر مستقلة.
+
+تتكون عملية التحليل من أربع خطوات:
+
+1. استخراج الادعاءات — تقسم الأداة النص إلى ادعاءات فردية، وتصنف كل منها كحقيقة قابلة للتحقق، أو اقتباس/بيان، أو تفسير، أو ادعاء غير قابل للتحقق.
+
+2. فحص الاتساق الداخلي — تتحقق الأداة مما إذا كانت الادعاءات داخل النص الواحد تتعارض من حيث التواريخ أو الأرقام أو المنطق.
+
+3. مقارنة المصادر — لكل حقيقة قابلة للتحقق، تبحث الأداة في المصادر المستقلة المنتقاة وتقارن ما تقوله كل مصدر، محددةً نقاط التوافق والتناقضات وفروق الإطار.
+
+4. تعيين مستوى الثقة — بناءً على الأدلة المجمعة، تعين الأداة مستوى ثقة (عالٍ أو متوسط أو منخفض) وفق معايير صريحة (انظر القسم 3).
+
+للصور، تجري الأداة أيضاً بحثاً عكسياً عن الصور وتقييم الموقع الجغرافي وتحليل بيانات EXIF الوصفية والكشف عن توليد الذكاء الاصطناعي.`,
+  },
+  sources: {
+    title: "اختيار المصادر",
+    body: `تُختار المصادر وفق المعايير التالية، المطبقة باتساق على جميع المنافذ بصرف النظر عن الجانب الذي ترتبط به:
+
+1. الاستقلالية التحريرية — يجب أن يكون المصدر حراً من السيطرة الحكومية أو الدولة وألا يكون ممولاً من طرف في الصراع.
+
+2. سجل التحقق — يجب أن يكون للمصدر سجل موثق من الدقة والتصحيحات.
+
+3. التغطية الجغرافية واللغوية — يجب أن تشمل قائمة المصادر منافذ تغطي جانبي الصراع.
+
+4. المصداقية المؤسسية — لبيانات حقوق الإنسان، يجب أن يكون المصدر منظمة دولية أو إقليمية معترفاً بها.
+
+تُراجع قائمة المصادر المنتقاة كل ثلاثة أشهر. القائمة الكاملة ووثائق التدقيق متاحة على palizra.org/analyses.
+
+المصادر المستبعدة صراحةً: المنافذ التي تسيطر عليها الحكومة أو تموّلها الدولة، والمصادر ذات التحيز المنهجي الموثق.`,
+  },
+  confidence: {
+    title: "معايير مستوى الثقة",
+    body: `تُعيَّن مستويات الثقة وفق المعايير الصريحة التالية، المطبقة باتساق بصرف النظر عن مصدر الادعاء:
+
+عالٍ: مصدران مستقلان منتقيان على الأقل يؤكدان الادعاء الأساسي، ولا يتعارض معه أي مصدر منتقى بشكل مباشر.
+
+متوسط: مصدر منتقى مستقل واحد على الأقل يؤكد أو يؤكد جزئياً الادعاء الأساسي، أو تتعارض المصادر المنتقاة في التفاصيل الرئيسية.
+
+منخفض: لا يؤكد أي مصدر منتقى مستقل الادعاء، أو يؤكده فقط مصادر حزبية أو تابعة للدولة، أو تظل التفاصيل الرئيسية غير مؤكدة.
+
+تعكس هذه المعايير التوازن التحريري لا التوازن الميكانيكي. يُحدَّد مستوى الثقة بناءً على جودة الأدلة المتاحة وكميتها، لا بناءً على مصدر الادعاء.`,
+  },
+  balance: {
+    title: "اختبار الحياد",
+    body: `للتحقق من أن الأداة تطبق معايير متسقة بصرف النظر عن الجانب الذي يأتي منه الادعاء، تُجرى اختبارات حياد ربع سنوية.
+
+يتكون كل اختبار من أزواج متطابقة من الادعاءات — أحدها من مصدر فلسطيني/عربي وآخر مكافئ هيكلياً من مصدر إسرائيلي — تُرسل إلى الأداة بشكل مستقل. تُقارن النتائج عبر أربع فئات: الضحايا والبنية التحتية والإحصاءات والبيانات الدبلوماسية.
+
+إذا تم تحديد تناقض، يُحقق في السبب الجذري ويُنفَّذ تصحيح. تُحتفظ بجميع سجلات الاختبارات وتُنشر النتائج في سجل التغييرات على palizra.org.
+
+الاختبار الأول: الربع الثالث من 2026.`,
+  },
+  corrections: {
+    title: "التصحيحات والتحديثات",
+    body: `يلتزم محلل بالزرا بتصحيح الأخطاء بشفافية وفقاً لمعايير IFCN.
+
+إذا تم تحديد خطأ في تحليل منشور، سواء من قِبل المؤلف أو بلّغ عنه قارئ، تُتخذ الخطوات التالية:
+
+1. يُقيَّم الخطأ وإذا تأكد يُصحَّح في أقرب وقت ممكن.
+2. يُحدَّث التحليل المنشور بإشعار تحديث مرئي يذكر تاريخ التصحيح وطبيعة التغيير.
+3. يُوثَّق التصحيح في سجل التصحيحات العام على palizra.org/corrections.
+
+يمكن الإبلاغ عن الأخطاء عبر زر "الإبلاغ عن مشكلة" في كل تحليل منشور، أو عبر البريد الإلكتروني على palizra@proton.me.`,
+  },
+};
+
+CONTENT.he = {
+  how: {
+    title: "כיצד הכלי עובד",
+    body: `פליזרה אנלייזר הוא כלי לבדיקת עובדות בסיוע בינה מלאכותית עבור טענות ותמונות הקשורות לסכסוך הישראלי-פלסטיני. הוא אינו מוציא פסקי דין פשוטים של נכון/לא נכון. במקום זאת, הוא מפרק טקסט ליחידות ברות אימות ומשווה אותן על פני מקורות עצמאיים.
+
+תהליך הניתוח מורכב מארבעה שלבים:
+
+1. חילוץ טענות — הכלי מפרק את הטקסט לטענות בודדות, ומסווג כל אחת כעובדה ברת אימות, ציטוט/הצהרה, פרשנות, או טענה שלא ניתן לאמת.
+
+2. בדיקת עקביות פנימית — הכלי בודק האם טענות בתוך אותו טקסט סותרות זו את זו מבחינת תאריכים, מספרים או היגיון.
+
+3. השוואת מקורות — עבור כל עובדה ברת אימות, הכלי מחפש במקורות עצמאיים מאוצרים ומשווה מה כל מקור אומר, תוך זיהוי הסכמה, סתירות והבדלי מסגור.
+
+4. הקצאת רמת ביטחון — בהתבסס על הראיות שנאספו, הכלי מקצה רמת ביטחון (גבוהה, בינונית או נמוכה) לפי קריטריונים מפורשים (ראה סעיף 3).
+
+לתמונות, הכלי מבצע בנוסף חיפוש תמונה הפוך, הערכת גיאולוקציה, ניתוח מטאדאטה EXIF וזיהוי יצירה על ידי בינה מלאכותית.`,
+  },
+  sources: {
+    title: "בחירת מקורות",
+    body: `מקורות נבחרים לפי הקריטריונים הבאים, המיושמים באופן עקבי על כל הגופים ללא קשר לצד הסכסוך שהם קשורים אליו:
+
+1. עצמאות עיתונאית — המקור חייב להיות חופשי מבקרת ממשלתית או מדינתית ואסור שיממומן על ידי צד בסכסוך.
+
+2. שיא בדיקת עובדות — למקור חייב להיות שיא מתועד של דיוק ותיקונים.
+
+3. כיסוי גיאוגרפי ולשוני — רשימת המקורות חייבת לכלול גופים המכסים את שני צדי הסכסוך.
+
+4. אמינות מוסדית — לנתוני זכויות אדם, המקור חייב להיות ארגון בינלאומי או אזורי מוכר.
+
+רשימת המקורות המאוצרת נסקרת מדי רבעון. הרשימה המלאה ותיעוד הביקורת זמינים בכתובת palizra.org/analyses.
+
+מקורות המוחרגים במפורש: גופים הנשלטים על ידי ממשלה או ממומנים על ידי המדינה, מקורות עם הטיה שיטתית מתועדת.`,
+  },
+  confidence: {
+    title: "קריטריוני רמת הביטחון",
+    body: `רמות הביטחון מוקצות לפי הקריטריונים המפורשים הבאים, המיושמים באופן עקבי ללא קשר למקור הטענה:
+
+גבוהה: לפחות 2 מקורות עצמאיים מאוצרים מאשרים את הטענה המרכזית, ואף מקור מאוצר אינו סותר אותה ישירות.
+
+בינונית: לפחות מקור עצמאי מאוצר אחד מאשר או מאשר חלקית את הטענה המרכזית, או שמקורות מאוצרים מתנגשים בפרטים מרכזיים.
+
+נמוכה: אף מקור עצמאי מאוצר אינו מאשר את הטענה, או שהיא מאושרת רק על ידי מקורות מפלגתיים או הקשורים למדינה, או שפרטים מרכזיים נותרים לא מאומתים.
+
+קריטריונים אלה משקפים איזון עיתונאי, לא איזון מכאני. רמת הביטחון נקבעת על פי איכות וכמות הראיות הזמינות, לא על פי מקור הטענה.`,
+  },
+  balance: {
+    title: "בדיקת נייטרליות",
+    body: `כדי לוודא שהכלי מיישם סטנדרטים עקביים ללא קשר לצד שממנו מגיעה הטענה, מתבצעות בדיקות נייטרליות רבעוניות.
+
+כל בדיקה מורכבת מזוגות מותאמים של טענות — אחת ממקור פלסטיני/ערבי ואחת שוות ערך מבנית ממקור ישראלי — המוגשות לכלי באופן עצמאי. התוצאות מושוות על פני ארבע קטגוריות: נפגעים, תשתיות, סטטיסטיקות והצהרות דיפלומטיות.
+
+אם מזוהה אי-עקביות, מחקרת הסיבה ומיושם תיקון. כל רשומות הבדיקות נשמרות והתוצאות מתפרסמות בסגל השינויים ב-palizra.org.
+
+בדיקה ראשונה: רבעון שלישי 2026.`,
+  },
+  corrections: {
+    title: "תיקונים ועדכונים",
+    body: `פליזרה אנלייזר מחויב לתיקון שגיאות בשקיפות בהתאם לתקני IFCN.
+
+אם מזוהה שגיאה בניתוח מפורסם — בין אם על ידי המחבר או שדווח עליה על ידי קורא — ננקטים הצעדים הבאים:
+
+1. השגיאה מוערכת ואם מאושרת, מתוקנת בהקדם האפשרי.
+2. הניתוח המפורסם מעודכן עם הודעת עדכון גלויה המציינת את תאריך התיקון ואת אופי השינוי.
+3. התיקון מתועד ביומן התיקונים הציבורי ב-palizra.org/corrections.
+
+ניתן לדווח על שגיאות דרך כפתור "דווח על בעיה" בכל ניתוח מפורסם, או בדואר אלקטרוני בכתובת palizra@proton.me.`,
+  },
+};
 
 export default function MethodologyPage() {
   const urlLang = new URLSearchParams(window.location.search).get("lang");
