@@ -372,8 +372,109 @@ export default function AnalysesPage() {
                   </div>
                 )}
                 {(() => {
-                  // Použi preloženú verziu ak existuje, inak pôvodnú
                   const comparison = detail.translations?.[lang]?.comparison || detail.result?.comparison;
+                  const imageAnalysis = detail.result?.imageAnalysis;
+                  const imageUrl = imageAnalysis?.imageUrl || detail.result?.imageUrl;
+
+                  // Obrazová analýza
+                  if (imageAnalysis) return (
+                    <>
+                      {imageUrl && (
+                        <div style={{ marginBottom: 12 }}>
+                          <img src={imageUrl} alt="verified"
+                            style={{ maxWidth: "100%", maxHeight: 280, objectFit: "contain", borderRadius: 4, border: `1px solid ${COLORS.line}`, display: "block" }} />
+                        </div>
+                      )}
+                      {imageAnalysis.llmAnalysis?.visual_description && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "الوصف البصري" : lang === "he" ? "תיאור חזותי" : lang === "en" ? "VISUAL DESCRIPTION" : "VIZUÁLNY POPIS"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.visual_description}</div>
+                          {imageAnalysis.llmAnalysis.earliest_known_appearance && (
+                            <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 6 }}>
+                              <strong>{lang === "en" ? "Earliest known appearance: " : lang === "ar" ? "أقدم ظهور معروف: " : lang === "he" ? "הופעה ראשונה ידועה: " : "Najstarší známy výskyt: "}</strong>
+                              {imageAnalysis.llmAnalysis.earliest_known_appearance}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {imageAnalysis.llmAnalysis?.geolocation_assessment && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.consensus, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "ar" ? "تحديد الموقع" : lang === "he" ? "גיאולוקציה" : lang === "en" ? "GEOLOCATION" : "GEOLOKÁCIA"}
+                          </div>
+                          {typeof imageAnalysis.llmAnalysis.geolocation_assessment === "string" ? (
+                            <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment}</div>
+                          ) : (
+                            <>
+                              {imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location && (
+                                <div style={{ fontSize: 13, marginBottom: 4 }}>
+                                  <strong>{lang === "en" ? "Consistency: " : lang === "ar" ? "التوافق: " : lang === "he" ? "עקביות: " : "Súlad: "}</strong>
+                                  {(() => {
+                                    const val = imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location?.toLowerCase();
+                                    if (val?.includes("konzistent") || val?.includes("consistent")) return lang === "ar" ? "متوافق" : lang === "he" ? "עקבי" : lang === "en" ? "consistent" : "konzistentné";
+                                    if (val?.includes("nekonzistent") || val?.includes("inconsistent")) return lang === "ar" ? "غير متوافق" : lang === "he" ? "לא עקבי" : lang === "en" ? "inconsistent" : "nekonzistentné";
+                                    return imageAnalysis.llmAnalysis.geolocation_assessment.consistency_with_claimed_location;
+                                  })()}
+                                </div>
+                              )}
+                              {imageAnalysis.llmAnalysis.geolocation_assessment.explanation && (
+                                <div style={{ fontSize: 13 }}>{imageAnalysis.llmAnalysis.geolocation_assessment.explanation}</div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+                      {imageAnalysis.metadata !== undefined && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>METADATA (EXIF)</div>
+                          <div style={{ fontSize: 12, color: COLORS.inkSoft }}>
+                            {imageAnalysis.metadata?.present === false
+                              ? (lang === "en" ? "No EXIF data found." : lang === "ar" ? "لا توجد بيانات EXIF." : lang === "he" ? "אין נתוני EXIF." : "Žiadne EXIF dáta.")
+                              : (imageAnalysis.metadata?.date || imageAnalysis.metadata?.device || "")}
+                          </div>
+                        </div>
+                      )}
+                      {imageAnalysis.reverseResults?.length > 0 && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: "#f8f6f1", borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 6, letterSpacing: "0.06em" }}>REVERSE IMAGE SEARCH</div>
+                          {imageAnalysis.reverseResults.map((r, ei) => r.matches?.length > 0 ? (
+                            <div key={ei} style={{ marginBottom: 6 }}>
+                              <div style={{ fontSize: 11, fontFamily: "monospace", color: COLORS.inkSoft, marginBottom: 3 }}>{r.engine?.toUpperCase()} – {r.matches.length} results</div>
+                              {r.matches.slice(0, 3).map((m, i) => (
+                                <div key={i} style={{ fontSize: 12, marginBottom: 2 }}>
+                                  <a href={m.url} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.ink }}>{(m.title || m.url || "").slice(0, 70)}</a>
+                                </div>
+                              ))}
+                            </div>
+                          ) : null)}
+                        </div>
+                      )}
+                      {imageAnalysis.archiveCheck?.matched_in_archive && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.discrepancyBg, border: `1px solid ${COLORS.discrepancy}`, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: COLORS.discrepancy, marginBottom: 6, letterSpacing: "0.06em" }}>
+                            {lang === "en" ? "⚠ ARCHIVE MATCH" : lang === "ar" ? "⚠ تطابق الأرشيف" : lang === "he" ? "⚠ התאמת ארכיון" : "⚠ ZHODA V ARCHÍVE"}
+                          </div>
+                          {imageAnalysis.archiveCheck.known_context && <div style={{ fontSize: 13 }}>{imageAnalysis.archiveCheck.known_context}</div>}
+                          {imageAnalysis.archiveCheck.known_date && <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 4 }}>{imageAnalysis.archiveCheck.known_date}</div>}
+                        </div>
+                      )}
+                      {imageAnalysis.aiDetection?.probability_ai_generated !== undefined && (
+                        <div style={{ marginBottom: 12, padding: "10px 12px", background: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancyBg : COLORS.consensusBg, borderRadius: 4 }}>
+                          <div style={{ fontSize: 10, fontFamily: "monospace", color: imageAnalysis.aiDetection.probability_ai_generated > 0.7 ? COLORS.discrepancy : COLORS.consensus, marginBottom: 4, letterSpacing: "0.06em" }}>
+                            {lang === "en" ? "AI DETECTION" : lang === "ar" ? "كشف الذكاء الاصطناعي" : lang === "he" ? "זיהוי בינה מלאכותית" : "AI DETEKCIA"}
+                          </div>
+                          <div style={{ fontSize: 13 }}>
+                            {lang === "en" ? "AI probability: " : lang === "ar" ? "احتمالية AI: " : lang === "he" ? "הסתברות AI: " : "Pravdepodobnosť AI: "}
+                            <strong>{(imageAnalysis.aiDetection.probability_ai_generated * 100).toFixed(0)}%</strong>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+
+                  // Textová analýza
                   return comparison && (<>
                     {comparison.consensus_points?.length > 0 && (
                       <div style={{ marginBottom: 12, padding: "10px 12px", background: COLORS.consensusBg, borderRadius: 4 }}>
