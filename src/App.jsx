@@ -961,12 +961,14 @@ export default function ClaimVerifierDemo() {
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>{t("about_h_independence")}</h3>
           <p style={{ marginBottom: 8 }}>{t("about_independence")}</p>
           <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 8 }}>{t("about_imprint")}</p>
-          <p style={{ fontSize: 13, marginBottom: 8 }}><strong>{t("about_h_conflict")}</strong></p>
-          <p style={{ fontSize: 13, color: COLORS.inkSoft, marginBottom: 16 }}>{t("about_conflict")}</p>
           <p style={{ fontSize: 13, marginBottom: 8 }}>
             <strong>{t("about_methodology_version")}</strong>
             {" · "}
             <strong>{t("about_source_review_date")}</strong>
+            {" · "}
+            <a href={`/methodology?lang=${lang}`} style={{ color: COLORS.ink, fontSize: 13 }}>
+              {lang === "ar" ? "← المنهجية الكاملة" : lang === "he" ? "← מתודולוגיה מלאה" : lang === "en" ? "← Full methodology" : "← Plná metodológia"}
+            </a>
           </p>
           <p style={{ fontSize: 13, marginBottom: 16 }}>
             <a href="/corrections" style={{ color: COLORS.ink }}>→ {t("about_corrections_link")}</a>
@@ -1183,10 +1185,10 @@ export default function ClaimVerifierDemo() {
             {
               date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
               type: "methodology",
-              sk: "Pridaná politika konfliktu záujmov – verejné vyhlásenie autora o absencii finančných, politických a osobných záujmov v konflikte, v súlade s požiadavkami IFCN.",
-              en: "Added conflict of interest policy – public statement by the author confirming the absence of financial, political and personal interests in the conflict, in accordance with IFCN requirements.",
-              ar: "تمت إضافة سياسة تضارب المصالح وفقاً لمتطلبات IFCN.",
-              he: "נוספה מדיניות ניגוד עניינים בהתאם לדרישות IFCN.",
+              sk: "Pridaná verejná stránka metodológie palizra.org/methodology – obsahuje postup analýzy, kritériá výberu zdrojov, kritériá miery istoty, protokol testovania vyváženosti a politiku opráv v súlade so štandardmi IFCN.",
+              en: "Added public methodology page palizra.org/methodology – covers analysis procedure, source selection criteria, confidence level criteria, impartiality testing protocol and corrections policy, in accordance with IFCN standards.",
+              ar: "تمت إضافة صفحة المنهجية العامة palizra.org/methodology وفقاً لمعايير IFCN.",
+              he: "נוספה דף מתודולוגיה ציבורי palizra.org/methodology בהתאם לתקני IFCN.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
