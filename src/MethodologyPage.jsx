@@ -438,6 +438,13 @@ export default function MethodologyPage() {
                 {para}
               </p>
             ))}
+            {s.id === "sources" && (
+              <div style={{ padding: "10px 14px", background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 4, fontSize: 13 }}>
+                <a href="/documents/Palizra_Source_Audit.pdf" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.ink }}>
+                  → {lang === "ar" ? "تنزيل وثيقة تدقيق المصادر (PDF)" : lang === "he" ? "הורד את מסמך ביקורת המקורות (PDF)" : lang === "en" ? "Download the Source Audit document (PDF)" : "Stiahnuť dokument Source Audit (PDF)"}
+                </a>
+              </div>
+            )}
           </div>
         );
       })}

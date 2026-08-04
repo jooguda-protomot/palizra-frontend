@@ -970,8 +970,13 @@ export default function ClaimVerifierDemo() {
               {lang === "ar" ? "← المنهجية الكاملة" : lang === "he" ? "← מתודולוגיה מלאה" : lang === "en" ? "← Full methodology" : "← Plná metodológia"}
             </a>
           </p>
-          <p style={{ fontSize: 13, marginBottom: 16 }}>
+          <p style={{ fontSize: 13, marginBottom: 8 }}>
             <a href="/corrections" style={{ color: COLORS.ink }}>→ {t("about_corrections_link")}</a>
+          </p>
+          <p style={{ fontSize: 13, marginBottom: 16 }}>
+            <a href="/documents/Palizra_Source_Audit.pdf" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.ink }}>
+              → {lang === "ar" ? "وثيقة تدقيق المصادر (PDF)" : lang === "he" ? "מסמך ביקורת המקורות (PDF)" : lang === "en" ? "Source Audit document (PDF)" : "Dokument Source Audit (PDF)"}
+            </a>
           </p>
         </div>
       )}
@@ -1197,6 +1202,14 @@ export default function ClaimVerifierDemo() {
               en: "Added an explicit correction deadline – confirmed errors are corrected within 5 business days. Added to the corrections policy (/corrections) and methodology (version 1.1).",
               ar: "تمت إضافة مهلة صريحة لتصحيح الأخطاء – 5 أيام عمل من التأكيد. أُضيفت إلى سياسة التصحيحات والمنهجية (الإصدار 1.1).",
               he: "נוספה מסגרת זמן מפורשת לתיקון שגיאות – 5 ימי עבודה מרגע האישור. נוסף למדיניות התיקונים ולמתודולוגיה (גרסה 1.1).",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Zverejnený dokument Palizra Source Audit ako verejne dostupné PDF, s priamym odkazom v sekciách Metodológia a O nástroji.",
+              en: "Published the Palizra Source Audit document as a publicly accessible PDF, with direct links from the Methodology and About sections.",
+              ar: "تم نشر وثيقة تدقيق مصادر بالزرا كملف PDF متاح للعموم، مع روابط مباشرة في قسمي المنهجية وحول الأداة.",
+              he: "מסמך ביקורת המקורות של פליזרה פורסם כקובץ PDF נגיש לציבור, עם קישורים ישירים בסעיפי המתודולוגיה ואודות.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
