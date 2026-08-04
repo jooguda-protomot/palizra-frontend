@@ -323,9 +323,13 @@ export default function AnalysesPage() {
                   lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
                   { day: "numeric", month: "long", year: "numeric" }
                 )} · {tLocation(a.location, lang)} · {tCategory(a.category, lang)} · {a.lang?.toUpperCase()}
-                {a.type === "image" && (
+                {a.type === "image" ? (
                   <span style={{ marginLeft: 8, background: COLORS.framing, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
                     {lang === "ar" ? "صورة" : lang === "he" ? "תמונה" : lang === "en" ? "IMAGE" : "OBRÁZOK"}
+                  </span>
+                ) : (
+                  <span style={{ marginLeft: 8, background: COLORS.inkSoft, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
+                    {lang === "ar" ? "نص" : lang === "he" ? "טקסט" : lang === "en" ? "TEXT" : "TEXT"}
                   </span>
                 )}
               </div>
@@ -362,9 +366,13 @@ export default function AnalysesPage() {
                       lang === "sk" ? "sk-SK" : lang === "ar" ? "ar-SA" : lang === "he" ? "he-IL" : "en-GB",
                       { day: "numeric", month: "long", year: "numeric" }
                     )} · {tLocation(detail.location, lang)} · {tCategory(detail.category, lang)} · {detail.lang?.toUpperCase()}
-                    {detail.type === "image" && (
+                    {detail.type === "image" ? (
                       <span style={{ marginLeft: 8, background: COLORS.framing, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
                         {lang === "ar" ? "صورة" : lang === "he" ? "תמונה" : lang === "en" ? "IMAGE" : "OBRÁZOK"}
+                      </span>
+                    ) : (
+                      <span style={{ marginLeft: 8, background: COLORS.inkSoft, color: "#fff", fontSize: 9, fontFamily: "monospace", padding: "1px 5px", borderRadius: 2, letterSpacing: "0.04em" }}>
+                        {lang === "ar" ? "نص" : lang === "he" ? "טקסט" : lang === "en" ? "TEXT" : "TEXT"}
                       </span>
                     )}
                   </div>
