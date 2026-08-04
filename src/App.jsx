@@ -1190,6 +1190,14 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة صفحة المنهجية العامة palizra.org/methodology وفقاً لمعايير IFCN.",
               he: "נוספה דף מתודולוגיה ציבורי palizra.org/methodology בהתאם לתקני IFCN.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Pridaná explicitná lehota na opravu chýb – 5 pracovných dní od potvrdenia chyby. Doplnené do politiky opráv (/corrections) aj metodológie (verzia 1.1).",
+              en: "Added an explicit correction deadline – confirmed errors are corrected within 5 business days. Added to the corrections policy (/corrections) and methodology (version 1.1).",
+              ar: "تمت إضافة مهلة صريحة لتصحيح الأخطاء – 5 أيام عمل من التأكيد. أُضيفت إلى سياسة التصحيحات والمنهجية (الإصدار 1.1).",
+              he: "נוספה מסגרת זמן מפורשת לתיקון שגיאות – 5 ימי עבודה מרגע האישור. נוסף למדיניות התיקונים ולמתודולוגיה (גרסה 1.1).",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>

@@ -19,7 +19,7 @@ const UI = {
     title: "Metodológia",
     desc: "Transparentný popis postupov, kritérií a testovania vyváženosti nástroja Palizra Analyzator v súlade so štandardmi IFCN.",
     back: "← Späť na nástroj",
-    version: "Verzia metodológie: 1.0 · August 2026",
+    version: "Verzia metodológie: 1.1 · August 2026",
     toc: "Obsah",
     sections: [
       { id: "how", title: "Ako nástroj funguje" },
@@ -34,7 +34,7 @@ const UI = {
     title: "Methodology",
     desc: "A transparent description of the procedures, criteria and impartiality testing of Palizra Analyzator, in accordance with IFCN standards.",
     back: "← Back to tool",
-    version: "Methodology version: 1.0 · August 2026",
+    version: "Methodology version: 1.1 · August 2026",
     toc: "Contents",
     sections: [
       { id: "how", title: "How the tool works" },
@@ -49,7 +49,7 @@ const UI = {
     title: "المنهجية",
     desc: "وصف شفاف للإجراءات والمعايير واختبار الحياد لمحلل بالزرا، وفقاً لمعايير IFCN.",
     back: "← العودة إلى الأداة",
-    version: "إصدار المنهجية: 1.0 · أغسطس 2026",
+    version: "إصدار المنهجية: 1.1 · أغسطس 2026",
     toc: "المحتويات",
     sections: [
       { id: "how", title: "كيف تعمل الأداة" },
@@ -64,7 +64,7 @@ const UI = {
     title: "מתודולוגיה",
     desc: "תיאור שקוף של הנהלים, הקריטריונים ובדיקת הנייטרליות של פליזרה אנלייזר, בהתאם לתקני IFCN.",
     back: "← חזרה לכלי",
-    version: "גרסת מתודולוגיה: 1.0 · אוגוסט 2026",
+    version: "גרסת מתודולוגיה: 1.1 · אוגוסט 2026",
     toc: "תוכן עניינים",
     sections: [
       { id: "how", title: "כיצד הכלי עובד" },
@@ -140,7 +140,7 @@ First quarterly test: Q3 2026.`,
 
 If an error is identified in a published analysis — whether by the author or reported by a reader — the following steps are taken:
 
-1. The error is assessed and, if confirmed, corrected as soon as possible.
+1. The error is assessed and, if confirmed, corrected within 5 business days of confirmation.
 2. The published analysis is updated with a visible update notice stating the date of the correction and the nature of the change.
 3. The correction is documented in the public corrections log at palizra.org/corrections.
 
@@ -215,7 +215,7 @@ Prvý kvartálny test: Q3 2026.`,
 
 Ak sa v zverejnenej analýze zistí chyba — či už autorom alebo nahlásená čitateľom — podniknú sa nasledujúce kroky:
 
-1. Chyba sa posúdi a ak sa potvrdí, čo najskôr sa opraví.
+1. Chyba sa posúdi a ak sa potvrdí, opraví sa do 5 pracovných dní od potvrdenia.
 2. Zverejnená analýza sa aktualizuje viditeľným upozornením o aktualizácii s dátumom opravy a popisom zmeny.
 3. Oprava sa zdokumentuje vo verejnom zozname opráv na palizra.org/corrections.
 
@@ -286,7 +286,7 @@ CONTENT.ar = {
 
 إذا تم تحديد خطأ في تحليل منشور، سواء من قِبل المؤلف أو بلّغ عنه قارئ، تُتخذ الخطوات التالية:
 
-1. يُقيَّم الخطأ وإذا تأكد يُصحَّح في أقرب وقت ممكن.
+1. يُقيَّم الخطأ وإذا تأكد يُصحَّح خلال 5 أيام عمل من التأكيد.
 2. يُحدَّث التحليل المنشور بإشعار تحديث مرئي يذكر تاريخ التصحيح وطبيعة التغيير.
 3. يُوثَّق التصحيح في سجل التصحيحات العام على palizra.org/corrections.
 
@@ -355,7 +355,7 @@ CONTENT.he = {
 
 אם מזוהה שגיאה בניתוח מפורסם — בין אם על ידי המחבר או שדווח עליה על ידי קורא — ננקטים הצעדים הבאים:
 
-1. השגיאה מוערכת ואם מאושרת, מתוקנת בהקדם האפשרי.
+1. השגיאה מוערכת ואם מאושרת, מתוקנת בתוך 5 ימי עבודה מרגע האישור.
 2. הניתוח המפורסם מעודכן עם הודעת עדכון גלויה המציינת את תאריך התיקון ואת אופי השינוי.
 3. התיקון מתועד ביומן התיקונים הציבורי ב-palizra.org/corrections.
 
