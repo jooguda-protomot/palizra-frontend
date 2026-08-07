@@ -1211,6 +1211,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم نشر وثيقة تدقيق مصادر بالزرا كملف PDF متاح للعموم، مع روابط مباشرة في قسمي المنهجية وحول الأداة.",
               he: "מסמך ביקורת המקורות של פליזרה פורסם כקובץ PDF נגיש לציבור, עם קישורים ישירים בסעיפי המתודולוגיה ואודות.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "fix",
+              sk: "Opravená občasná chyba pri extrakcii tvrdení a porovnávaní zdrojov spôsobená neplatným JSON pri citáciách s vnorenými úvodzovkami. Backend teraz používa Anthropic tool use namiesto parsovania voľného textu, čo chybu odstraňuje natrvalo.",
+              en: "Fixed an intermittent error in claim extraction and source comparison caused by invalid JSON when claims contained nested quotation marks. The backend now uses Anthropic tool use instead of parsing free-form text, eliminating the failure mode entirely.",
+              ar: "تم إصلاح خطأ متقطع في استخراج التصريحات ومقارنة المصادر ناتج عن JSON غير صالح عند احتواء التصريحات على علامات اقتباس متداخلة. يستخدم الخادم الآن Anthropic tool use بدلاً من تحليل نص حر، مما يزيل هذا الخطأ نهائياً.",
+              he: "תוקנה שגיאה לסירוגין בחילוץ טענות ובהשוואת מקורות שנגרמה מ-JSON לא תקין כאשר טענות הכילו מרכאות מקוננות. השרת משתמש כעת ב-Anthropic tool use במקום ניתוח טקסט חופשי, מה שמבטל את התקלה לחלוטין.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
