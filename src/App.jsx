@@ -238,7 +238,11 @@ export default function ClaimVerifierDemo() {
 
   async function handleSelectClaim(claim) {
     setSelectedClaimId(claim.id);
-    if (claim.type !== "factual_claim" && claim.type !== "unverifiable") {
+    // "interpretation" (rámcovanie/názor) sa objektívne overiť nedá, preto sa
+    // preskakuje. "quoted_statement" (citácia) SA overuje - nie pravdivosť
+    // výroku, ale to, či bol skutočne vyslovený/publikovaný (viď
+    // claim_extractor.js) - preto musí ísť rovnakou cestou ako factual_claim.
+    if (claim.type === "interpretation") {
       setComparison(null);
       return;
     }
@@ -1218,6 +1222,14 @@ export default function ClaimVerifierDemo() {
               en: "Fixed an intermittent error in claim extraction and source comparison caused by invalid JSON when claims contained nested quotation marks. The backend now uses Anthropic tool use instead of parsing free-form text, eliminating the failure mode entirely.",
               ar: "تم إصلاح خطأ متقطع في استخراج التصريحات ومقارنة المصادر ناتج عن JSON غير صالح عند احتواء التصريحات على علامات اقتباس متداخلة. يستخدم الخادم الآن Anthropic tool use بدلاً من تحليل نص حر، مما يزيل هذا الخطأ نهائياً.",
               he: "תוקנה שגיאה לסירוגין בחילוץ טענות ובהשוואת מקורות שנגרמה מ-JSON לא תקין כאשר טענות הכילו מרכאות מקוננות. השרת משתמש כעת ב-Anthropic tool use במקום ניתוח טקסט חופשי, מה שמבטל את התקלה לחלוטין.",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "fix",
+              sk: "Opravené kliknutie na tvrdenia typu citácia (QUOTE/STATEMENT) v Breakdown paneli, ktoré predtým nespúšťalo porovnanie zdrojov vôbec.",
+              en: "Fixed clicking on quote/statement-type claims in the Breakdown panel, which previously did not trigger source comparison at all.",
+              ar: "تم إصلاح النقر على التصريحات من نوع اقتباس (QUOTE/STATEMENT) في لوحة التحليل، والتي لم تكن تُطلق مقارنة المصادر إطلاقاً من قبل.",
+              he: "תוקנה לחיצה על טענות מסוג ציטוט (QUOTE/STATEMENT) בפאנל הפירוק, שקודם לא הפעילה השוואת מקורות כלל.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
