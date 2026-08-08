@@ -1239,6 +1239,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم إنجاز أول اختبار حياد ربع سنوي (الربع الثالث 2026) - 8 تصريحات ضمن 4 أزواج متطابقة (الضحايا، البنية التحتية، الإحصاءات، الدبلوماسية). تم توثيق النتائج والنتائج المنهجية في سجل اختبار الحياد؛ تم تحديث وثيقة تدقيق المصادر إلى الإصدار 1.1.",
               he: "הושלם מבחן האיזון הרבעוני הראשון (רבעון 3 2026) - 8 טענות בארבעה זוגות תואמים (נפגעים, תשתיות, סטטיסטיקה, דיפלומטיה). התוצאות והממצאים המתודולוגיים תועדו ביומן מבחן האיזון; מסמך ביקורת המקורות עודכן לגרסה 1.1.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "feature",
+              sk: "Pridané emailové notifikácie pre oznamovateľov návrhov (cez Resend API) - automaticky sa odosielajú pri zmene stavu návrhu na SPRACOVÁVA SA, HOTOVO alebo ZAMIETNUTÉ.",
+              en: "Added email notifications for suggestion submitters (via Resend API) - sent automatically when a suggestion's status changes to in progress, done, or rejected.",
+              ar: "تمت إضافة إشعارات بريد إلكتروني لمقدمي الاقتراحات (عبر Resend API) - تُرسل تلقائياً عند تغيير حالة الاقتراح إلى قيد المعالجة أو مكتمل أو مرفوض.",
+              he: "נוספו התראות דוא\"ל למגישי הצעות (דרך Resend API) - נשלחות אוטומטית כאשר סטטוס ההצעה משתנה לבטיפול, הושלם, או נדחה.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
