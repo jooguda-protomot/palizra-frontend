@@ -1231,6 +1231,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم إصلاح النقر على التصريحات من نوع اقتباس (QUOTE/STATEMENT) في لوحة التحليل، والتي لم تكن تُطلق مقارنة المصادر إطلاقاً من قبل.",
               he: "תוקנה לחיצה על טענות מסוג ציטוט (QUOTE/STATEMENT) בפאנל הפירוק, שקודם לא הפעילה השוואת מקורות כלל.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Dokončený prvý kvartálny test vyváženosti (Q3 2026) - 8 tvrdení v 4 pároch (obete, infraštruktúra, štatistiky, diplomacia). Výsledky a metodologické zistenia zdokumentované v Impartiality Test Log, Palizra_Source_Audit dokument aktualizovaný na verziu 1.1.",
+              en: "Completed the first quarterly impartiality test (Q3 2026) - 8 claims across 4 matched pairs (casualties, infrastructure, statistics, diplomacy). Results and methodological findings documented in the Impartiality Test Log; Palizra_Source_Audit document updated to version 1.1.",
+              ar: "تم إنجاز أول اختبار حياد ربع سنوي (الربع الثالث 2026) - 8 تصريحات ضمن 4 أزواج متطابقة (الضحايا، البنية التحتية، الإحصاءات، الدبلوماسية). تم توثيق النتائج والنتائج المنهجية في سجل اختبار الحياد؛ تم تحديث وثيقة تدقيق المصادر إلى الإصدار 1.1.",
+              he: "הושלם מבחן האיזון הרבעוני הראשון (רבעון 3 2026) - 8 טענות בארבעה זוגות תואמים (נפגעים, תשתיות, סטטיסטיקה, דיפלומטיה). התוצאות והממצאים המתודולוגיים תועדו ביומן מבחן האיזון; מסמך ביקורת המקורות עודכן לגרסה 1.1.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
