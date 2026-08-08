@@ -1247,6 +1247,14 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة إشعارات بريد إلكتروني لمقدمي الاقتراحات (عبر Resend API) - تُرسل تلقائياً عند تغيير حالة الاقتراح إلى قيد المعالجة أو مكتمل أو مرفوض.",
               he: "נוספו התראות דוא\"ל למגישי הצעות (דרך Resend API) - נשלחות אוטומטית כאשר סטטוס ההצעה משתנה לבטיפול, הושלם, או נדחה.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Zverejnený organizačný status v sekcii O nástroji a v Palizra_Source_Audit dokumente (verzia 1.2) - projekt v súčasnosti prevádzkuje fyzická osoba, formálna registrácia sa zvažuje s rastom projektu.",
+              en: "Published organizational status in the About section and Palizra_Source_Audit document (version 1.2) - the project is currently operated by an individual; formal registration is being considered as the project grows.",
+              ar: "تم نشر الوضع التنظيمي في قسم حول الأداة ووثيقة تدقيق المصادر (الإصدار 1.2) - يدير المشروع حالياً شخص طبيعي؛ يُنظر في التسجيل الرسمي مع نمو المشروع.",
+              he: "פורסם סטטוס ארגוני בסעיף אודות ובמסמך ביקורת המקורות (גרסה 1.2) - הפרויקט מופעל כעת על ידי יחיד; רישום פורמלי נשקל ככל שהפרויקט גדל.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
