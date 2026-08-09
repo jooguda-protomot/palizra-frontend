@@ -1306,7 +1306,16 @@ export default function ClaimVerifierDemo() {
       )}
 
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft }}>
-        {t("footer")}
+        {t("footer")} ·{" "}
+        <a href={`/methodology?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "المنهجية" : lang === "he" ? "מתודולוגיה" : lang === "en" ? "Methodology" : "Metodológia"}
+        </a> ·{" "}
+        <a href={`/corrections?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "التصحيحات" : lang === "he" ? "תיקונים" : lang === "en" ? "Corrections" : "Opravy"}
+        </a> ·{" "}
+        <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "الخصوصية" : lang === "he" ? "פרטיות" : lang === "en" ? "Privacy" : "Súkromie"}
+        </a>
       </footer>
     </div>
   );
