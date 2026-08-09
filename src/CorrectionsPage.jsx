@@ -171,7 +171,13 @@ export default function CorrectionsPage() {
       </div>
 
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft, textAlign: "center" }}>
-        © {new Date().getFullYear()} Palizra Analyzator · <a href="/" style={{ color: COLORS.inkSoft }}>{u.back}</a>
+        © {new Date().getFullYear()} Palizra Analyzator · <a href="/" style={{ color: COLORS.inkSoft }}>{u.back}</a> ·{" "}
+        <a href={`/methodology?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "المنهجية" : lang === "he" ? "מתודולוגיה" : lang === "en" ? "Methodology" : "Metodológia"}
+        </a> ·{" "}
+        <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "الخصوصية" : lang === "he" ? "פרטיות" : lang === "en" ? "Privacy" : "Súkromie"}
+        </a>
       </footer>
     </div>
   );

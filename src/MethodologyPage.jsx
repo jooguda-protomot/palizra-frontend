@@ -454,6 +454,9 @@ export default function MethodologyPage() {
         <a href={`/?lang=${lang}`} style={{ color: COLORS.inkSoft }}>{u.back}</a> ·{" "}
         <a href={`/corrections?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
           {lang === "ar" ? "التصحيحات" : lang === "he" ? "תיקונים" : lang === "en" ? "Corrections" : "Opravy"}
+        </a> ·{" "}
+        <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
+          {lang === "ar" ? "الخصوصية" : lang === "he" ? "פרטיות" : lang === "en" ? "Privacy" : "Súkromie"}
         </a>
       </footer>
     </div>
