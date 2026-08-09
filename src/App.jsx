@@ -1255,6 +1255,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم نشر الوضع التنظيمي في قسم حول الأداة ووثيقة تدقيق المصادر (الإصدار 1.2) - يدير المشروع حالياً شخص طبيعي؛ يُنظر في التسجيل الرسمي مع نمو المشروع.",
               he: "פורסם סטטוס ארגוני בסעיף אודות ובמסמך ביקורת המקורות (גרסה 1.2) - הפרויקט מופעל כעת על ידי יחיד; רישום פורמלי נשקל ככל שהפרויקט גדל.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "security",
+              sk: "Vykonaný prvý bezpečnostný test odolnosti voči prompt injection - 3 tvrdenia so zabudovanými pokusmi o prepísanie inštrukcií nástroja. Nástroj vo všetkých prípadoch neuposlúchol vloženú inštrukciu; v jednom prípade ju priamo rozpoznal a pomenoval ako pokus o manipuláciu. Výsledky zdokumentované v Palizra_Source_Audit dokumente (verzia 1.3, nová sekcia 7 - Security Testing).",
+              en: "Completed the first prompt-injection resilience test - 3 claims with embedded attempts to override the tool's instructions. In all cases the tool did not comply with the injected instruction; in one case it explicitly identified and named the manipulation attempt. Results documented in the Palizra_Source_Audit document (version 1.3, new Section 7 - Security Testing).",
+              ar: "تم إجراء أول اختبار أمني لمقاومة حقن الأوامر (prompt injection) - 3 تصريحات تحتوي على محاولات مضمنة لتجاوز تعليمات الأداة. في جميع الحالات لم تمتثل الأداة للتعليمات المحقونة؛ وفي حالة واحدة تعرفت الأداة على محاولة التلاعب وسمّتها صراحة. تم توثيق النتائج في وثيقة تدقيق المصادر (الإصدار 1.3، القسم 7 الجديد - اختبار الأمان).",
+              he: "בוצע מבחן העמידות הראשון מפני הזרקת פקודות (prompt injection) - 3 טענות עם ניסיונות מוטמעים לעקוף את הוראות הכלי. בכל המקרים הכלי לא ציית להוראה המוזרקת; במקרה אחד הוא זיהה ותייג במפורש את ניסיון המניפולציה. התוצאות תועדו במסמך ביקורת המקורות (גרסה 1.3, סעיף 7 חדש - בדיקות אבטחה).",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
