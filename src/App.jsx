@@ -982,6 +982,11 @@ export default function ClaimVerifierDemo() {
               → {lang === "ar" ? "وثيقة تدقيق المصادر (PDF)" : lang === "he" ? "מסמך ביקורת המקורות (PDF)" : lang === "en" ? "Source Audit document (PDF)" : "Dokument Source Audit (PDF)"}
             </a>
           </p>
+          <p style={{ fontSize: 13, marginBottom: 16 }}>
+            <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.ink }}>
+              → {lang === "ar" ? "سياسة الخصوصية" : lang === "he" ? "מדיניות פרטיות" : lang === "en" ? "Privacy Policy" : "Ochrana osobných údajov"}
+            </a>
+          </p>
         </div>
       )}
 
@@ -1262,6 +1267,14 @@ export default function ClaimVerifierDemo() {
               en: "Completed the first prompt-injection resilience test - 3 claims with embedded attempts to override the tool's instructions. In all cases the tool did not comply with the injected instruction; in one case it explicitly identified and named the manipulation attempt. Results documented in the Palizra_Source_Audit document (version 1.3, new Section 7 - Security Testing).",
               ar: "تم إجراء أول اختبار أمني لمقاومة حقن الأوامر (prompt injection) - 3 تصريحات تحتوي على محاولات مضمنة لتجاوز تعليمات الأداة. في جميع الحالات لم تمتثل الأداة للتعليمات المحقونة؛ وفي حالة واحدة تعرفت الأداة على محاولة التلاعب وسمّتها صراحة. تم توثيق النتائج في وثيقة تدقيق المصادر (الإصدار 1.3، القسم 7 الجديد - اختبار الأمان).",
               he: "בוצע מבחן העמידות הראשון מפני הזרקת פקודות (prompt injection) - 3 טענות עם ניסיונות מוטמעים לעקוף את הוראות הכלי. בכל המקרים הכלי לא ציית להוראה המוזרקת; במקרה אחד הוא זיהה ותייג במפורש את ניסיון המניפולציה. התוצאות תועדו במסמך ביקורת המקורות (גרסה 1.3, סעיף 7 חדש - בדיקות אבטחה).",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "feature",
+              sk: "Pridaná verejná stránka palizra.org/privacy - politika ochrany osobných údajov v súlade s GDPR, opisujúca spracúvané údaje, tretie strany, dobu uchovávania a práva dotknutých osôb.",
+              en: "Added a public privacy policy page at palizra.org/privacy, in accordance with GDPR - covering data processed, third parties, retention periods, and data subject rights.",
+              ar: "تمت إضافة صفحة سياسة خصوصية عامة على palizra.org/privacy وفقاً للائحة العامة لحماية البيانات (GDPR) - تغطي البيانات المُعالَجة والأطراف الثالثة وفترات الاحتفاظ وحقوق أصحاب البيانات.",
+              he: "נוספה דף מדיניות פרטיות ציבורי בכתובת palizra.org/privacy, בהתאם ל-GDPR - מכסה נתונים מעובדים, צדדים שלישיים, תקופות שמירה וזכויות נושאי הנתונים.",
             },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>

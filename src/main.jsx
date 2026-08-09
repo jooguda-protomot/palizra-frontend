@@ -8,6 +8,7 @@ import AnalysesPage from "./AnalysesPage.jsx";
 import CorrectionsPage from "./CorrectionsPage.jsx";
 import SuggestPage from "./SuggestPage.jsx";
 import MethodologyPage from "./MethodologyPage.jsx";
+import PrivacyPage from "./PrivacyPage.jsx";
 
 Sentry.init({
   dsn: "https://8feb21459f3af15423099f4cdf13b534@o4511713083785216.ingest.de.sentry.io/4511713121534032",
@@ -22,9 +23,10 @@ const isAnalyses = path === "/analyses" || path.startsWith("/analyses/");
 const isCorrections = path === "/corrections";
 const isSuggest = path === "/suggest";
 const isMethodology = path === "/methodology";
+const isPrivacy = path === "/privacy";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {isAdmin ? <AdminPanel /> : isAnalyses ? <AnalysesPage /> : isCorrections ? <CorrectionsPage /> : isSuggest ? <SuggestPage /> : isMethodology ? <MethodologyPage /> : <App />}
+    {isAdmin ? <AdminPanel /> : isAnalyses ? <AnalysesPage /> : isCorrections ? <CorrectionsPage /> : isSuggest ? <SuggestPage /> : isMethodology ? <MethodologyPage /> : isPrivacy ? <PrivacyPage /> : <App />}
   </StrictMode>
 );
