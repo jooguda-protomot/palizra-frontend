@@ -1276,6 +1276,30 @@ export default function ClaimVerifierDemo() {
               ar: "تمت إضافة صفحة سياسة خصوصية عامة على palizra.org/privacy وفقاً للائحة العامة لحماية البيانات (GDPR) - تغطي البيانات المُعالَجة والأطراف الثالثة وفترات الاحتفاظ وحقوق أصحاب البيانات.",
               he: "נוספה דף מדיניות פרטיות ציבורי בכתובת palizra.org/privacy, בהתאם ל-GDPR - מכסה נתונים מעובדים, צדדים שלישיים, תקופות שמירה וזכויות נושאי הנתונים.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Zdokumentovaný peer review proces v Palizra_Source_Audit dokumente (verzia 1.4) - fáza 1: štruktúrovaný self-review checklist pred zverejnením; fáza 2 (plánovaná): externý peer review cez overené kanály po vzniku formálnej organizačnej štruktúry.",
+              en: "Documented the peer review process in the Palizra_Source_Audit document (version 1.4) - Phase 1: structured self-review checklist before publication; Phase 2 (planned): external peer review through vetted channels once a formal organizational structure is in place.",
+              ar: "تم توثيق عملية المراجعة النظيرة في وثيقة تدقيق المصادر (الإصدار 1.4) - المرحلة 1: قائمة تحقق منظمة للمراجعة الذاتية قبل النشر؛ المرحلة 2 (مخطط لها): مراجعة نظيرة خارجية عبر قنوات موثوقة بعد إنشاء هيكل تنظيمي رسمي.",
+              he: "תועד תהליך בדיקת עמיתים במסמך ביקורת המקורות (גרסה 1.4) - שלב 1: רשימת בדיקה עצמית מובנית לפני פרסום; שלב 2 (מתוכנן): בדיקת עמיתים חיצונית דרך ערוצים מאומתים לאחר הקמת מבנה ארגוני פורמלי.",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "fix",
+              sk: "Opravené kolidujúce číslovanie sekcií v Palizra_Source_Audit dokumente - Impartiality Testing Protocol premenovaný na Appendix A s vlastným číslovaním (A.1-A.7), aby sa neprekrývalo s hlavnými sekciami dokumentu (verzia 1.5).",
+              en: "Fixed colliding section numbering in the Palizra_Source_Audit document - the Impartiality Testing Protocol was renamed to Appendix A with its own numbering (A.1-A.7) so it no longer overlaps with the document's main sections (version 1.5).",
+              ar: "تم إصلاح تعارض ترقيم الأقسام في وثيقة تدقيق المصادر - أُعيدت تسمية بروتوكول اختبار الحياد إلى الملحق أ بترقيم خاص به (A.1-A.7) بحيث لا يتداخل مع الأقسام الرئيسية للوثيقة (الإصدار 1.5).",
+              he: "תוקנה התנגשות במספור הסעיפים במסמך ביקורת המקורות - פרוטוקול בדיקת האיזון שונה לשמו לנספח A עם מספור משלו (A.1-A.7) כך שאינו חופף עוד לסעיפים הראשיים של המסמך (גרסה 1.5).",
+            },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "fix",
+              sk: "Presunutá sekcia Contact v Palizra_Source_Audit dokumente na skutočný koniec dokumentu, za Appendix A, aby pôsobila ako záver a nie uprostred textu pred prílohou (verzia 1.6).",
+              en: "Moved the Contact section in the Palizra_Source_Audit document to the true end of the document, after Appendix A, so it reads as a closing section rather than appearing mid-document before the appendix (version 1.6).",
+              ar: "تم نقل قسم الاتصال في وثيقة تدقيق المصادر إلى النهاية الفعلية للوثيقة، بعد الملحق أ، بحيث يُقرأ كقسم ختامي بدلاً من الظهور في منتصف الوثيقة قبل الملحق (الإصدار 1.6).",
+              he: "סעיף יצירת הקשר במסמך ביקורת המקורות הועבר לסוף האמיתי של המסמך, אחרי נספח A, כך שהוא נקרא כסעיף מסכם ולא מופיע באמצע המסמך לפני הנספח (גרסה 1.6).",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
