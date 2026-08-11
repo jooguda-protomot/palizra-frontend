@@ -1300,6 +1300,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم نقل قسم الاتصال في وثيقة تدقيق المصادر إلى النهاية الفعلية للوثيقة، بعد الملحق أ، بحيث يُقرأ كقسم ختامي بدلاً من الظهور في منتصف الوثيقة قبل الملحق (الإصدار 1.6).",
               he: "סעיף יצירת הקשר במסמך ביקורת המקורות הועבר לסוף האמיתי של המסמך, אחרי נספח A, כך שהוא נקרא כסעיף מסכם ולא מופיע באמצע המסמך לפני הנספח (גרסה 1.6).",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "methodology",
+              sk: "Zdokumentované posúdenie DDoS/WAF ochrany v Palizra_Source_Audit dokumente (verzia 1.7) - dedikovaný Cloudflare WAF vyhodnotený ako momentálne nepotrebný vzhľadom na vstavanú ochranu Railway (Fastly WAF, Under Attack Mode) a absenciu SQL databázy; rozhodnutie bude prehodnotené pri raste projektu, zavedení SQL databázy, alebo pri reálnom útoku.",
+              en: "Documented the DDoS/WAF protection assessment in the Palizra_Source_Audit document (version 1.7) - a dedicated Cloudflare WAF was assessed as not currently necessary, given Railway's built-in protection (Fastly WAF, Under Attack Mode) and the absence of a SQL database; the decision will be revisited if the project grows, a SQL database is introduced, or an actual attack occurs.",
+              ar: "تم توثيق تقييم حماية DDoS/WAF في وثيقة تدقيق المصادر (الإصدار 1.7) - تم تقييم عدم الحاجة حالياً لجدار حماية Cloudflare مخصص نظراً للحماية المدمجة في Railway (Fastly WAF، وضع تحت الهجوم) وعدم وجود قاعدة بيانات SQL؛ سيُعاد النظر في القرار إذا نما المشروع، أو أُدخلت قاعدة بيانات SQL، أو حدث هجوم فعلي.",
+              he: "תועד הערכת הגנת DDoS/WAF במסמך ביקורת המקורות (גרסה 1.7) - הוערך כי אין צורך כרגע ב-Cloudflare WAF ייעודי, לאור ההגנה המובנית של Railway (Fastly WAF, מצב תחת התקפה) והיעדר בסיס נתונים SQL; ההחלטה תיבדק מחדש אם הפרויקט יגדל, בסיס נתונים SQL יתווסף, או אם תתרחש התקפה בפועל.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
