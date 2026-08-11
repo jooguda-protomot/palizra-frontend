@@ -1,0 +1,38 @@
+name: E2E real smoke test (živá produkcia, 1x denne)
+
+on:
+  schedule:
+    # 06:00 UTC každý deň - uprav podľa preferencie
+    - cron: "0 6 * * *"
+  workflow_dispatch: {} # umožňuje aj ručné spustenie z GitHub UI
+
+jobs:
+  real-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run real smoke test proti palizra.org
+        env:
+          INCLUDE_REAL_SMOKE: "1"
+        run: npx playwright test real-smoke
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-real-smoke
+          path: playwright-report/
+          retention-days: 14
