@@ -1308,6 +1308,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم توثيق تقييم حماية DDoS/WAF في وثيقة تدقيق المصادر (الإصدار 1.7) - تم تقييم عدم الحاجة حالياً لجدار حماية Cloudflare مخصص نظراً للحماية المدمجة في Railway (Fastly WAF، وضع تحت الهجوم) وعدم وجود قاعدة بيانات SQL؛ سيُعاد النظر في القرار إذا نما المشروع، أو أُدخلت قاعدة بيانات SQL، أو حدث هجوم فعلي.",
               he: "תועד הערכת הגנת DDoS/WAF במסמך ביקורת המקורות (גרסה 1.7) - הוערך כי אין צורך כרגע ב-Cloudflare WAF ייעודי, לאור ההגנה המובנית של Railway (Fastly WAF, מצב תחת התקפה) והיעדר בסיס נתונים SQL; ההחלטה תיבדק מחדש אם הפרויקט יגדל, בסיס נתונים SQL יתווסף, או אם תתרחש התקפה בפועל.",
             },
+            {
+              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
+              type: "feature",
+              sk: "Pridaná automatizovaná E2E testovacia sada (Playwright, 17 testov) pokrývajúca extrakciu tvrdení, porovnanie zdrojov, jazykový prepínač, formulár návrhov a routing. Beží automaticky cez GitHub Actions pri každom pushi (bez API nákladov) plus denný real-data smoke test proti produkcii. Zdokumentované v Palizra_Source_Audit dokumente (verzia 1.8).",
+              en: "Added an automated E2E test suite (Playwright, 17 tests) covering claim extraction, source comparison, the language switcher, the suggestion form, and routing. Runs automatically via GitHub Actions on every push (zero API cost), plus a daily real-data smoke test against production. Documented in the Palizra_Source_Audit document (version 1.8).",
+              ar: "تمت إضافة مجموعة اختبارات E2E آلية (Playwright، 17 اختباراً) تغطي استخراج التصريحات ومقارنة المصادر ومبدل اللغة ونموذج الاقتراحات والتوجيه. تعمل تلقائياً عبر GitHub Actions مع كل دفعة (بدون تكلفة API)، بالإضافة إلى اختبار دخان يومي ببيانات حقيقية مقابل الإنتاج. موثقة في وثيقة تدقيق المصادر (الإصدار 1.8).",
+              he: "נוספה חבילת בדיקות E2E אוטומטית (Playwright, 17 בדיקות) המכסה חילוץ טענות, השוואת מקורות, מתג השפה, טופס ההצעות והניתוב. פועלת אוטומטית דרך GitHub Actions בכל דחיפה (ללא עלות API), בתוספת בדיקת עשן יומית עם נתונים אמיתיים מול הסביבה החיה. תועד במסמך ביקורת המקורות (גרסה 1.8).",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
