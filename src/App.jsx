@@ -212,7 +212,14 @@ export default function ClaimVerifierDemo() {
     startProgressMsgs(TEXT_LOADING_MSGS[effectiveLang] || TEXT_LOADING_MSGS.en, setLoadingMsg, textProgressRef);
     try {
       const result = await extractClaimsViaBackend(inputText, effectiveLang);
-      const claimsList = result.claims || [];
+      // Obrana: aj keby backend niekedy vrátil "claims" v neočakávanom tvare
+      // (napr. ako reťazec namiesto poľa), appka nesmie na tom spadnúť do
+      // bielej stránky - radšej ukáž prázdny zoznam a chybu.
+      const claimsList = Array.isArray(result.claims) ? result.claims : [];
+      if (!Array.isArray(result.claims)) {
+        console.error("Neočakávaný tvar 'claims' v odpovedi backendu:", result.claims);
+        setError(t("error_extract"));
+      }
       setClaims(claimsList);
 
       // Kontrola konzistentnosti beží na pozadí, neblokuje zobrazenie tvrdení
@@ -238,11 +245,7 @@ export default function ClaimVerifierDemo() {
 
   async function handleSelectClaim(claim) {
     setSelectedClaimId(claim.id);
-    // "interpretation" (rámcovanie/názor) sa objektívne overiť nedá, preto sa
-    // preskakuje. "quoted_statement" (citácia) SA overuje - nie pravdivosť
-    // výroku, ale to, či bol skutočne vyslovený/publikovaný (viď
-    // claim_extractor.js) - preto musí ísť rovnakou cestou ako factual_claim.
-    if (claim.type === "interpretation") {
+    if (claim.type !== "factual_claim" && claim.type !== "unverifiable") {
       setComparison(null);
       return;
     }
@@ -982,11 +985,6 @@ export default function ClaimVerifierDemo() {
               → {lang === "ar" ? "وثيقة تدقيق المصادر (PDF)" : lang === "he" ? "מסמך ביקורת המקורות (PDF)" : lang === "en" ? "Source Audit document (PDF)" : "Dokument Source Audit (PDF)"}
             </a>
           </p>
-          <p style={{ fontSize: 13, marginBottom: 16 }}>
-            <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.ink }}>
-              → {lang === "ar" ? "سياسة الخصوصية" : lang === "he" ? "מדיניות פרטיות" : lang === "en" ? "Privacy Policy" : "Ochrana osobných údajov"}
-            </a>
-          </p>
         </div>
       )}
 
@@ -1228,94 +1226,6 @@ export default function ClaimVerifierDemo() {
               ar: "تم إصلاح خطأ متقطع في استخراج التصريحات ومقارنة المصادر ناتج عن JSON غير صالح عند احتواء التصريحات على علامات اقتباس متداخلة. يستخدم الخادم الآن Anthropic tool use بدلاً من تحليل نص حر، مما يزيل هذا الخطأ نهائياً.",
               he: "תוקנה שגיאה לסירוגין בחילוץ טענות ובהשוואת מקורות שנגרמה מ-JSON לא תקין כאשר טענות הכילו מרכאות מקוננות. השרת משתמש כעת ב-Anthropic tool use במקום ניתוח טקסט חופשי, מה שמבטל את התקלה לחלוטין.",
             },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "fix",
-              sk: "Opravené kliknutie na tvrdenia typu citácia (QUOTE/STATEMENT) v Breakdown paneli, ktoré predtým nespúšťalo porovnanie zdrojov vôbec.",
-              en: "Fixed clicking on quote/statement-type claims in the Breakdown panel, which previously did not trigger source comparison at all.",
-              ar: "تم إصلاح النقر على التصريحات من نوع اقتباس (QUOTE/STATEMENT) في لوحة التحليل، والتي لم تكن تُطلق مقارنة المصادر إطلاقاً من قبل.",
-              he: "תוקנה לחיצה על טענות מסוג ציטוט (QUOTE/STATEMENT) בפאנל הפירוק, שקודם לא הפעילה השוואת מקורות כלל.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "methodology",
-              sk: "Dokončený prvý kvartálny test vyváženosti (Q3 2026) - 8 tvrdení v 4 pároch (obete, infraštruktúra, štatistiky, diplomacia). Výsledky a metodologické zistenia zdokumentované v Impartiality Test Log, Palizra_Source_Audit dokument aktualizovaný na verziu 1.1.",
-              en: "Completed the first quarterly impartiality test (Q3 2026) - 8 claims across 4 matched pairs (casualties, infrastructure, statistics, diplomacy). Results and methodological findings documented in the Impartiality Test Log; Palizra_Source_Audit document updated to version 1.1.",
-              ar: "تم إنجاز أول اختبار حياد ربع سنوي (الربع الثالث 2026) - 8 تصريحات ضمن 4 أزواج متطابقة (الضحايا، البنية التحتية، الإحصاءات، الدبلوماسية). تم توثيق النتائج والنتائج المنهجية في سجل اختبار الحياد؛ تم تحديث وثيقة تدقيق المصادر إلى الإصدار 1.1.",
-              he: "הושלם מבחן האיזון הרבעוני הראשון (רבעון 3 2026) - 8 טענות בארבעה זוגות תואמים (נפגעים, תשתיות, סטטיסטיקה, דיפלומטיה). התוצאות והממצאים המתודולוגיים תועדו ביומן מבחן האיזון; מסמך ביקורת המקורות עודכן לגרסה 1.1.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "feature",
-              sk: "Pridané emailové notifikácie pre oznamovateľov návrhov (cez Resend API) - automaticky sa odosielajú pri zmene stavu návrhu na SPRACOVÁVA SA, HOTOVO alebo ZAMIETNUTÉ.",
-              en: "Added email notifications for suggestion submitters (via Resend API) - sent automatically when a suggestion's status changes to in progress, done, or rejected.",
-              ar: "تمت إضافة إشعارات بريد إلكتروني لمقدمي الاقتراحات (عبر Resend API) - تُرسل تلقائياً عند تغيير حالة الاقتراح إلى قيد المعالجة أو مكتمل أو مرفوض.",
-              he: "נוספו התראות דוא\"ל למגישי הצעות (דרך Resend API) - נשלחות אוטומטית כאשר סטטוס ההצעה משתנה לבטיפול, הושלם, או נדחה.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "methodology",
-              sk: "Zverejnený organizačný status v sekcii O nástroji a v Palizra_Source_Audit dokumente (verzia 1.2) - projekt v súčasnosti prevádzkuje fyzická osoba, formálna registrácia sa zvažuje s rastom projektu.",
-              en: "Published organizational status in the About section and Palizra_Source_Audit document (version 1.2) - the project is currently operated by an individual; formal registration is being considered as the project grows.",
-              ar: "تم نشر الوضع التنظيمي في قسم حول الأداة ووثيقة تدقيق المصادر (الإصدار 1.2) - يدير المشروع حالياً شخص طبيعي؛ يُنظر في التسجيل الرسمي مع نمو المشروع.",
-              he: "פורסם סטטוס ארגוני בסעיף אודות ובמסמך ביקורת המקורות (גרסה 1.2) - הפרויקט מופעל כעת על ידי יחיד; רישום פורמלי נשקל ככל שהפרויקט גדל.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "security",
-              sk: "Vykonaný prvý bezpečnostný test odolnosti voči prompt injection - 3 tvrdenia so zabudovanými pokusmi o prepísanie inštrukcií nástroja. Nástroj vo všetkých prípadoch neuposlúchol vloženú inštrukciu; v jednom prípade ju priamo rozpoznal a pomenoval ako pokus o manipuláciu. Výsledky zdokumentované v Palizra_Source_Audit dokumente (verzia 1.3, nová sekcia 7 - Security Testing).",
-              en: "Completed the first prompt-injection resilience test - 3 claims with embedded attempts to override the tool's instructions. In all cases the tool did not comply with the injected instruction; in one case it explicitly identified and named the manipulation attempt. Results documented in the Palizra_Source_Audit document (version 1.3, new Section 7 - Security Testing).",
-              ar: "تم إجراء أول اختبار أمني لمقاومة حقن الأوامر (prompt injection) - 3 تصريحات تحتوي على محاولات مضمنة لتجاوز تعليمات الأداة. في جميع الحالات لم تمتثل الأداة للتعليمات المحقونة؛ وفي حالة واحدة تعرفت الأداة على محاولة التلاعب وسمّتها صراحة. تم توثيق النتائج في وثيقة تدقيق المصادر (الإصدار 1.3، القسم 7 الجديد - اختبار الأمان).",
-              he: "בוצע מבחן העמידות הראשון מפני הזרקת פקודות (prompt injection) - 3 טענות עם ניסיונות מוטמעים לעקוף את הוראות הכלי. בכל המקרים הכלי לא ציית להוראה המוזרקת; במקרה אחד הוא זיהה ותייג במפורש את ניסיון המניפולציה. התוצאות תועדו במסמך ביקורת המקורות (גרסה 1.3, סעיף 7 חדש - בדיקות אבטחה).",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "feature",
-              sk: "Pridaná verejná stránka palizra.org/privacy - politika ochrany osobných údajov v súlade s GDPR, opisujúca spracúvané údaje, tretie strany, dobu uchovávania a práva dotknutých osôb.",
-              en: "Added a public privacy policy page at palizra.org/privacy, in accordance with GDPR - covering data processed, third parties, retention periods, and data subject rights.",
-              ar: "تمت إضافة صفحة سياسة خصوصية عامة على palizra.org/privacy وفقاً للائحة العامة لحماية البيانات (GDPR) - تغطي البيانات المُعالَجة والأطراف الثالثة وفترات الاحتفاظ وحقوق أصحاب البيانات.",
-              he: "נוספה דף מדיניות פרטיות ציבורי בכתובת palizra.org/privacy, בהתאם ל-GDPR - מכסה נתונים מעובדים, צדדים שלישיים, תקופות שמירה וזכויות נושאי הנתונים.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "methodology",
-              sk: "Zdokumentovaný peer review proces v Palizra_Source_Audit dokumente (verzia 1.4) - fáza 1: štruktúrovaný self-review checklist pred zverejnením; fáza 2 (plánovaná): externý peer review cez overené kanály po vzniku formálnej organizačnej štruktúry.",
-              en: "Documented the peer review process in the Palizra_Source_Audit document (version 1.4) - Phase 1: structured self-review checklist before publication; Phase 2 (planned): external peer review through vetted channels once a formal organizational structure is in place.",
-              ar: "تم توثيق عملية المراجعة النظيرة في وثيقة تدقيق المصادر (الإصدار 1.4) - المرحلة 1: قائمة تحقق منظمة للمراجعة الذاتية قبل النشر؛ المرحلة 2 (مخطط لها): مراجعة نظيرة خارجية عبر قنوات موثوقة بعد إنشاء هيكل تنظيمي رسمي.",
-              he: "תועד תהליך בדיקת עמיתים במסמך ביקורת המקורות (גרסה 1.4) - שלב 1: רשימת בדיקה עצמית מובנית לפני פרסום; שלב 2 (מתוכנן): בדיקת עמיתים חיצונית דרך ערוצים מאומתים לאחר הקמת מבנה ארגוני פורמלי.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "fix",
-              sk: "Opravené kolidujúce číslovanie sekcií v Palizra_Source_Audit dokumente - Impartiality Testing Protocol premenovaný na Appendix A s vlastným číslovaním (A.1-A.7), aby sa neprekrývalo s hlavnými sekciami dokumentu (verzia 1.5).",
-              en: "Fixed colliding section numbering in the Palizra_Source_Audit document - the Impartiality Testing Protocol was renamed to Appendix A with its own numbering (A.1-A.7) so it no longer overlaps with the document's main sections (version 1.5).",
-              ar: "تم إصلاح تعارض ترقيم الأقسام في وثيقة تدقيق المصادر - أُعيدت تسمية بروتوكول اختبار الحياد إلى الملحق أ بترقيم خاص به (A.1-A.7) بحيث لا يتداخل مع الأقسام الرئيسية للوثيقة (الإصدار 1.5).",
-              he: "תוקנה התנגשות במספור הסעיפים במסמך ביקורת המקורות - פרוטוקול בדיקת האיזון שונה לשמו לנספח A עם מספור משלו (A.1-A.7) כך שאינו חופף עוד לסעיפים הראשיים של המסמך (גרסה 1.5).",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "fix",
-              sk: "Presunutá sekcia Contact v Palizra_Source_Audit dokumente na skutočný koniec dokumentu, za Appendix A, aby pôsobila ako záver a nie uprostred textu pred prílohou (verzia 1.6).",
-              en: "Moved the Contact section in the Palizra_Source_Audit document to the true end of the document, after Appendix A, so it reads as a closing section rather than appearing mid-document before the appendix (version 1.6).",
-              ar: "تم نقل قسم الاتصال في وثيقة تدقيق المصادر إلى النهاية الفعلية للوثيقة، بعد الملحق أ، بحيث يُقرأ كقسم ختامي بدلاً من الظهور في منتصف الوثيقة قبل الملحق (الإصدار 1.6).",
-              he: "סעיף יצירת הקשר במסמך ביקורת המקורות הועבר לסוף האמיתי של המסמך, אחרי נספח A, כך שהוא נקרא כסעיף מסכם ולא מופיע באמצע המסמך לפני הנספח (גרסה 1.6).",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "methodology",
-              sk: "Zdokumentované posúdenie DDoS/WAF ochrany v Palizra_Source_Audit dokumente (verzia 1.7) - dedikovaný Cloudflare WAF vyhodnotený ako momentálne nepotrebný vzhľadom na vstavanú ochranu Railway (Fastly WAF, Under Attack Mode) a absenciu SQL databázy; rozhodnutie bude prehodnotené pri raste projektu, zavedení SQL databázy, alebo pri reálnom útoku.",
-              en: "Documented the DDoS/WAF protection assessment in the Palizra_Source_Audit document (version 1.7) - a dedicated Cloudflare WAF was assessed as not currently necessary, given Railway's built-in protection (Fastly WAF, Under Attack Mode) and the absence of a SQL database; the decision will be revisited if the project grows, a SQL database is introduced, or an actual attack occurs.",
-              ar: "تم توثيق تقييم حماية DDoS/WAF في وثيقة تدقيق المصادر (الإصدار 1.7) - تم تقييم عدم الحاجة حالياً لجدار حماية Cloudflare مخصص نظراً للحماية المدمجة في Railway (Fastly WAF، وضع تحت الهجوم) وعدم وجود قاعدة بيانات SQL؛ سيُعاد النظر في القرار إذا نما المشروع، أو أُدخلت قاعدة بيانات SQL، أو حدث هجوم فعلي.",
-              he: "תועד הערכת הגנת DDoS/WAF במסמך ביקורת המקורות (גרסה 1.7) - הוערך כי אין צורך כרגע ב-Cloudflare WAF ייעודי, לאור ההגנה המובנית של Railway (Fastly WAF, מצב תחת התקפה) והיעדר בסיס נתונים SQL; ההחלטה תיבדק מחדש אם הפרויקט יגדל, בסיס נתונים SQL יתווסף, או אם תתרחש התקפה בפועל.",
-            },
-            {
-              date: {"sk": "August 2026", "en": "August 2026", "ar": "أغسطس 2026", "he": "אוגוסט 2026"},
-              type: "feature",
-              sk: "Pridaná automatizovaná E2E testovacia sada (Playwright, 17 testov) pokrývajúca extrakciu tvrdení, porovnanie zdrojov, jazykový prepínač, formulár návrhov a routing. Beží automaticky cez GitHub Actions pri každom pushi (bez API nákladov) plus denný real-data smoke test proti produkcii. Zdokumentované v Palizra_Source_Audit dokumente (verzia 1.8).",
-              en: "Added an automated E2E test suite (Playwright, 17 tests) covering claim extraction, source comparison, the language switcher, the suggestion form, and routing. Runs automatically via GitHub Actions on every push (zero API cost), plus a daily real-data smoke test against production. Documented in the Palizra_Source_Audit document (version 1.8).",
-              ar: "تمت إضافة مجموعة اختبارات E2E آلية (Playwright، 17 اختباراً) تغطي استخراج التصريحات ومقارنة المصادر ومبدل اللغة ونموذج الاقتراحات والتوجيه. تعمل تلقائياً عبر GitHub Actions مع كل دفعة (بدون تكلفة API)، بالإضافة إلى اختبار دخان يومي ببيانات حقيقية مقابل الإنتاج. موثقة في وثيقة تدقيق المصادر (الإصدار 1.8).",
-              he: "נוספה חבילת בדיקות E2E אוטומטית (Playwright, 17 בדיקות) המכסה חילוץ טענות, השוואת מקורות, מתג השפה, טופס ההצעות והניתוב. פועלת אוטומטית דרך GitHub Actions בכל דחיפה (ללא עלות API), בתוספת בדיקת עשן יומית עם נתונים אמיתיים מול הסביבה החיה. תועד במסמך ביקורת המקורות (גרסה 1.8).",
-            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
@@ -1346,16 +1256,7 @@ export default function ClaimVerifierDemo() {
       )}
 
       <footer style={{ marginTop: 32, paddingTop: 14, borderTop: `1px solid ${COLORS.line}`, fontSize: 12, color: COLORS.inkSoft }}>
-        {t("footer")} ·{" "}
-        <a href={`/methodology?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
-          {lang === "ar" ? "المنهجية" : lang === "he" ? "מתודולוגיה" : lang === "en" ? "Methodology" : "Metodológia"}
-        </a> ·{" "}
-        <a href={`/corrections?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
-          {lang === "ar" ? "التصحيحات" : lang === "he" ? "תיקונים" : lang === "en" ? "Corrections" : "Opravy"}
-        </a> ·{" "}
-        <a href={`/privacy?lang=${lang}`} style={{ color: COLORS.inkSoft }}>
-          {lang === "ar" ? "الخصوصية" : lang === "he" ? "פרטיות" : lang === "en" ? "Privacy" : "Súkromie"}
-        </a>
+        {t("footer")}
       </footer>
     </div>
   );
