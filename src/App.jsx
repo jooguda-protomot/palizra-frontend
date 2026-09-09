@@ -1226,6 +1226,14 @@ export default function ClaimVerifierDemo() {
               ar: "تم إصلاح خطأ متقطع في استخراج التصريحات ومقارنة المصادر ناتج عن JSON غير صالح عند احتواء التصريحات على علامات اقتباس متداخلة. يستخدم الخادم الآن Anthropic tool use بدلاً من تحليل نص حر، مما يزيل هذا الخطأ نهائياً.",
               he: "תוקנה שגיאה לסירוגין בחילוץ טענות ובהשוואת מקורות שנגרמה מ-JSON לא תקין כאשר טענות הכילו מרכאות מקוננות. השרת משתמש כעת ב-Anthropic tool use במקום ניתוח טקסט חופשי, מה שמבטל את התקלה לחלוטין.",
             },
+            {
+              date: {"sk": "September 2026", "en": "September 2026", "ar": "سبتمبر 2026", "he": "ספטמבר 2026"},
+              type: "fix",
+              sk: "Opravená opakovaná chyba pri extrakcii tvrdení s vnorenými úvodzovkami (napr. slovenské „citácie“ vnútri citácie) - backend teraz skúša opraviť poškodený JSON pomocou knižnice jsonrepair predtým, než sa vzdá. Zároveň bola appka zabezpečená proti bielej stránke, ak by backend aj napriek tomu vrátil neplatný tvar dát.",
+              en: "Fixed a recurring extraction error affecting claims with nested quotation marks (e.g. Slovak-style quotes within a quote) - the backend now attempts to repair malformed JSON using the jsonrepair library before giving up. The app was also hardened against a blank white-screen crash if the backend ever returns data in an unexpected shape.",
+              ar: "تم إصلاح خطأ متكرر في استخراج التصريحات التي تحتوي على علامات اقتباس متداخلة - يحاول الخادم الآن إصلاح JSON التالف باستخدام مكتبة jsonrepair قبل الاستسلام. كما تم تحصين التطبيق ضد انهيار الشاشة البيضاء الفارغة في حال إرجاع الخادم بيانات بشكل غير متوقع.",
+              he: "תוקנה שגיאה חוזרת בחילוץ טענות עם מרכאות מקוננות - השרת מנסה כעת לתקן JSON פגום באמצעות ספריית jsonrepair לפני שהוא מוותר. כמו כן, האפליקציה חוזקה מפני קריסה למסך לבן ריק אם השרת מחזיר נתונים בצורה בלתי צפויה.",
+            },
           ].map((entry, i) => (
             <div key={i} style={{ display: "flex", gap: 14, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${COLORS.line}` }}>
               <div style={{ minWidth: 90, fontSize: 12, color: COLORS.inkSoft, paddingTop: 2 }}>{typeof entry.date === "object" ? (entry.date[lang] || entry.date.sk) : entry.date}</div>
